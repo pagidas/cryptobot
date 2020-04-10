@@ -1,0 +1,39 @@
+plugins {
+    id 'java'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.71'
+}
+
+apply from: rootProject.file("versions.gradle")
+
+group 'me.pysquad.cryptobot'
+version '1.0-SNAPSHOT'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+}
+
+test {
+    useJUnitPlatform()
+}
+
+dependencies {
+    compile kotlin
+    compile http4kCore
+    compile http4kJsonAndContractRoute
+    compile http4kOAuth
+    compile http4kServer
+    compile http4kClient
+    compile typesafeConfig
+    compile hikari
+    compile slf4jLogging
+
+    testCompile jUnit
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "1.8"
+}

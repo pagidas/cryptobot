@@ -1,0 +1,52 @@
+ext {
+    // Dependencies versions
+    http4k_version = '3.233.0'
+    junit_version = '4.13'
+    typesafe_version = '1.4.0'
+    hikari_version = '3.4.1'
+    slf4j_version = '2.0.0-alpha1'
+
+    // Dependencies
+    kotlin = [
+            "org.jetbrains.kotlin:kotlin-stdlib-jdk8"
+    ]
+
+    http4kServer = [
+            "org.http4k:http4k-server-jetty:$http4k_version"
+    ]
+
+    http4kClient = [
+            "org.http4k:http4k-client-apache:$http4k_version",
+            "org.http4k:http4k-client-websocket:$http4k_version"
+    ]
+
+    http4kCore = [
+            "org.http4k:http4k-core:$http4k_version"
+    ]
+
+    http4kOAuth = [
+            "org.http4k:http4k-security-oauth:$http4k_version"
+    ]
+
+    http4kJsonAndContractRoute = [
+            "org.http4k:http4k-format-jackson:$http4k_version",
+            "org.http4k:http4k-contract:$http4k_version"
+    ]
+
+    hikari = [
+            "com.zaxxer:HikariCP:$hikari_version"
+    ]
+
+    typesafeConfig = [
+            "com.typesafe:config:$typesafe_version"
+    ]
+
+    slf4jLogging = [
+            "org.slf4j:slf4j-api:$slf4j_version",
+            "org.slf4j:slf4j-simple:$slf4j_version"
+    ]
+
+    jUnit = [
+            "junit:junit:$junit_version"
+    ]
+}
