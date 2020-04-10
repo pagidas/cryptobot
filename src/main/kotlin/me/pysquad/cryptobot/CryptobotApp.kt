@@ -27,8 +27,11 @@ fun main() {
 
     val client = WebsocketClient.blocking(Uri.of("ws://localhost:9000/ageMe"))
 
-    // Sends a message in "native form" -- we could also use the Lens here to auto-marshall
+    // Sends a message in "native form" -- We could also use the Lens here to auto-marshall
     client.send(WsMessage(personLens(Person("Nick", 25)).bodyString()))
+
+    // That's a more json readable example without de-serializing
+    // client.send(WsMessage("""{ "name: "Nick", "age": 25 }"""))
 
     /**
      * Reads all of the messages from the socket until it is closed (by the server).
