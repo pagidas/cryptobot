@@ -2,6 +2,7 @@ package me.pysquad.cryptobot.subscriber.endpoints
 
 import me.pysquad.cryptobot.coinbase.CoinbaseApi
 import me.pysquad.cryptobot.common.Endpoint
+import me.pysquad.cryptobot.subscriber.CoinbaseSubscribeRequest
 import org.http4k.contract.meta
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST
@@ -15,7 +16,10 @@ class SubscribeToMarket(val coinbase: CoinbaseApi): Endpoint {
             summary = "Subscribes to the real-time market data flow on orders and trades."
         } bindContract POST to handler()
 
-    private fun handler(): HttpHandler = { _: Request ->
-        coinbase.subscribe().run { Response(OK).body(this) }
+    private fun handler(): HttpHandler = { req: Request ->
+        with(CoinbaseSubscribeRequest.lens(req)) {
+            coinbase.subscribe(this)
+            Response(OK)
+        }
     }
 }
