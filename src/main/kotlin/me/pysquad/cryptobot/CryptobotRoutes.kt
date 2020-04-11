@@ -1,6 +1,6 @@
 package me.pysquad.cryptobot
 
-import me.pysquad.cryptobot.common.Endpoint
+import me.pysquad.cryptobot.subscriber.endpoints.SubscribeToMarket
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
@@ -14,7 +14,11 @@ import org.http4k.routing.routes
 
 object CryptobotRoutes {
     operator fun invoke(): RoutingHttpHandler {
-        val contractRoutes = emptyList<Endpoint>()
+        val contractRoutes =
+            listOf(
+                // --- Subscriber ---
+                SubscribeToMarket()
+            )
 
         val contract = contract {
             renderer = OpenApi3(ApiInfo("Cryptobot API", "v1.0"), Jackson)
@@ -24,6 +28,6 @@ object CryptobotRoutes {
 
         return ServerFilters.CatchLensFailure
             .then(DebuggingFilters.PrintRequestAndResponse())
-            .then(routes("api/v1" bind contract))
+            .then(routes("api" bind contract))
     }
 }
