@@ -4,8 +4,19 @@ import me.pysquad.cryptobot.config.ConfigReader
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 
+object CryptobotApp {
+    private val server = CryptobotServer.build()
+
+    /**
+     *  Here we pass all the dependencies that routes need to function.
+     *  The dependencies are instantiated in [CryptobotServer.build]
+     */
+    operator fun invoke() =
+        CryptobotRoutes(
+            server.coinbase
+        )
+}
+
 fun main() {
-    with(CryptobotRoutes()) {
-        asServer(ConfigReader.app.server.port.let(::Jetty)).start()
-    }
+    CryptobotApp().asServer(ConfigReader.app.server.port.let(::Jetty)).start()
 }

@@ -1,5 +1,6 @@
 package me.pysquad.cryptobot
 
+import me.pysquad.cryptobot.coinbase.CoinbaseApi
 import me.pysquad.cryptobot.subscriber.endpoints.SubscribeToMarket
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
@@ -13,11 +14,11 @@ import org.http4k.routing.bind
 import org.http4k.routing.routes
 
 object CryptobotRoutes {
-    operator fun invoke(): RoutingHttpHandler {
+    operator fun invoke(coinbase: CoinbaseApi): RoutingHttpHandler {
         val contractRoutes =
             listOf(
                 // --- Subscriber ---
-                SubscribeToMarket()
+                SubscribeToMarket(coinbase)
             )
 
         val contract = contract {
