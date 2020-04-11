@@ -8,7 +8,7 @@ data class AppConfig(val server: ServerConfig)
 object ConfigReader {
     private val config = ConfigFactory.load()
 
-    private val app = AppConfig(
+    val app = AppConfig(
         ServerConfig(host = config.getString("server.host"), port = config.getInt("server.port"))
     )
 }
