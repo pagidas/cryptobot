@@ -6,20 +6,22 @@ import org.http4k.client.WebsocketClient
 import org.http4k.core.Uri
 import org.http4k.format.Jackson
 import org.http4k.websocket.WsMessage
+import kotlin.concurrent.thread
 
 val coinbaseUri = Uri.of(ConfigReader.coinbase.uri)
 
 interface CoinbaseApi {
-    fun subscribe(subscribeRequest: CoinbaseSubscribeRequest)
+    fun subscribe(subscribeRequest: CoinbaseSubscribeRequest): Thread
 
     companion object {
 
         fun Client() = object: CoinbaseApi {
-            override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest) =
+            override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest) = thread {
                 with(WebsocketClient.blocking(coinbaseUri)) {
                     send(WsMessage(subscribeRequest.toJsonPrettyString()))
                     received().printInChunks()
                 }
+            }
         }
     }
 }
