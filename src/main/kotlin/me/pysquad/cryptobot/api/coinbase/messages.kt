@@ -1,8 +1,8 @@
-package me.pysquad.cryptobot.coinbase
+package me.pysquad.cryptobot.api.coinbase
 
 import org.http4k.websocket.WsMessage
 import java.time.Instant
-import me.pysquad.cryptobot.CryptobotJson.auto
+import me.pysquad.cryptobot.api.CryptobotJson.auto
 
 data class CoinbaseProductMessage(
     val type: Type,

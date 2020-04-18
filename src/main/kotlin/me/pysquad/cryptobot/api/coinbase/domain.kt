@@ -1,4 +1,4 @@
-package me.pysquad.cryptobot.coinbase
+package me.pysquad.cryptobot.api.coinbase
 
 
 enum class Type { TICKER }

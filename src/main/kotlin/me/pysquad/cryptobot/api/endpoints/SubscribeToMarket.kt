@@ -1,11 +1,11 @@
-package me.pysquad.cryptobot.subscriber.endpoints
+package me.pysquad.cryptobot.api.endpoints
 
-import me.pysquad.cryptobot.Channel
-import me.pysquad.cryptobot.CoinbaseMessageType.Subscribe
-import me.pysquad.cryptobot.ProductId
-import me.pysquad.cryptobot.coinbase.CoinbaseApi
+import me.pysquad.cryptobot.api.Channel
+import me.pysquad.cryptobot.api.CoinbaseMessageType.Subscribe
+import me.pysquad.cryptobot.api.coinbase.CoinbaseApi
+import me.pysquad.cryptobot.api.coinbase.ProductId
 import me.pysquad.cryptobot.common.Endpoint
-import me.pysquad.cryptobot.subscriber.CoinbaseSubscribeRequest
+import me.pysquad.cryptobot.api.CoinbaseSubscribeRequest
 import org.http4k.contract.meta
 import org.http4k.core.HttpHandler
 import org.http4k.core.Method.POST

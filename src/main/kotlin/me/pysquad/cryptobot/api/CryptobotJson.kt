@@ -1,9 +1,9 @@
-package me.pysquad.cryptobot
+package me.pysquad.cryptobot.api
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import me.pysquad.cryptobot.coinbase.withCoinbaseMappings
+import me.pysquad.cryptobot.api.coinbase.withCoinbaseMappings
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.ConfigurableJackson
 import org.http4k.format.asConfigurable
@@ -24,6 +24,5 @@ object CryptobotJson: ConfigurableJackson(KotlinModule()
 )
 
 fun AutoMappingConfiguration<ObjectMapper>.withCryptobotMappings() = apply {
-    text(BiDiMapping(::ProductId, ProductId::value))
     text(BiDiMapping(::Channel, Channel::value))
 }

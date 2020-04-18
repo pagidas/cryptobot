@@ -1,10 +1,8 @@
-package me.pysquad.cryptobot.subscriber
+package me.pysquad.cryptobot.api
 
-import me.pysquad.cryptobot.Channel
-import me.pysquad.cryptobot.CoinbaseMessageType
-import me.pysquad.cryptobot.ProductId
+import me.pysquad.cryptobot.api.CryptobotJson.auto
+import me.pysquad.cryptobot.api.coinbase.ProductId
 import org.http4k.core.Body
-import me.pysquad.cryptobot.CryptobotJson.auto
 
 data class CoinbaseSubscribeRequest(
     val type: CoinbaseMessageType,

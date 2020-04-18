@@ -1,8 +1,8 @@
-package me.pysquad.cryptobot.coinbase
+package me.pysquad.cryptobot.api.coinbase
 
-import me.pysquad.cryptobot.CryptobotService
+import me.pysquad.cryptobot.api.CryptobotService
 import me.pysquad.cryptobot.config.ConfigReader
-import me.pysquad.cryptobot.subscriber.CoinbaseSubscribeRequest
+import me.pysquad.cryptobot.api.CoinbaseSubscribeRequest
 import org.http4k.client.WebsocketClient
 import org.http4k.core.Uri
 import org.http4k.format.Jackson

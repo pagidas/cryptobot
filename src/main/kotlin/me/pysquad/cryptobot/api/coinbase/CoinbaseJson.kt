@@ -1,4 +1,4 @@
-package me.pysquad.cryptobot.coinbase
+package me.pysquad.cryptobot.api.coinbase
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import org.http4k.format.AutoMappingConfiguration
