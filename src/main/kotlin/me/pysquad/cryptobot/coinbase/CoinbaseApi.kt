@@ -1,5 +1,6 @@
 package me.pysquad.cryptobot.coinbase
 
+import me.pysquad.cryptobot.CryptobotService
 import me.pysquad.cryptobot.config.ConfigReader
 import me.pysquad.cryptobot.subscriber.CoinbaseSubscribeRequest
 import org.http4k.client.WebsocketClient
@@ -15,12 +16,13 @@ interface CoinbaseApi {
 
     companion object {
 
-        fun Client() = object: CoinbaseApi {
+        fun Client(cryptobot: CryptobotService) = object: CoinbaseApi {
             override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest) = thread {
                 with(WebsocketClient.blocking(coinbaseUri)) {
                     send(WsMessage(subscribeRequest.toCoinbaseJsonRequest()))
                     received().first().apply(::println)
-                    received().parseAndPrintItInChunks()
+//                    received().parseAndPrintItInChunks()
+                    cryptobot.storeMessages()
                 }
             }
         }
@@ -56,7 +58,7 @@ private fun Sequence<WsMessage>.printInChunks(sizeOfChunk: Int = 6) {
  */
 private fun Sequence<WsMessage>.parseAndPrintItInChunks(sizeOfChunk: Int = 6) {
     for (listOfMessage in chunked(sizeOfChunk)) {
-        listOfMessage.forEach { println(CoinbaseProductTickerMessage.wsLens(it)) }
+        listOfMessage.forEach { println(CoinbaseProductMessage.wsLens(it)) }
         println("\nReceiving, parsing and printing next chunk of size $sizeOfChunk... be patient!\n")
     }
 }

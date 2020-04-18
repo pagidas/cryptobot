@@ -4,7 +4,7 @@ import org.http4k.websocket.WsMessage
 import java.time.Instant
 import me.pysquad.cryptobot.CryptobotJson.auto
 
-data class CoinbaseProductTickerMessage(
+data class CoinbaseProductMessage(
     val type: Type,
     val sequence: CoinSequence,
     val product_id: ProductId,
@@ -22,6 +22,6 @@ data class CoinbaseProductTickerMessage(
     val last_size: LastSize
 ) {
     companion object {
-        val wsLens = WsMessage.auto<CoinbaseProductTickerMessage>().toLens()
+        val wsLens = WsMessage.auto<CoinbaseProductMessage>().toLens()
     }
 }

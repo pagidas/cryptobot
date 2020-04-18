@@ -27,6 +27,7 @@ dependencies {
     compile typesafeConfig
     compile hikari
     compile slf4jLogging
+    compile rethinkdb
 
     testCompile test
     testRuntimeOnly jupiterEngine
