@@ -3,6 +3,7 @@ package me.pysquad.cryptobot
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import me.pysquad.cryptobot.coinbase.withCoinbaseMappings
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.ConfigurableJackson
 import org.http4k.format.asConfigurable
@@ -13,6 +14,7 @@ object CryptobotJson: ConfigurableJackson(KotlinModule()
     .asConfigurable()
     .withStandardMappings()
     .withCryptobotMappings()
+    .withCoinbaseMappings()
     .done()
     .deactivateDefaultTyping()
     .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)

@@ -20,7 +20,7 @@ interface CoinbaseApi {
                 with(WebsocketClient.blocking(coinbaseUri)) {
                     send(WsMessage(subscribeRequest.toCoinbaseJsonRequest()))
                     received().first().apply(::println)
-                    received().printInChunks()
+                    received().parseAndPrintItInChunks()
                 }
             }
         }
@@ -38,7 +38,7 @@ private fun CoinbaseSubscribeRequest.toCoinbaseJsonRequest() = Jackson {
 }
 
 /**
- * Helper function to print received messaes in chunks.
+ * Helper function to print received messages in chunks.
  * The size of chunks is by default 6.
  *
  * Similar to this function we could have a "writeInChunks"
@@ -48,5 +48,15 @@ private fun Sequence<WsMessage>.printInChunks(sizeOfChunk: Int = 6) {
     for (listOfMessages in chunked(sizeOfChunk)) {
         listOfMessages.forEach(::println)
         println("\nReceiving and printing next chunk of size $sizeOfChunk... be patient!\n")
+    }
+}
+
+/**
+ * Helper function to parse received messages and print them in chunks
+ */
+private fun Sequence<WsMessage>.parseAndPrintItInChunks(sizeOfChunk: Int = 6) {
+    for (listOfMessage in chunked(sizeOfChunk)) {
+        listOfMessage.forEach { println(CoinbaseProductTickerMessage.wsLens(it)) }
+        println("\nReceiving, parsing and printing next chunk of size $sizeOfChunk... be patient!\n")
     }
 }
