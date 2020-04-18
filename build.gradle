@@ -28,7 +28,8 @@ dependencies {
     compile hikari
     compile slf4jLogging
 
-    testCompile jUnit
+    testCompile test
+    testRuntimeOnly jupiterEngine
 }
 
 compileKotlin {

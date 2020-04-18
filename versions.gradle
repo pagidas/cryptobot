@@ -1,7 +1,7 @@
 ext {
     // Dependencies versions
-    http4k_version = '3.233.0'
-    junit_version = '4.13'
+    http4k_version = '3.243.0'
+    junit_version = '5.5.1'
     typesafe_version = '1.4.0'
     hikari_version = '3.4.1'
     slf4j_version = '2.0.0-alpha1'
@@ -46,7 +46,13 @@ ext {
             "org.slf4j:slf4j-simple:$slf4j_version"
     ]
 
-    jUnit = [
-            "junit:junit:$junit_version"
+    test = [
+            "org.http4k:http4k-testing-approval:$http4k_version",
+            "org.http4k:http4k-testing-hamkrest:$http4k_version",
+            "org.junit.jupiter:junit-jupiter-api:$junit_version"
+    ]
+
+    jupiterEngine = [
+            "org.junit.jupiter:junit-jupiter-engine:$junit_version"
     ]
 }
