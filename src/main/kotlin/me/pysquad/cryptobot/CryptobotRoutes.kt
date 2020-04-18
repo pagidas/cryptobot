@@ -22,7 +22,7 @@ object CryptobotRoutes {
             )
 
         val contract = contract {
-            renderer = OpenApi3(ApiInfo("Cryptobot API", "v1.0"), Jackson)
+            renderer = OpenApi3(ApiInfo("Cryptobot API", "v1.0"), CryptobotJson)
             descriptionPath = "/swagger.json"
             routes += contractRoutes.map { it.contractRoute }
         }

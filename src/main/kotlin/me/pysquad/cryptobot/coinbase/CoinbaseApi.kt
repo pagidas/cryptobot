@@ -18,7 +18,8 @@ interface CoinbaseApi {
         fun Client() = object: CoinbaseApi {
             override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest) = thread {
                 with(WebsocketClient.blocking(coinbaseUri)) {
-                    send(WsMessage(subscribeRequest.toJsonPrettyString()))
+                    send(WsMessage(subscribeRequest.toCoinbaseJsonRequest()))
+                    received().first().apply(::println)
                     received().printInChunks()
                 }
             }
@@ -26,7 +27,7 @@ interface CoinbaseApi {
     }
 }
 
-private fun CoinbaseSubscribeRequest.toJsonPrettyString() = Jackson {
+private fun CoinbaseSubscribeRequest.toCoinbaseJsonRequest() = Jackson {
     val productIdsJson = productIds.map { string(it.value) }
     val channelsJson = channels.map { string(it.value) }
     obj(

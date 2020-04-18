@@ -1,7 +1,7 @@
 package me.pysquad.cryptobot.subscriber.endpoints
 
 import me.pysquad.cryptobot.Channel
-import me.pysquad.cryptobot.CoinbaseMessageType.SUBSCRIBE
+import me.pysquad.cryptobot.CoinbaseMessageType.Subscribe
 import me.pysquad.cryptobot.ProductId
 import me.pysquad.cryptobot.coinbase.CoinbaseApi
 import me.pysquad.cryptobot.common.Endpoint
@@ -16,7 +16,7 @@ import org.http4k.core.Status.Companion.OK
 class SubscribeToMarket(val coinbase: CoinbaseApi): Endpoint {
     private val exampleSubscribeRequest =
         CoinbaseSubscribeRequest(
-            type = SUBSCRIBE,
+            type = Subscribe,
             productIds = listOf(ProductId("ETH-GBP")),
             channels = listOf(Channel("ticker"))
         )
@@ -31,7 +31,7 @@ class SubscribeToMarket(val coinbase: CoinbaseApi): Endpoint {
     private fun handler(): HttpHandler = { req: Request ->
         with(CoinbaseSubscribeRequest.lens(req)) {
             coinbase.subscribe(this)
-            Response(OK)
+            Response(OK).body("Connecting to coinbase websocket...\n")
         }
     }
 }

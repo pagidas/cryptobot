@@ -4,7 +4,7 @@ import me.pysquad.cryptobot.Channel
 import me.pysquad.cryptobot.CoinbaseMessageType
 import me.pysquad.cryptobot.ProductId
 import org.http4k.core.Body
-import org.http4k.format.Jackson.auto
+import me.pysquad.cryptobot.CryptobotJson.auto
 
 data class CoinbaseSubscribeRequest(
     val type: CoinbaseMessageType,
