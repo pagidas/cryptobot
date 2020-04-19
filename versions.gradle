@@ -5,7 +5,7 @@ ext {
     typesafe_version = '1.4.0'
     hikari_version = '3.4.1'
     slf4j_version = '2.0.0-alpha1'
-    rethinkdb_version = '2.3.3'
+    rethinkdb_version = '2.4.2'
 
     // Dependencies
     kotlin = [

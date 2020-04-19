@@ -22,9 +22,20 @@ interface CoinbaseApi {
                     send(WsMessage(subscribeRequest.toCoinbaseJsonRequest()))
                     received().first().apply(::println)
 //                    received().parseAndPrintItInChunks()
-                    cryptobot.storeMessages()
+                    received().storeInChunks()
                 }
             }
+
+            private fun Sequence<WsMessage>.storeInChunks(sizeOfChunk: Int = 6) {
+                for (listOfMessages in chunked(sizeOfChunk)) {
+                    cryptobot.storeMessages(
+                        listOfMessages.map { CoinbaseProductMessage.wsLens(it) }
+                    )
+                    listOfMessages.forEach(::println)
+                    println("These messages have been stored!\n")
+                }
+            }
+
         }
     }
 }
@@ -57,8 +68,8 @@ private fun Sequence<WsMessage>.printInChunks(sizeOfChunk: Int = 6) {
  * Helper function to parse received messages and print them in chunks
  */
 private fun Sequence<WsMessage>.parseAndPrintItInChunks(sizeOfChunk: Int = 6) {
-    for (listOfMessage in chunked(sizeOfChunk)) {
-        listOfMessage.forEach { println(CoinbaseProductMessage.wsLens(it)) }
+    for (listOfMessages in chunked(sizeOfChunk)) {
+        listOfMessages.forEach { println(CoinbaseProductMessage.wsLens(it)) }
         println("\nReceiving, parsing and printing next chunk of size $sizeOfChunk... be patient!\n")
     }
 }

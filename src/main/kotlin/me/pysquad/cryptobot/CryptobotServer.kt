@@ -15,5 +15,5 @@ class CryptobotServer(val coinbase: CoinbaseApi) {
 }
 
 private fun buildCryptobotService() = CryptobotService(
-    CoinbaseWsMessagesRepo(Database(ConfigReader.db))
+    CoinbaseWsMessagesRepo(RealTimeDb(ConfigReader.db))
 )
