@@ -1,0 +1,19 @@
+version: "3"
+
+services:
+  realtime-db:
+    image: "rethinkdb:2.4.0"
+    container_name: rethinkdb
+    restart: always
+    ports:
+    - 8080:8080
+  coinbase-adapter-service:
+    depends_on:
+      - realtime-db
+    environment:
+      RETHINK_HOST: ${RETHINK_DB_HOST}
+    image: "cryptobot:1.0-SNAPSHOT"
+    container_name: coinbase_adapter
+    restart: always
+    ports:
+    - 9000:9000
