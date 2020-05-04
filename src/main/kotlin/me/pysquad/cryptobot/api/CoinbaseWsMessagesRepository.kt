@@ -1,8 +1,8 @@
 package me.pysquad.cryptobot.api
 
-import com.rethinkdb.gen.ast.Db
 import me.pysquad.cryptobot.RealTimeDb
 import me.pysquad.cryptobot.api.coinbase.CoinbaseProductMessage
+import me.pysquad.cryptobot.inTransaction
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
@@ -15,11 +15,8 @@ interface CoinbaseWsMessagesRepository {
 }
 
 class CoinbaseWsMessagesRepo(realTimeDb: RealTimeDb): CoinbaseWsMessagesRepository {
-    private val r = realTimeDb.rethinkWrapper
+    private val r = realTimeDb.rethinkCtx
     private val conn = realTimeDb.connection
-    private val cryptoDb = r.db(CRYPTOBOT)
-
-    private fun inTransaction(db: Db = cryptoDb, fn: Db.() -> Unit = {}) = db.fn()
 
     override fun store(messages: List<CoinbaseProductMessage>) {
         inTransaction {
