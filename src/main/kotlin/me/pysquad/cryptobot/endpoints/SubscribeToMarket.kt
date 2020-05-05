@@ -1,4 +1,4 @@
-package me.pysquad.cryptobot.api.endpoints
+package me.pysquad.cryptobot.endpoints
 
 import me.pysquad.cryptobot.api.Channel
 import me.pysquad.cryptobot.api.CoinbaseMessageType.Subscribe

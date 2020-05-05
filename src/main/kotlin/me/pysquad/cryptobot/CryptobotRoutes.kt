@@ -2,7 +2,7 @@ package me.pysquad.cryptobot
 
 import me.pysquad.cryptobot.api.CryptobotJson
 import me.pysquad.cryptobot.api.coinbase.CoinbaseApi
-import me.pysquad.cryptobot.api.endpoints.SubscribeToMarket
+import me.pysquad.cryptobot.endpoints.SubscribeToMarket
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
 import org.http4k.contract.openapi.v3.OpenApi3
