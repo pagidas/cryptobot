@@ -1,6 +1,6 @@
 package me.pysquad.cryptobot
 
-import me.pysquad.cryptobot.api.CryptobotJson
+import me.pysquad.cryptobot.api.CoinbaseAdapterJson
 import me.pysquad.cryptobot.api.coinbase.CoinbaseApi
 import me.pysquad.cryptobot.endpoints.SubscribeToMarket
 import org.http4k.contract.contract
@@ -13,7 +13,7 @@ import org.http4k.routing.RoutingHttpHandler
 import org.http4k.routing.bind
 import org.http4k.routing.routes
 
-object CryptobotRoutes {
+object CoinbaseAdapterRoutes {
     operator fun invoke(coinbase: CoinbaseApi): RoutingHttpHandler {
         val contractRoutes =
             listOf(
@@ -23,7 +23,7 @@ object CryptobotRoutes {
 
         val contract = contract {
             renderer = OpenApi3(ApiInfo("Cryptobot API", "v1.0"),
-                CryptobotJson
+                CoinbaseAdapterJson
             )
             descriptionPath = "/swagger.json"
             routes += contractRoutes.map { it.contractRoute }

@@ -1,6 +1,6 @@
 package me.pysquad.cryptobot.api.coinbase
 
-import me.pysquad.cryptobot.api.CryptobotService
+import me.pysquad.cryptobot.api.CoinbaseAdapterService
 import me.pysquad.cryptobot.config.ConfigReader
 import me.pysquad.cryptobot.api.CoinbaseSubscribeRequest
 import org.http4k.client.WebsocketClient
@@ -16,7 +16,7 @@ interface CoinbaseApi {
 
     companion object {
 
-        fun Client(cryptobot: CryptobotService) = object: CoinbaseApi {
+        fun Client(coinbaseAdapter: CoinbaseAdapterService) = object: CoinbaseApi {
             override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest) = thread {
                 with(WebsocketClient.blocking(coinbaseUri)) {
                     send(WsMessage(subscribeRequest.toCoinbaseJsonRequest()))
@@ -28,7 +28,7 @@ interface CoinbaseApi {
 
             private fun Sequence<WsMessage>.storeInChunks(sizeOfChunk: Int = 6) {
                 for (listOfMessages in chunked(sizeOfChunk)) {
-                    cryptobot.storeMessages(
+                    coinbaseAdapter.storeMessages(
                         listOfMessages.map { CoinbaseProductMessage.wsLens(it) }
                     )
                     listOfMessages.forEach(::println)

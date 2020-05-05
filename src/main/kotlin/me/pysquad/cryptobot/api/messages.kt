@@ -1,6 +1,6 @@
 package me.pysquad.cryptobot.api
 
-import me.pysquad.cryptobot.api.CryptobotJson.auto
+import me.pysquad.cryptobot.api.CoinbaseAdapterJson.auto
 import me.pysquad.cryptobot.api.coinbase.ProductId
 import org.http4k.core.Body
 

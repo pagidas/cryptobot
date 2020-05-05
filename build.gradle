@@ -8,7 +8,7 @@ plugins {
 
 apply from: rootProject.file("versions.gradle")
 
-mainClassName = 'me.pysquad.cryptobot.CryptobotAppKt'
+mainClassName = 'me.pysquad.cryptobot.CoinbaseAdapterAppKt'
 
 group 'me.pysquad.cryptobot'
 version '1.0-SNAPSHOT'

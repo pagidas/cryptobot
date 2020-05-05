@@ -1,22 +1,22 @@
 package me.pysquad.cryptobot
 
 import me.pysquad.cryptobot.api.CoinbaseWsMessagesRepo
-import me.pysquad.cryptobot.api.CryptobotService
+import me.pysquad.cryptobot.api.CoinbaseAdapterService
 import me.pysquad.cryptobot.api.coinbase.CoinbaseApi
 import me.pysquad.cryptobot.config.ConfigReader
 
-class CryptobotServer(val coinbase: CoinbaseApi) {
+class CoinbaseAdapterServer(val coinbase: CoinbaseApi) {
     companion object {
         fun build() =
-            CryptobotServer(
-                coinbase = CoinbaseApi.Client(buildCryptobotService())
+            CoinbaseAdapterServer(
+                coinbase = CoinbaseApi.Client(buildCoinbaseAdapterService())
             )
     }
 }
 
-private fun buildCryptobotService(): CryptobotService {
+private fun buildCoinbaseAdapterService(): CoinbaseAdapterService {
     RealTimeDb.connect(ConfigReader.db).also { it.runMigrations() }
-    return CryptobotService(
+    return CoinbaseAdapterService(
         CoinbaseWsMessagesRepo(RealTimeDb)
     )
 }

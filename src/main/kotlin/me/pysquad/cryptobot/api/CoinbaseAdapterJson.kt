@@ -10,7 +10,7 @@ import org.http4k.format.asConfigurable
 import org.http4k.format.withStandardMappings
 import org.http4k.lens.BiDiMapping
 
-object CryptobotJson: ConfigurableJackson(KotlinModule()
+object CoinbaseAdapterJson: ConfigurableJackson(KotlinModule()
     .asConfigurable()
     .withStandardMappings()
     .withCryptobotMappings()

@@ -12,7 +12,7 @@ services:
       - realtime-db
     environment:
       RETHINK_HOST: ${RETHINK_DB_HOST}
-    image: "cryptobot:1.0-SNAPSHOT"
+    image: "coinbase-adapter:1.0-SNAPSHOT"
     container_name: coinbase_adapter
     restart: always
     ports:
