@@ -183,3 +183,5 @@ Temporary Items
 
 
 rethinkdb_data
+crypto-analyzer/build
+crypto-analyzer/dist
