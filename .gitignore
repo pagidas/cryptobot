@@ -130,6 +130,10 @@ gradle-app.setting
 
 # Package Files #
 *.jar
+
+# exception for gradle-wrapper.jar as we need it.
+!gradle/wrapper/gradle-wrapper.jar
+
 *.war
 *.nar
 *.ear
