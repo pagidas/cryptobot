@@ -17,3 +17,9 @@ services:
     restart: always
     ports:
     - 9000:9000
+  crypto-analyzer-service:
+    depends_on:
+      - realtime-db
+    image: "crypto-analyzer:1.0"
+    container_name: crypto_analyzer
+    restart: always
