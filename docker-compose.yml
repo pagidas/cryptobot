@@ -12,7 +12,7 @@ services:
       - realtime-db
     environment:
       RETHINK_HOST: ${RETHINK_DB_HOST}
-    image: "coinbase-adapter:1.0-SNAPSHOT"
+    image: "coinbase-adapter"
     container_name: coinbase_adapter
     restart: always
     ports:
@@ -20,6 +20,6 @@ services:
   crypto-analyzer-service:
     depends_on:
       - realtime-db
-    image: "crypto-analyzer:1.0"
+    image: "crypto-analyzer"
     container_name: crypto_analyzer
     restart: always

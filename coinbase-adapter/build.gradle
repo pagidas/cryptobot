@@ -38,6 +38,12 @@ dependencies {
     testRuntimeOnly jupiterEngine
 }
 
+jar {
+    manifest {
+        attributes "Main-Class": "me.pysquad.cryptobot.CoinbaseAdapterAppKt"
+    }
+}
+
 shadowJar {
     mergeServiceFiles()
 }
