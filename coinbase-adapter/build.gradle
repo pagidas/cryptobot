@@ -48,12 +48,6 @@ shadowJar {
     mergeServiceFiles()
 }
 
-docker {
-    name "${project.name}:${project.version}"
-    files "$buildDir/libs/${project.name}-${project.version}-all.jar"
-    buildArgs([JAR_FILE: "${project.name}-${project.version}-all.jar"])
-}
-
 compileKotlin {
     kotlinOptions.jvmTarget = "11"
 }
