@@ -1,9 +1,13 @@
 FROM openjdk:14-alpine
 COPY . /project/src/
-RUN mkdir -p /project/app/
-WORKDIR /project/src/
-RUN  ./gradlew build shadowJar -i
-RUN  cp build/libs/coinbase-adapter-1.0-SNAPSHOT-all.jar /project/app/app.jar
+
+RUN cd /project/src \
+    && ./gradlew build shadowJar -i \
+    && mkdir -p /project/app \
+    && cp /project/src/build/libs/coinbase-adapter-1.0-SNAPSHOT-all.jar /project/app/app.jar \
+    && rm -rf /project/src/ \
+    && rm -rf ~/.gradle \
+    && rm -rf ~/.kotlin
+
 WORKDIR /project/app
-RUN rm -rf /project/src/
 ENTRYPOINT ["java", "-jar", "app.jar"]
