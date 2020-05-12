@@ -1,3 +1,6 @@
 FROM quoinedev/python3.6-pandas-alpine
-COPY src/main.py app.py
-ENTRYPOINT ["python", "./app.py"]
+COPY requirements.txt requirements.txt
+RUN pip install -r requirements.txt
+COPY src/ myapp/
+WORKDIR /myapp/
+ENTRYPOINT ["python", "./main.py"]
