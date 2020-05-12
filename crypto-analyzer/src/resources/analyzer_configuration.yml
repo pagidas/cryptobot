@@ -2,6 +2,11 @@ coinbase_adapter:
     subscribe_products_endpoint: /api/market/subscribe
     host: coinbase_adapter
     port: 9000
+    post_request_body_template:
+        type: Subscribe
+        productIds: []
+        channels:
+            - ticker
 
 rethinkdb:
     host: rethinkdb
