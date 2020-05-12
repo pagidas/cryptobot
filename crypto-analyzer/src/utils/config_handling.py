@@ -32,3 +32,7 @@ class ConfigHandler:
     @property
     def post_request_body_template(self):
         return self.config_data['coinbase_adapter']['post_request_body_template']
+
+    @property
+    def rethink_db_name(self):
+        return self.config_data['rethinkdb']['db_name']

@@ -11,3 +11,4 @@ coinbase_adapter:
 rethinkdb:
     host: rethinkdb
     port: 28015
+    db_name: cryptobot
