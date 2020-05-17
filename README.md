@@ -13,7 +13,7 @@
 This project, still at its early development process, sends a request to an adapter service
 which talks to coinbase open api websocket, retreiving and storing realtime messages regarding
 value that a crypto currency has over to a real currency. The target is to analyze those values
-and play a safe bets little by little.
+and play safe bets little by little.
 
 #### Running:
 
