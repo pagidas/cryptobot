@@ -8,18 +8,18 @@ services:
     ports:
     - 8080:8080
   coinbase-adapter-service:
+    build: ./coinbase-adapter
     depends_on:
       - realtime-db
     environment:
       RETHINK_HOST: ${RETHINK_DB_HOST}
-    image: "coinbase-adapter"
     container_name: coinbase_adapter
     restart: always
     ports:
     - 9000:9000
   crypto-analyzer-service:
+    build: ./crypto-analyzer
     depends_on:
       - realtime-db
-    image: "crypto-analyzer"
     container_name: crypto_analyzer
     restart: always
