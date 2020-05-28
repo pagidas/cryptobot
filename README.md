@@ -1,21 +1,28 @@
-## Cryptobot
+# Cryptobot <!-- omit in toc -->
 
-#### Languages:
+## Contents <!-- omit in toc -->
+
+- [Languages:](#languages)
+- [Main technologies used:](#main-technologies-used)
+- [Overview:](#overview)
+- [Running:](#running)
+
+## Languages:
 - [Kotlin](https://kotlinlang.org/)
 - [Python](https://www.python.org/)
 
-#### Main technologies used:
+## Main technologies used:
 - [Http4k](https://www.http4k.org/) - a collection of lightweight libraries written natively in kotlin to handle http.
 - [RethinkDB](https://rethinkdb.com/) - RethinkDB pushes JSON to your apps in realtime.
 - [Requests](https://requests.readthedocs.io/en/master/) - a simple HTTP library for Python.
 
-#### Overview:
+## Overview:
 This project, still at its early development process, sends a request to an adapter service
 which talks to coinbase open api websocket, retreiving and storing realtime messages regarding
 value that a crypto currency has over to a real currency. The target is to analyze those values
 and play safe bets little by little.
 
-#### Running:
+## Running:
 
 To get you up-and-running and test how the project behaves at the moment, you need the following dependencies:
  - **Docker**
@@ -50,11 +57,20 @@ To get you up-and-running and test how the project behaves at the moment, you ne
  ```shell
  git clone https://github.com/pagidas/cryptobot.git
  ```
- and at the root of the project run
+ and at the root of the project for the first time run
  ```shell
- make -f coinbase-adapter/Makefile build-docker && 
- make -f crypto-analyzer/Makefile build-docker && 
+ docker-compose up -d --build
+ ```
+
+ in subsequent runs you can also use
+ ```shell
  docker-compose up -d
  ```
+
+ you can also use a command to only build the images
+ ```shell
+ docker-compose build
+ ```
+ 
  connect to `localhost:8080` and it will prompt you to a rethinkdb gui where you can
  watch the messages stored when retreived from coinbase open api websocket.
