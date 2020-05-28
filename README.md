@@ -67,7 +67,7 @@ To get you up-and-running and test how the project behaves at the moment, you ne
  docker-compose up -d
  ```
 
- you can also use a command to only build the images
+ there is also a command to force-build the images from scratch
  ```shell
  docker-compose build
  ```
