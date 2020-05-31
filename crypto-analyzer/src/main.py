@@ -2,7 +2,7 @@ import time
 from utils.adapter_request_helper import subscribe_products, cb_auth_request
 from utils.db_connection import connect_to_db, print_feed
 from utils.config_handling import ConfigHandler
-
+from utils.anal_utils import get_latest_prices
 
 def main():
     print("==================================")
@@ -18,8 +18,9 @@ def main():
     subscribe_products(handler, "BTC-EUR")
 
     connect_to_db(handler)
-    print_feed()
-
+    # print_feed()
+    values = get_latest_prices(20)
+    print(values)
 
 if __name__ == "__main__":
     main()
