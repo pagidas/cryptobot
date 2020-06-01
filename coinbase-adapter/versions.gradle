@@ -7,6 +7,7 @@ ext {
     hikari_version = '3.4.1'
     slf4j_version = '2.0.0-alpha1'
     rethinkdb_version = '2.4.2'
+    swagger_version = '3.25.3'
 
     // Dependencies
     kotlin = [
@@ -60,5 +61,9 @@ ext {
 
     rethinkdb = [
             "com.rethinkdb:rethinkdb-driver:$rethinkdb_version"
+    ]
+
+    swaggerUi = [
+            "org.webjars:swagger-ui:$swagger_version"
     ]
 }

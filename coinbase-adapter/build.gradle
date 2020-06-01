@@ -33,6 +33,7 @@ dependencies {
     compile hikari
     compile slf4jLogging
     compile rethinkdb
+    compile swaggerUi
 
     testCompile test
     testRuntimeOnly jupiterEngine

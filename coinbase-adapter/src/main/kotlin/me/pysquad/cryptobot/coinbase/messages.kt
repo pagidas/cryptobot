@@ -1,8 +1,8 @@
-package me.pysquad.cryptobot.api.coinbase
+package me.pysquad.cryptobot.coinbase
 
+import me.pysquad.cryptobot.CoinbaseAdapterJson.auto
 import org.http4k.websocket.WsMessage
 import java.time.Instant
-import me.pysquad.cryptobot.api.CoinbaseAdapterJson.auto
 
 data class CoinbaseProductMessage(
     val type: Type,
@@ -25,3 +25,12 @@ data class CoinbaseProductMessage(
         val wsLens = WsMessage.auto<CoinbaseProductMessage>().toLens()
     }
 }
+
+data class GetSandboxCoinbaseMessage(
+        val id: String,
+        val userId: String,
+        val name: String,
+        val active: Boolean,
+        val isDefault: Boolean,
+        val createdAt: String
+)

@@ -4,7 +4,7 @@ import com.typesafe.config.ConfigFactory
 
 data class ServerConfig(val host: String, val port: Int)
 data class AppConfig(val server: ServerConfig)
-data class CoinbaseConfig(val uri: String)
+data class CoinbaseConfig(val wsFeed: String, val sandboxUri: String)
 data class DbConfig(val host: String, val port: Int)
 
 object ConfigReader {
@@ -15,7 +15,8 @@ object ConfigReader {
     )
 
     val coinbase = CoinbaseConfig(
-        uri = config.getString("coinbase.uri")
+        wsFeed = config.getString("coinbase.wsFeed"),
+        sandboxUri = config.getString("coinbase.sandboxUri")
     )
 
     val db = DbConfig(
@@ -23,3 +24,6 @@ object ConfigReader {
         port = config.getInt("db.port")
     )
 }
+
+val getServerPort = ConfigReader.app.server.port
+val getDbConfig = ConfigReader.db
