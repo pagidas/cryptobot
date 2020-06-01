@@ -183,6 +183,7 @@ Temporary Items
 
 build/
 rethinkdb_data
+.env
 
 # VSCode directories
 .vscode/*
