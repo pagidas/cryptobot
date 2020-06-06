@@ -1,6 +1,6 @@
 coinbase_adapter:
     subscribe_products_endpoint: /api/market/subscribe
-    host: coinbase_adapter
+    host: localhost
     port: 9000
     post_request_body_template:
         type: Subscribe
@@ -9,6 +9,6 @@ coinbase_adapter:
             - ticker
 
 rethinkdb:
-    host: rethinkdb
+    host: localhost
     port: 28015
     db_name: cryptobot
