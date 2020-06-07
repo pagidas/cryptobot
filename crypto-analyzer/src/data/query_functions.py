@@ -1,6 +1,4 @@
-import sys
 from rethinkdb import r
-import numpy as np
 
 def get_prices(values_length):
     query = r.db('cryptobot')\
