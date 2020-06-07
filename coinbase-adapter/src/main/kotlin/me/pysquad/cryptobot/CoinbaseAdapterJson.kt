@@ -1,9 +1,9 @@
-package me.pysquad.cryptobot.api
+package me.pysquad.cryptobot
 
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
-import me.pysquad.cryptobot.api.coinbase.withCoinbaseMappings
+import me.pysquad.cryptobot.coinbase.withCoinbaseMappings
 import org.http4k.format.AutoMappingConfiguration
 import org.http4k.format.ConfigurableJackson
 import org.http4k.format.asConfigurable

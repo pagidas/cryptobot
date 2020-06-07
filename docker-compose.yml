@@ -6,7 +6,7 @@ services:
     container_name: rethinkdb
     restart: always
     ports:
-    - 8080:8080
+    - 8000:8080
     - 28015:28015
   coinbase-adapter-service:
     build: ./coinbase-adapter
@@ -14,6 +14,11 @@ services:
       - realtime-db
     environment:
       RETHINK_HOST: ${RETHINK_DB_HOST}
+      CB_SANDBOX_API_KEY: ${CB_SANDBOX_API_KEY}
+      CB_SANDBOX_API_SECRET: ${CB_SANDBOX_API_SECRET}
+      CB_SANDBOX_API_PASSPHRASE: ${CB_SANDBOX_API_PASSPHRASE}
+      COINBASE_ADAPTER_BASIC_AUTH_USER: ${COINBASE_ADAPTER_BASIC_AUTH_USER}
+      COINBASE_ADAPTER_BASIC_AUTH_PWD: ${COINBASE_ADAPTER_BASIC_AUTH_PWD}
     container_name: coinbase_adapter
     restart: always
     ports:

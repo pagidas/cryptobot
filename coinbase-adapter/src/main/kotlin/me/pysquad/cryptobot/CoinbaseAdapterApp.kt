@@ -1,22 +1,21 @@
 package me.pysquad.cryptobot
 
-import me.pysquad.cryptobot.config.ConfigReader
-import org.http4k.server.Jetty
-import org.http4k.server.asServer
+import me.pysquad.cryptobot.coinbase.CoinbaseApi
+import me.pysquad.cryptobot.common.Http4kApp
+import me.pysquad.cryptobot.config.getDbConfig
+import me.pysquad.cryptobot.config.getServerPort
+import me.pysquad.cryptobot.security.SecurityProvider
 
-object CoinbaseAdapterApp {
-    private val server = CoinbaseAdapterServer.build()
-
-    /**
-     *  Here we pass all the dependencies that routes need to function.
-     *  The dependencies are instantiated in [CoinbaseAdapterServer.build]
-     */
-    operator fun invoke() =
-        CoinbaseAdapterRoutes(
-            server.coinbase
-        )
+fun buildApp() = object: Http4kApp {
+    override val port = getServerPort
+    override val routes = CoinbaseAdapterRoutes(
+            CoinbaseAdapterService.buildIt(),
+            CoinbaseApi.buildIt(),
+            SecurityProvider.buildIt()
+    )
 }
 
 fun main() {
-    CoinbaseAdapterApp().asServer(ConfigReader.app.server.port.let(::Jetty)).start()
+    RealTimeDb.connect(dbConfig = getDbConfig) { runMigrations() }
+    buildApp().invoke()
 }
