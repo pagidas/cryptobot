@@ -13,3 +13,4 @@ def get_prices(values_length):
         time.append(d['time'].strftime('%M:%S'))
 
     return prices[::-1], trade_ids[::-1], time[::-1]
+
