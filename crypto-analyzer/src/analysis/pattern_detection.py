@@ -44,6 +44,13 @@ def get_MW_patterns(timeseries, epsilon=0.1, p=2):
             if M_idxs:
                 cand_M.append(M_idxs)
 
-    return cand_M, cand_W
+    return np.array(cand_M), np.array(cand_W)
 
 
+def get_buy_price(timeseries, epsilon=0.1, p=2):
+    _, w = get_MW_patterns(timeseries, epsilon, p)
+    return timeseries[w[:, 2]]
+
+def get_sell_price(timeseries, epsilon=0.1, p=2):
+    m, _ = get_MW_patterns(timeseries, epsilon, p)
+    return timeseries[m[:, 2]]
