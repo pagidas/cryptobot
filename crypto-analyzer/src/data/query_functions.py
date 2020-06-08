@@ -1,6 +1,7 @@
 from rethinkdb import r
 
-def get_prices(values_length):
+
+def get_latest_prices(values_length):
     query = r.db('cryptobot')\
             .table('messages').pluck(['price', 'time', 'trade_id']).order_by(r.desc('time')).limit(values_length).run()
     prices = []
