@@ -1,5 +1,5 @@
 import time
-from utils.adapter_request_helper import subscribe_products
+from utils.adapter_request_helper import subscribe_products, cb_auth_request
 from utils.db_connection import connect_to_db, print_feed
 from utils.config_handling import ConfigHandler
 
@@ -13,7 +13,8 @@ def main():
     handler = ConfigHandler()
 
     print("Sleeping for ten seconds...")
-    time.sleep(10)
+    time.sleep(5)
+    cb_auth_request(handler)
     subscribe_products(handler, "BTC-EUR")
 
     connect_to_db(handler)
