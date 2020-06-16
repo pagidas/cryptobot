@@ -1,13 +1,16 @@
-FROM openjdk:14-alpine
-COPY . /project/src/
+ARG VERSION=14
+FROM openjdk:${VERSION}-alpine as BUILD
 
-RUN cd /project/src \
-    && ./gradlew build shadowJar -i \
-    && mkdir -p /project/app \
-    && cp /project/src/build/libs/coinbase-adapter-1.0-SNAPSHOT-all.jar /project/app/app.jar \
-    && rm -rf /project/src/ \
-    && rm -rf ~/.gradle \
-    && rm -rf ~/.kotlin
+# Get gradle distribution
+COPY *.gradle gradle.* gradlew /src/
+COPY gradle /src/gradle
+WORKDIR /src
+RUN ./gradlew --version
 
-WORKDIR /project/app
-ENTRYPOINT ["java", "-jar", "app.jar"]
+COPY . .
+RUN ./gradlew --no-daemon shadowJar -i
+
+# Stage 2, distribution container
+FROM openjdk:${VERSION}-alpine
+COPY --from=BUILD /src/build/libs/coinbase-adapter-1.0-SNAPSHOT-all.jar /bin/app.jar
+CMD ["java", "-jar", "/bin/app.jar"]
