@@ -1,6 +1,5 @@
 package me.pysquad.cryptobot.coinbase
 
-import me.pysquad.cryptobot.CoinbaseAdapterJson
 import me.pysquad.cryptobot.CoinbaseAdapterRepoImpl
 import me.pysquad.cryptobot.CoinbaseAdapterRepository
 import me.pysquad.cryptobot.CoinbaseSubscribeRequest
@@ -14,7 +13,6 @@ import org.http4k.client.WebsocketClient
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Uri
-import org.http4k.format.Jackson
 import org.http4k.websocket.WsMessage
 import java.time.Instant
 import kotlin.concurrent.thread
@@ -24,7 +22,7 @@ val coinbaseSandboxUri = ConfigReader.coinbase.sandboxUri
 
 interface CoinbaseApi {
     fun subscribe(subscribeRequest: CoinbaseSubscribeRequest): Thread
-    fun getSandboxCoinbaseProfiles(): List<GetSandboxCoinbaseMessage>
+    fun getSandboxCoinbaseProfiles(): List<GetSandboxCoinbaseProfileMessage>
 
     companion object {
 
@@ -43,29 +41,17 @@ interface CoinbaseApi {
                 }
             }
 
-            override fun getSandboxCoinbaseProfiles(): List<GetSandboxCoinbaseMessage> = with(ApacheClient()) {
-                CoinbaseAdapterJson {
-                    this@with(Request(GET, "$coinbaseSandboxUri/profiles").asCoinbaseSandboxAuthenticated())
-                            .bodyString()
-                            .asJsonObject()
-                            .asJsonArray()
-                            .map { jsonPayload ->
-                                GetSandboxCoinbaseMessage(
-                                        jsonPayload["id"].asText(),
-                                        jsonPayload["user_id"].asText(),
-                                        jsonPayload["name"].asText(),
-                                        jsonPayload["active"].asBoolean(),
-                                        jsonPayload["is_default"].asBoolean(),
-                                        jsonPayload["created_at"].asText()
-                                )
-                            }
-                }
+            override fun getSandboxCoinbaseProfiles(): List<GetSandboxCoinbaseProfileMessage> = with(ApacheClient()) {
+                GetSandboxCoinbaseProfileMessage.toListOfMessages(
+                        this(Request(GET, "$coinbaseSandboxUri/profiles").asCoinbaseSandboxAuthenticated())
+                )
             }
 
             private fun Sequence<WsMessage>.storeInChunks(sizeOfChunk: Int = 6) {
                 for (listOfMessages in chunked(sizeOfChunk)) {
+                    listOfMessages.forEach(::println)
                     coinbaseRepo.store(
-                        listOfMessages.map { CoinbaseProductMessage.wsLens(it) }
+                        listOfMessages.map { CoinbaseProductMessage.fromWsMessage(it) }
                     )
                 }
             }
@@ -96,14 +82,4 @@ interface CoinbaseApi {
 
         }
     }
-}
-
-private fun CoinbaseSubscribeRequest.toNativeCoinbaseRequest() = Jackson {
-    val productIdsJson = productIds.map { string(it.value) }
-    val channelsJson = channels.map { string(it.value) }
-    obj(
-        "type" to type.name.toLowerCase().asJsonValue(),
-        "product_ids" to array(productIdsJson),
-        "channels" to array(channelsJson)
-    ).toPrettyString()
 }

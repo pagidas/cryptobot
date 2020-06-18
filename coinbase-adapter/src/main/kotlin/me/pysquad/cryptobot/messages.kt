@@ -1,7 +1,7 @@
 package me.pysquad.cryptobot
 
 import me.pysquad.cryptobot.CoinbaseAdapterJson.auto
-import me.pysquad.cryptobot.coinbase.GetSandboxCoinbaseMessage
+import me.pysquad.cryptobot.coinbase.GetSandboxCoinbaseProfileMessage
 import me.pysquad.cryptobot.coinbase.ProductId
 import org.http4k.core.Body
 import org.http4k.core.Credentials
@@ -14,6 +14,16 @@ data class CoinbaseSubscribeRequest(
 ) {
     companion object {
         val lens = Body.auto<CoinbaseSubscribeRequest>().toLens()
+    }
+
+    fun toNativeCoinbaseRequest(): String = CoinbaseAdapterJson {
+        val productIdsJson = productIds.map { string(it.value) }
+        val channelsJson = channels.map { string(it.value) }
+        obj(
+                "type" to type.name.toLowerCase().asJsonValue(),
+                "product_ids" to array(productIdsJson),
+                "channels" to array(channelsJson)
+        ).toPrettyString()
     }
 }
 
@@ -44,7 +54,7 @@ data class SandboxCoinbaseProfile(
     companion object {
         val listLens = Body.auto<List<SandboxCoinbaseProfile>>().toLens()
 
-        fun of(message: GetSandboxCoinbaseMessage): SandboxCoinbaseProfile =
+        fun of(message: GetSandboxCoinbaseProfileMessage): SandboxCoinbaseProfile =
             SandboxCoinbaseProfile(
                     message.id,
                     message.userId,
