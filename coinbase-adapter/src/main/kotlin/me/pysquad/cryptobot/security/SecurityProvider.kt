@@ -4,10 +4,13 @@ import me.pysquad.cryptobot.CoinbaseAdapterRepoImpl
 import me.pysquad.cryptobot.EnvHelper.Companion.getEnvBasicAuthPassword
 import me.pysquad.cryptobot.EnvHelper.Companion.getEnvBasicAuthUsername
 import me.pysquad.cryptobot.RealTimeDb
+import org.apache.commons.codec.binary.Base64
 import org.http4k.base64Encode
 import org.http4k.contract.security.BasicAuthSecurity
 import org.http4k.core.Credentials
+import org.http4k.core.Request
 import java.security.MessageDigest
+import java.time.Instant
 import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
@@ -60,5 +63,28 @@ class SecurityProvider(private val coinbaseAdapterRepoImpl: CoinbaseAdapterRepoI
             "${given.user}:${given.password}".base64Encode()
         else
             null
+    }
+
+    fun coinbaseSandboxHeaders(request: Request) = with(getCoinbaseSandboxApiCredentials()) {
+        val timestamp = String.format("%.3f", Instant.now().toEpochMilli() / 1000.0)
+
+        // build the message
+        val message = (timestamp + request.method.name + request.uri.path + request.bodyString()).toByteArray()
+
+        // base64 decode the secret
+        val secret = Base64.decodeBase64(secret)
+
+        // sign the message with the hmac key
+        val signature = hmacSHA256(message, secret)
+
+        // finally base64 encode the result
+        val encodedSignature = String(Base64.encodeBase64(signature))
+
+        request.headers(listOf(
+                "CB-ACCESS-KEY" to key,
+                "CB-ACCESS-SIGN" to encodedSignature,
+                "CB-ACCESS-TIMESTAMP" to timestamp,
+                "CB-ACCESS-PASSPHRASE" to passphrase
+        ))
     }
 }

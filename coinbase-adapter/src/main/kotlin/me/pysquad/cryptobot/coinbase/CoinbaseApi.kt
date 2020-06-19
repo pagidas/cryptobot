@@ -6,16 +6,13 @@ import me.pysquad.cryptobot.CoinbaseSubscribeRequest
 import me.pysquad.cryptobot.RealTimeDb
 import me.pysquad.cryptobot.config.ConfigReader
 import me.pysquad.cryptobot.security.SecurityProvider
-import me.pysquad.cryptobot.security.SecurityProvider.Companion.hmacSHA256
-import org.apache.commons.codec.binary.Base64
 import org.http4k.client.ApacheClient
 import org.http4k.client.WebsocketClient
 import org.http4k.core.Method.GET
 import org.http4k.core.Request
 import org.http4k.core.Uri
-import org.http4k.websocket.WsMessage
-import java.time.Instant
 import org.http4k.format.Jackson.json
+import org.http4k.websocket.WsMessage
 import kotlin.concurrent.thread
 
 val coinbaseWsFeedUri = Uri.of(ConfigReader.coinbase.wsFeed)
@@ -36,12 +33,11 @@ interface CoinbaseApi {
 
             override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest): CoinbaseWsFeedResponse =
                     with(WebsocketClient.blocking(coinbaseWsFeedUri)) {
-                        val wsJsonLens = WsMessage.json().toLens()
 
                         send(WsMessage(subscribeRequest.toNativeCoinbaseRequest()))
                         val firstMessage = received().first().apply(::println)
 
-                        if (wsJsonLens(firstMessage)["type"].asText() != "error") {
+                        if (wsFeedHasNoError(firstMessage)) {
                             thread { received().storeInChunks() }
                             CoinbaseWsFeedResponse.success(firstMessage).apply(::println)
                         }
@@ -66,30 +62,12 @@ interface CoinbaseApi {
                 }
             }
 
-            fun Request.asCoinbaseSandboxAuthenticated(): Request {
-                val timestamp = String.format("%.3f", Instant.now().toEpochMilli() / 1000.0)
-                val coinbaseSandbox = securityProvider.getCoinbaseSandboxApiCredentials()
-
-                // build the message
-                val message = (timestamp + method.name + uri.path + bodyString()).toByteArray()
-
-                // base64 decode the secret
-                val secret = Base64.decodeBase64(coinbaseSandbox.secret)
-
-                // sign the message with the hmac key
-                val signature = hmacSHA256(message, secret)
-
-                // finally base64 encode the result
-                val encodedSignature = String(Base64.encodeBase64(signature))
-
-                return headers(listOf(
-                        "CB-ACCESS-KEY" to coinbaseSandbox.key,
-                        "CB-ACCESS-SIGN" to encodedSignature,
-                        "CB-ACCESS-TIMESTAMP" to timestamp,
-                        "CB-ACCESS-PASSPHRASE" to coinbaseSandbox.passphrase
-                ))
-            }
-
+            private fun Request.asCoinbaseSandboxAuthenticated() = securityProvider.coinbaseSandboxHeaders(this)
         }
     }
+}
+
+private val wsFeedHasNoError: (WsMessage) -> Boolean = { wsMessage ->
+    val wsJsonLens = WsMessage.json().toLens()
+    wsJsonLens(wsMessage)["type"].asText() != "error"
 }
