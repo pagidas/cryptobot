@@ -15,13 +15,14 @@ import org.http4k.core.Request
 import org.http4k.core.Uri
 import org.http4k.websocket.WsMessage
 import java.time.Instant
+import org.http4k.format.Jackson.json
 import kotlin.concurrent.thread
 
 val coinbaseWsFeedUri = Uri.of(ConfigReader.coinbase.wsFeed)
 val coinbaseSandboxUri = ConfigReader.coinbase.sandboxUri
 
 interface CoinbaseApi {
-    fun subscribe(subscribeRequest: CoinbaseSubscribeRequest): Thread
+    fun subscribe(subscribeRequest: CoinbaseSubscribeRequest): CoinbaseWsFeedResponse
     fun getSandboxCoinbaseProfiles(): List<GetSandboxCoinbaseProfileMessage>
 
     companion object {
@@ -33,13 +34,22 @@ interface CoinbaseApi {
 
         fun Client(coinbaseRepo: CoinbaseAdapterRepository, securityProvider: SecurityProvider) = object: CoinbaseApi {
 
-            override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest) = thread {
-                with(WebsocketClient.blocking(coinbaseWsFeedUri)) {
-                    send(WsMessage(subscribeRequest.toNativeCoinbaseRequest()))
-                    received().first().apply(::println)
-                    received().storeInChunks()
-                }
-            }
+            override fun subscribe(subscribeRequest: CoinbaseSubscribeRequest): CoinbaseWsFeedResponse =
+                    with(WebsocketClient.blocking(coinbaseWsFeedUri)) {
+                        val wsJsonLens = WsMessage.json().toLens()
+
+                        send(WsMessage(subscribeRequest.toNativeCoinbaseRequest()))
+                        val firstMessage = received().first().apply(::println)
+
+                        if (wsJsonLens(firstMessage)["type"].asText() != "error") {
+                            thread { received().storeInChunks() }
+                            CoinbaseWsFeedResponse.success(firstMessage).apply(::println)
+                        }
+                        else {
+                            close()
+                            CoinbaseWsFeedResponse.error(firstMessage).apply(::println)
+                        }
+                    }
 
             override fun getSandboxCoinbaseProfiles(): List<GetSandboxCoinbaseProfileMessage> = with(ApacheClient()) {
                 GetSandboxCoinbaseProfileMessage.toListOfMessages(

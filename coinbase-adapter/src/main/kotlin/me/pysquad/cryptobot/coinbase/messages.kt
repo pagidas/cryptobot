@@ -3,6 +3,8 @@ package me.pysquad.cryptobot.coinbase
 import org.http4k.core.Body
 import org.http4k.core.HttpMessage
 import org.http4k.format.Jackson.json
+import me.pysquad.cryptobot.CoinbaseAdapterJson.auto
+import me.pysquad.cryptobot.CoinbaseMessageType
 import org.http4k.websocket.WsMessage
 import java.time.Instant
 
@@ -77,3 +79,44 @@ data class GetSandboxCoinbaseProfileMessage(
         }
     }
 }
+
+abstract class CoinbaseWsFeedResponse {
+    companion object {
+        private val wsJsonLens = WsMessage.json().toLens()
+
+        val successLens = Body.auto<CoinbaseWsFeedSuccess>().toLens()
+        val errorLens = Body.auto<CoinbaseWsFeedError>().toLens()
+
+        fun success(wsMessage: WsMessage): CoinbaseWsFeedSuccess =
+            with(wsJsonLens(wsMessage)) {
+                CoinbaseWsFeedSuccess(
+                        type = CoinbaseMessageType.betterValueOf(get("type").asText()),
+                        message = "Successfully subscribed to coinbase websocket feed",
+                        productIds = get("channels")
+                                .asIterable().iterator().next()["product_ids"]
+                                .asIterable().map { it.asText() }
+                )
+            }
+
+        fun error(wsMessage: WsMessage): CoinbaseWsFeedError =
+            with(wsJsonLens(wsMessage)) {
+                CoinbaseWsFeedError(
+                        type = CoinbaseMessageType.betterValueOf(get("type").asText()),
+                        message = get("message").asText(),
+                        reason = get("reason").asText()
+                )
+            }
+    }
+}
+
+data class CoinbaseWsFeedSuccess(
+        val type: CoinbaseMessageType,
+        val message: String,
+        val productIds: List<String>
+): CoinbaseWsFeedResponse()
+
+data class CoinbaseWsFeedError(
+        val type: CoinbaseMessageType,
+        val message: String,
+        val reason: String
+): CoinbaseWsFeedResponse()
