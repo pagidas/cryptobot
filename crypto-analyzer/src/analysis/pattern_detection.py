@@ -2,7 +2,7 @@ import numpy as np
 from scipy.signal import argrelextrema
 
 
-def get_W_pattern_indexes(timeseries, maxs, mins, idx, epsilon, p):
+def _check_W_pattern(data, epsilon, p):
     # calculate distances for W
     # absolute distance between minimums
     minD = np.abs(timeseries[mins[idx]] - timeseries[mins[idx + 1]])
@@ -15,7 +15,7 @@ def get_W_pattern_indexes(timeseries, maxs, mins, idx, epsilon, p):
                        mins[idx + 1], maxs[idx - 1]]).tolist()
 
 
-def get_M_pattern_indexes(timeseries, maxs, mins, idx, epsilon, p):
+def _check_M_pattern(timeseries, maxs, mins, idx, epsilon, p):
     # calculate distances for M
     maxD = np.abs(timeseries[maxs[idx]] - timeseries[maxs[idx + 1]])
     # distance between second maximum and middle minimum
@@ -27,27 +27,39 @@ def get_M_pattern_indexes(timeseries, maxs, mins, idx, epsilon, p):
                        mins[idx + 1], mins[idx + 2]]).tolist()
 
 
-def get_MW_patterns(timeseries, epsilon=0.1, p=2):
-    maximums = argrelextrema(timeseries, np.greater)[0]
-    minimums = argrelextrema(timeseries, np.less)[0]
-    # print("Local Maxs:", maximums)
-    # print("Local Mins:", minimums)
-
+def get_MW_patterns(prices, epsilon=0.1, p=2):
+    """
+    :param prices: the input timeseries with the values of prices in time (can be either a python list or numpy array)
+    :param epsilon: a parameter that defines the maximum accepted difference between the picks in the pattern
+    :param p: a parameter that defines the distance between middle and edges in the pattern
+    :return: two numpy arrays with the respective indexes for M and W patterns
+    """
+    # initialize the output arguments as empty lists
     cand_M = []
     cand_W = []
-    for index, (maxi, mini) in enumerate(zip(maximums, minimums)):
-        if index < len(maximums) - 2:
-            W_idxs = get_W_pattern_indexes(timeseries,maximums,minimums,index,epsilon,p)
-            if W_idxs:
-                cand_W.append(W_idxs)
-            M_idxs = get_M_pattern_indexes(timeseries,maximums,minimums,index,epsilon,p)
-            if M_idxs:
-                cand_M.append(M_idxs)
+    # iterate through all prices and check for patterns in a price window of size five
+    for index in range(len(prices)):
+        # set as candidates the five consecutive indexes needed for a pattern (M or W)
+        cand_idxs = np.array([index, index+1, index+2, index+3, index+4])
+        # set the respective candidate prices
+        cand_prices = np.array([prices[idx] for idx in cand_idxs])
+        # check if there is a W or M pattern in current price window and add the indexes in the respective list
+        if _check_W_pattern(cand_prices, epsilon, p):
+            cand_W.append(cand_idxs)
+        if _check_M_pattern(cand_prices, epsilon, p):
+            cand_M.append(cand_idxs)
 
     return np.array(cand_M), np.array(cand_W)
 
 
 def get_buy_price(timeseries, epsilon=0.1, p=2):
+    """
+    :param timeseries: input that contains the prices data in time (can be either a python list or numpy array)
+    :param epsilon: a parameter that defines the maximum accepted difference between the picks in the pattern
+    :param p: a parameter that defines the distance between middle and edges in the pattern
+    :return: a numpy array with all the possible buy prices
+    """
+    # transform the input data into numpy array
     prices = np.array(timeseries)
     _, w = get_MW_patterns(prices, epsilon, p)
     if w.size != 0:
@@ -56,6 +68,13 @@ def get_buy_price(timeseries, epsilon=0.1, p=2):
         return np.array([])
 
 def get_sell_price(timeseries, epsilon=0.1, p=2):
+    """
+    :param timeseries: input that contains the prices data in time (can be either a python list or numpy array)
+    :param epsilon: a parameter that defines the maximum accepted difference between the picks in the pattern
+    :param p: a parameter that defines the distance between middle and edges in the pattern
+    :return: a numpy array with all the possible sell prices
+    """
+    # transform the input data into numpy array
     prices = np.array(timeseries)
     m, _ = get_MW_patterns(prices, epsilon, p)
     if m.size != 0:
