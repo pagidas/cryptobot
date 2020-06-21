@@ -3,31 +3,41 @@ from scipy.signal import argrelextrema
 
 
 def _check_W_pattern(cand_prices, epsilon, p):
-    # calculate distances for W
-    # absolute distance between minimums in possible W pattern
-    minD = np.abs(cand_prices[1] - cand_prices[3])
-    # distance between middle maximum and second minimum in the possible W pattern
-    D1 = cand_prices[2] - cand_prices[3]
-    # absolute distance between middle and third maximum
-    D2 = np.abs(cand_prices[2] - cand_prices[4])
-    if D1 <= p * D2 and minD < epsilon:
-        return 1
-    else:
-        return 0
+    lows = [cand_prices[1], cand_prices[3]]
+    highs = [cand_prices[0], cand_prices[2], cand_prices[4]]
+
+    if all(high > lows[0] for high in highs) and all(high > lows[1] for high in highs):
+        print("Ws: ", cand_prices)
+        # calculate distances for W
+        # absolute distance between minimums in possible W pattern
+        minD = np.abs(cand_prices[1] - cand_prices[3])
+        # distance between middle maximum and second minimum in the possible W pattern
+        D1 = cand_prices[2] - cand_prices[3]
+        # absolute distance between middle and third maximum
+        D2 = np.abs(cand_prices[2] - cand_prices[4])
+        if D1 <= p * D2 and minD < epsilon:
+            return 1
+        else:
+            return 0
 
 
 def _check_M_pattern(cand_prices, epsilon, p):
-    # calculate distances for M
-    # absolute distance between maximums in possible M pattern
-    maxD = np.abs(cand_prices[1] - cand_prices[3])
-    # distance between second maximum and middle minimum in possible M pattern
-    D1 = cand_prices[3] - cand_prices[2]
-    # absolute distance between third minimum and middle minimum
-    D2 = np.abs(cand_prices[2] - cand_prices[4])
-    if D1 <= p * D2 and maxD < epsilon:
-        return 1
-    else:
-        return 0
+    highs = [cand_prices[1], cand_prices[3]]
+    lows = [cand_prices[0], cand_prices[2], cand_prices[4]]
+
+    if all(high > lows[0] for high in highs) and all(high > lows[1] for high in highs):
+        print("Ms: ", cand_prices)
+        # calculate distances for M
+        # absolute distance between maximums in possible M pattern
+        maxD = np.abs(cand_prices[1] - cand_prices[3])
+        # distance between second maximum and middle minimum in possible M pattern
+        D1 = cand_prices[3] - cand_prices[2]
+        # absolute distance between third minimum and middle minimum
+        D2 = np.abs(cand_prices[2] - cand_prices[4])
+        if D1 <= p * D2 and maxD < epsilon:
+            return 1
+        else:
+            return 0
 
 
 def get_MW_patterns(prices, epsilon=0.1, p=2):
@@ -41,7 +51,7 @@ def get_MW_patterns(prices, epsilon=0.1, p=2):
     cand_M = []
     cand_W = []
     # iterate through all prices and check for patterns in a price window of size five
-    for index in range(len(prices)):
+    for index in range(len(prices[:-5])):
         # set as candidates the five consecutive indexes needed for a pattern (M or W)
         cand_idxs = np.array([index, index+1, index+2, index+3, index+4])
         # set the respective candidate prices
