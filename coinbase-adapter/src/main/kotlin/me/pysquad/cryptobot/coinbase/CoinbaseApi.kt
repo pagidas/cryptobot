@@ -38,6 +38,7 @@ interface CoinbaseApi {
                         val firstMessage = received().first().apply(::println)
 
                         if (wsFeedHasNoError(firstMessage)) {
+                            coinbaseRepo.storeSubscriptions(mapProductIds(firstMessage))
                             thread { received().storeInChunks() }
                             CoinbaseWsFeedResponse.success(firstMessage).apply(::println)
                         }
@@ -56,7 +57,7 @@ interface CoinbaseApi {
             private fun Sequence<WsMessage>.storeInChunks(sizeOfChunk: Int = 6) {
                 for (listOfMessages in chunked(sizeOfChunk)) {
                     listOfMessages.forEach(::println)
-                    coinbaseRepo.store(
+                    coinbaseRepo.storeMessages(
                         listOfMessages.map { CoinbaseProductMessage.fromWsMessage(it) }
                     )
                 }
@@ -67,7 +68,14 @@ interface CoinbaseApi {
     }
 }
 
+private val wsJsonLens = WsMessage.json().toLens()
+
 private val wsFeedHasNoError: (WsMessage) -> Boolean = { wsMessage ->
-    val wsJsonLens = WsMessage.json().toLens()
     wsJsonLens(wsMessage)["type"].asText() != "error"
+}
+
+private val mapProductIds: (WsMessage) -> ProductsIds = { wsMessage ->
+    wsJsonLens(wsMessage)["channels"]
+            .asIterable().iterator().next()["product_ids"]
+            .asIterable().map { ProductId(it.asText()) }
 }

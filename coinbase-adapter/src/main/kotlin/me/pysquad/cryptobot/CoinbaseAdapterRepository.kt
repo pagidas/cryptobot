@@ -2,13 +2,15 @@ package me.pysquad.cryptobot
 
 import com.rethinkdb.gen.exc.ReqlOpFailedError
 import me.pysquad.cryptobot.coinbase.CoinbaseProductMessage
+import me.pysquad.cryptobot.coinbase.ProductsIds
 import org.http4k.core.Credentials
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 interface CoinbaseAdapterRepository {
-    fun store(messages: List<CoinbaseProductMessage>)
+    fun storeMessages(messages: List<CoinbaseProductMessage>)
+    fun storeSubscriptions(subscriptions: ProductsIds)
     fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials
     fun getCoinbaseAdapterAuthCredentials(): Credentials
 }
@@ -17,7 +19,7 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
     private val r = realTimeDb.rethinkCtx
     private val conn = realTimeDb.connection
 
-    override fun store(messages: List<CoinbaseProductMessage>) =
+    override fun storeMessages(messages: List<CoinbaseProductMessage>) =
         messages.forEach {
             r.table(MESSAGES).insert(it.toDbHashMap()).runNoReply(conn)
         }
@@ -48,6 +50,12 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
                         password = it["password"] as String
                     )
                 } ?: throw ReqlOpFailedError("coinbase adapter auth credentials not found.")
+
+    override fun storeSubscriptions(subscriptions: ProductsIds) =
+            r.table(PRODUCT_SUBSCRIPTIONS).insert(hashMapOf(
+                    "sub_id" to "coinbase_adapter_subs",
+                    "product_ids" to subscriptions.joinToString { it.value }
+            )).runNoReply(conn)
 
     private fun CoinbaseProductMessage.toDbHashMap() =
         hashMapOf(
