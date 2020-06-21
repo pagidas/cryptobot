@@ -48,9 +48,17 @@ def get_MW_patterns(timeseries, epsilon=0.1, p=2):
 
 
 def get_buy_price(timeseries, epsilon=0.1, p=2):
-    _, w = get_MW_patterns(timeseries, epsilon, p)
-    return timeseries[w[:, 2]]
+    prices = np.array(timeseries)
+    _, w = get_MW_patterns(prices, epsilon, p)
+    if w.size != 0:
+        return timeseries[w[:, 2]]
+    else:
+        return np.array([])
 
 def get_sell_price(timeseries, epsilon=0.1, p=2):
-    m, _ = get_MW_patterns(timeseries, epsilon, p)
-    return timeseries[m[:, 2]]
+    prices = np.array(timeseries)
+    m, _ = get_MW_patterns(prices, epsilon, p)
+    if m.size != 0:
+        return timeseries[m[:, 2]]
+    else:
+        return np.array([])
