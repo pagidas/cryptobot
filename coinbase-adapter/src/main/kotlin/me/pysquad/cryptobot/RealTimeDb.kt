@@ -84,5 +84,13 @@ object RealTimeDb {
         ).run(connection)
     }
 
-    private fun migrateProductSubscriptions() = rethinkCtx.tableCreate(PRODUCT_SUBSCRIPTIONS).run(connection)
+    private fun migrateProductSubscriptions() {
+        rethinkCtx.tableCreate(PRODUCT_SUBSCRIPTIONS).run(connection)
+        rethinkCtx.table(PRODUCT_SUBSCRIPTIONS).insert(
+                hashMapOf(
+                        "sub_id" to "coinbase_adapter_subs",
+                        "product_ids" to ""
+                )
+        ).run(connection)
+    }
 }

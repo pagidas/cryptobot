@@ -11,7 +11,7 @@ import java.time.ZoneOffset
 
 interface CoinbaseAdapterRepository {
     fun storeMessages(messages: List<CoinbaseProductMessage>)
-    fun storeSubscriptions(subscriptions: ProductsIds)
+    fun storeSubscriptions(givenSubscriptions: ProductsIds)
     fun getSubscriptions(): ProductsIds
     fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials
     fun getCoinbaseAdapterAuthCredentials(): Credentials
@@ -53,21 +53,19 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
                     )
                 } ?: throw ReqlOpFailedError("coinbase adapter auth credentials not found.")
 
-    override fun storeSubscriptions(subscriptions: ProductsIds) =
-            r.table(PRODUCT_SUBSCRIPTIONS).insert(hashMapOf(
-                    "sub_id" to "coinbase_adapter_subs",
-                    "product_ids" to subscriptions.joinToString { it.value }
-            )).runNoReply(conn)
+    override fun storeSubscriptions(givenSubscriptions: ProductsIds) =
+        r.table(PRODUCT_SUBSCRIPTIONS)
+                .filter { row -> row.g("sub_id").eq("coinbase_adapter_subs") }
+                .update {
+                    hashMapOf("product_ids" to (getSubscriptions() union givenSubscriptions).joinToString(separator = ",") { it.value } + ",")
+                }.runNoReply(conn)
 
     override fun getSubscriptions(): ProductsIds =
             r.table(PRODUCT_SUBSCRIPTIONS)
                     .filter { it.g("sub_id").eq("coinbase_adapter_subs") }
                     .pluck("product_ids")
                     .run(conn, HashMap::class.java).next()
-
-                    ?.let { dbEntry ->
-                        (dbEntry["product_ids"] as String).split(",").map { ProductId(it.trim()) }
-                    } ?: emptyList()
+                    ?.let { mapSplitStringToProductIds(it["product_ids"] as String) } ?: emptyList()
 
     private fun CoinbaseProductMessage.toDbHashMap() =
         hashMapOf(
@@ -87,6 +85,15 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
             "trade_id" to tradeId.value,
             "last_size" to lastSize.value
         )
+
+    private val mapSplitStringToProductIds: (String) -> ProductsIds = { s ->
+        if (s.isBlank()) emptyList()
+        else {
+            s.split(",").toMutableList()
+                    .apply { removeAll { it.isBlank() } }
+                    .map { ProductId(it) }
+        }
+    }
 }
 
 private fun Instant.toOffsetDateTimeUTC() =
