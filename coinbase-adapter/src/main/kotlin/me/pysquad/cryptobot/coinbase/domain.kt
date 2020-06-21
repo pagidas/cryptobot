@@ -1,8 +1,21 @@
 package me.pysquad.cryptobot.coinbase
 
 
-enum class Type { TICKER }
-enum class Side { BUY, SELL }
+enum class Type {
+    TICKER;
+
+    companion object {
+        fun betterValueOf(s: String) = valueOf(s.toUpperCase())
+    }
+}
+enum class Side {
+    BUY,
+    SELL;
+
+    companion object {
+        fun betterValueOf(s: String) = valueOf(s.toUpperCase())
+    }
+}
 
 data class CoinSequence(val value: Long)
 data class ProductId(val value: String)

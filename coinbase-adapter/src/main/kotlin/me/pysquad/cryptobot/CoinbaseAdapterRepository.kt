@@ -53,19 +53,19 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
         hashMapOf(
             "type" to type.name,
             "sequence" to sequence.value,
-            "product_id" to product_id.value,
+            "product_id" to productId.value,
             "price" to price.value,
-            "open_24h" to open_24h.value,
-            "volume_24h" to volume_24h.value,
-            "low_24h" to low_24h.value,
-            "high_24h" to high_24h.value,
-            "volume_30d" to volume_30d.value,
-            "best_bid" to best_bid.value,
-            "best_ask" to best_ask.value,
+            "open_24h" to open24h.value,
+            "volume_24h" to volume24h.value,
+            "low_24h" to low24h.value,
+            "high_24h" to high24h.value,
+            "volume_30d" to volume30d.value,
+            "best_bid" to bestBid.value,
+            "best_ask" to bestAsk.value,
             "side" to side.name,
             "time" to time.toOffsetDateTimeUTC(),
-            "trade_id" to trade_id.value,
-            "last_size" to last_size.value
+            "trade_id" to tradeId.value,
+            "last_size" to lastSize.value
         )
 }
 

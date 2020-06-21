@@ -25,4 +25,8 @@ object CoinbaseAdapterJson: ConfigurableJackson(KotlinModule()
 
 fun AutoMappingConfiguration<ObjectMapper>.withCryptobotMappings() = apply {
     text(BiDiMapping(::Channel, Channel::value))
+    text(BiDiMapping(::coinbaseMessageTypeAsIn, ::coinbaseMessageTypeAsOut))
 }
+
+private fun coinbaseMessageTypeAsIn(s: String) = CoinbaseMessageType.betterValueOf(s)
+private fun coinbaseMessageTypeAsOut(enum: CoinbaseMessageType) = enum.name.toLowerCase()
