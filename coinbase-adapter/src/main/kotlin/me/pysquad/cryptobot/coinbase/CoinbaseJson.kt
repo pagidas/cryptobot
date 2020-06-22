@@ -6,8 +6,8 @@ import org.http4k.lens.BiDiMapping
 import java.time.Instant
 
 fun AutoMappingConfiguration<ObjectMapper>.withCoinbaseMappings() = apply {
-    text(BiDiMapping(::toTypeEnum, Type::name))
-    text(BiDiMapping(::toSideEnum, Side::name))
+    text(BiDiMapping(::typeAsIn, ::typeAsOut))
+    text(BiDiMapping(::sideAsIn, ::sideAsOut))
     long(BiDiMapping(::CoinSequence, CoinSequence::value))
     long(BiDiMapping(::TradeId, TradeId::value))
     text(BiDiMapping(::ProductId, ProductId::value))
@@ -23,5 +23,7 @@ fun AutoMappingConfiguration<ObjectMapper>.withCoinbaseMappings() = apply {
     BiDiMapping(Instant::parse, Instant::toString)
 }
 
-private fun toTypeEnum(s: String) = enumValueOf<Type>(s.toUpperCase())
-private fun toSideEnum(s: String) = enumValueOf<Side>(s.toUpperCase())
+private fun typeAsIn(s: String) = Type.betterValueOf(s)
+private fun typeAsOut(enum: Type) = enum.name.toLowerCase()
+private fun sideAsIn(s: String) = Side.betterValueOf(s)
+private fun sideAsOut(enum: Side) = enum.name.toLowerCase()
