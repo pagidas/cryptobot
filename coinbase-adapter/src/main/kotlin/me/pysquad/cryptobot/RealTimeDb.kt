@@ -17,6 +17,7 @@ const val CRYPTOBOT = "cryptobot"
 const val MESSAGES = "messages"
 const val API_KEYS = "api_keys"
 const val COINBASE_ADAPTER_AUTH = "coinbase_adapter_auth"
+const val PRODUCT_SUBSCRIPTIONS = "product_subscriptions"
 
 object RealTimeDb {
     val rethinkCtx: RethinkDB = r
@@ -43,6 +44,7 @@ object RealTimeDb {
             topLevelMigration()
             migrateApiKeys()
             migrateAppAuth()
+            migrateProductSubscriptions()
         } catch (e: RuntimeException) {
             println(e.message)
         }
@@ -79,6 +81,16 @@ object RealTimeDb {
                 "username" to getEnvBasicAuthUsername().toSHA256(),
                 "password" to getEnvBasicAuthPassword().toSHA256()
             )
+        ).run(connection)
+    }
+
+    private fun migrateProductSubscriptions() {
+        rethinkCtx.tableCreate(PRODUCT_SUBSCRIPTIONS).run(connection)
+        rethinkCtx.table(PRODUCT_SUBSCRIPTIONS).insert(
+                hashMapOf(
+                        "sub_id" to "coinbase_adapter_subs",
+                        "product_ids" to ""
+                )
         ).run(connection)
     }
 }

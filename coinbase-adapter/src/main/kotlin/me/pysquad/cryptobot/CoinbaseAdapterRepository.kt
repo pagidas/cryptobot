@@ -2,13 +2,17 @@ package me.pysquad.cryptobot
 
 import com.rethinkdb.gen.exc.ReqlOpFailedError
 import me.pysquad.cryptobot.coinbase.CoinbaseProductMessage
+import me.pysquad.cryptobot.coinbase.ProductId
+import me.pysquad.cryptobot.coinbase.ProductsIds
 import org.http4k.core.Credentials
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 interface CoinbaseAdapterRepository {
-    fun store(messages: List<CoinbaseProductMessage>)
+    fun storeMessages(messages: List<CoinbaseProductMessage>)
+    fun storeSubscriptions(givenSubscriptions: ProductsIds)
+    fun getSubscriptions(): ProductsIds
     fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials
     fun getCoinbaseAdapterAuthCredentials(): Credentials
 }
@@ -17,7 +21,7 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
     private val r = realTimeDb.rethinkCtx
     private val conn = realTimeDb.connection
 
-    override fun store(messages: List<CoinbaseProductMessage>) =
+    override fun storeMessages(messages: List<CoinbaseProductMessage>) =
         messages.forEach {
             r.table(MESSAGES).insert(it.toDbHashMap()).runNoReply(conn)
         }
@@ -49,6 +53,20 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
                     )
                 } ?: throw ReqlOpFailedError("coinbase adapter auth credentials not found.")
 
+    override fun storeSubscriptions(givenSubscriptions: ProductsIds) =
+        r.table(PRODUCT_SUBSCRIPTIONS)
+                .filter { row -> row.g("sub_id").eq("coinbase_adapter_subs") }
+                .update {
+                    hashMapOf("product_ids" to (getSubscriptions() union givenSubscriptions).joinToString(separator = ",") { it.value } + ",")
+                }.runNoReply(conn)
+
+    override fun getSubscriptions(): ProductsIds =
+            r.table(PRODUCT_SUBSCRIPTIONS)
+                    .filter { it.g("sub_id").eq("coinbase_adapter_subs") }
+                    .pluck("product_ids")
+                    .run(conn, HashMap::class.java).next()
+                    ?.let { mapSplitStringToProductIds(it["product_ids"] as String) } ?: emptyList()
+
     private fun CoinbaseProductMessage.toDbHashMap() =
         hashMapOf(
             "type" to type.name,
@@ -67,6 +85,15 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
             "trade_id" to tradeId.value,
             "last_size" to lastSize.value
         )
+
+    private val mapSplitStringToProductIds: (String) -> ProductsIds = { s ->
+        if (s.isBlank()) emptyList()
+        else {
+            s.split(",").toMutableList()
+                    .apply { removeAll { it.isBlank() } }
+                    .map { ProductId(it) }
+        }
+    }
 }
 
 private fun Instant.toOffsetDateTimeUTC() =
