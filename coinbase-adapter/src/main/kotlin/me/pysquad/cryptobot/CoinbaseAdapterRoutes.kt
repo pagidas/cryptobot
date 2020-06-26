@@ -4,6 +4,7 @@ import me.pysquad.cryptobot.coinbase.CoinbaseApi
 import me.pysquad.cryptobot.endpoints.Auth
 import me.pysquad.cryptobot.endpoints.GetProductSubscriptions
 import me.pysquad.cryptobot.endpoints.GetSandboxCoinbaseProfiles
+import me.pysquad.cryptobot.endpoints.GraphQL
 import me.pysquad.cryptobot.endpoints.SubscribeToMarket
 import me.pysquad.cryptobot.security.SecurityProvider
 import org.http4k.contract.contract
@@ -47,7 +48,10 @@ object CoinbaseAdapterRoutes {
                     GetSandboxCoinbaseProfiles(coinbaseAdapter),
 
                     // --- Auth ---
-                    Auth(securityProvider)
+                    Auth(securityProvider),
+
+                    // --- GraphQL ---
+                    GraphQL(coinbaseAdapter)
 
             ).map { it.contractRoute }
         }

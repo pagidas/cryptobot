@@ -35,7 +35,7 @@ dependencies {
     compile slf4jLogging
     compile rethinkdb
     compile swaggerUi
-    implementation "com.apurebase:kgraphql:0.14.0"
+    compile kgraphql
 
     testCompile test
     testRuntimeOnly jupiterEngine
