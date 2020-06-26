@@ -1,5 +1,6 @@
 package me.pysquad.cryptobot.coinbase
 
+typealias ProductsIds = List<ProductId>
 
 enum class Type {
     TICKER;
