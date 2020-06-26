@@ -16,6 +16,7 @@ version '1.0-SNAPSHOT'
 repositories {
     mavenLocal()
     mavenCentral()
+    jcenter()
 }
 
 test {
@@ -34,6 +35,7 @@ dependencies {
     compile slf4jLogging
     compile rethinkdb
     compile swaggerUi
+    implementation "com.apurebase:kgraphql:0.14.0"
 
     testCompile test
     testRuntimeOnly jupiterEngine

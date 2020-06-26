@@ -11,6 +11,7 @@ import java.time.ZoneOffset
 
 interface CoinbaseAdapterRepository {
     fun storeMessages(messages: List<CoinbaseProductMessage>)
+    fun getMessages(): List<CoinbaseProductMessage.GQLMessage>
     fun storeSubscriptions(givenSubscriptions: ProductsIds)
     fun getSubscriptions(): ProductsIds
     fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials
@@ -25,6 +26,9 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
         messages.forEach {
             r.table(MESSAGES).insert(it.toDbHashMap()).runNoReply(conn)
         }
+
+    override fun getMessages(): List<CoinbaseProductMessage.GQLMessage> =
+            r.table(MESSAGES).run(conn, HashMap::class.java).map { CoinbaseProductMessage.toGQLMessage(it) }
 
     override fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials =
         r.table(API_KEYS)

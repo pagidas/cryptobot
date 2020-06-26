@@ -1,10 +1,10 @@
 package me.pysquad.cryptobot.coinbase
 
+import me.pysquad.cryptobot.CoinbaseAdapterJson.auto
+import me.pysquad.cryptobot.CoinbaseMessageType
 import org.http4k.core.Body
 import org.http4k.core.HttpMessage
 import org.http4k.format.Jackson.json
-import me.pysquad.cryptobot.CoinbaseAdapterJson.auto
-import me.pysquad.cryptobot.CoinbaseMessageType
 import org.http4k.websocket.WsMessage
 import java.time.Instant
 
@@ -25,6 +25,24 @@ data class CoinbaseProductMessage(
         val tradeId: TradeId,
         val lastSize: LastSize
 ) {
+    data class GQLMessage(
+            val type: String,
+            val sequence: Long,
+            val productId: String,
+            val price: Double,
+            val open24h: Double,
+            val volume24h: Double,
+            val low24h: Double,
+            val high24h: Double,
+            val volume30d: Double,
+            val bestBid: Double,
+            val bestAsk: Double,
+            val side: String,
+            val time: String,
+            val tradeId: Long,
+            val lastSize: Double
+    )
+
     companion object {
         fun fromWsMessage(wsMessage: WsMessage): CoinbaseProductMessage {
             val wsJsonLens = WsMessage.json().toLens()
@@ -49,6 +67,25 @@ data class CoinbaseProductMessage(
                 )
             }
         }
+
+        fun toGQLMessage(map: HashMap<*, *>): GQLMessage =
+            GQLMessage(
+                    map["type"] as String,
+                    map["sequence"] as Long,
+                    map["product_id"] as String,
+                    (map["price"] as String).toDouble(),
+                    (map["open_24h"] as String).toDouble(),
+                    (map["volume_24h"] as String).toDouble(),
+                    (map["low_24h"] as String).toDouble(),
+                    (map["high_24h"] as String).toDouble(),
+                    (map["volume_30d"] as String).toDouble(),
+                    (map["best_bid"] as String).toDouble(),
+                    (map["best_ask"] as String).toDouble(),
+                    map["side"] as String,
+                    map["time"].toString(),
+                    map["trade_id"] as Long,
+                    (map["last_size"] as String).toDouble()
+            )
     }
 }
 
