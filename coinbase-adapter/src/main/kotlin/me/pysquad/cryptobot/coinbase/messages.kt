@@ -27,20 +27,20 @@ data class CoinbaseProductMessage(
 ) {
     data class GQLMessage(
             val type: String,
-            val sequence: Long,
+            val sequence: String,
             val productId: String,
-            val price: Double,
-            val open24h: Double,
-            val volume24h: Double,
-            val low24h: Double,
-            val high24h: Double,
-            val volume30d: Double,
-            val bestBid: Double,
-            val bestAsk: Double,
+            val price: String,
+            val open24h: String,
+            val volume24h: String,
+            val low24h: String,
+            val high24h: String,
+            val volume30d: String,
+            val bestBid: String,
+            val bestAsk: String,
             val side: String,
             val time: String,
-            val tradeId: Long,
-            val lastSize: Double
+            val tradeId: String,
+            val lastSize: String
     )
 
     companion object {
@@ -50,7 +50,7 @@ data class CoinbaseProductMessage(
             return with(wsJsonLens(wsMessage)) {
                 CoinbaseProductMessage(
                         Type.betterValueOf(get("type").asText()),
-                        CoinSequence(get("sequence").asLong()),
+                        CoinSequence(get("sequence").asText()),
                         ProductId(get("product_id").asText()),
                         Price(get("price").asText()),
                         Open24h(get("open_24h").asText()),
@@ -62,7 +62,7 @@ data class CoinbaseProductMessage(
                         BestAsk(get("best_ask").asText()),
                         Side.betterValueOf(get("side").asText()),
                         Instant.parse(get("time").asText() as CharSequence),
-                        TradeId(get("trade_id").asLong()),
+                        TradeId(get("trade_id").asText()),
                         LastSize(get("last_size").asText())
                 )
             }
@@ -71,20 +71,20 @@ data class CoinbaseProductMessage(
         fun toGQLMessage(map: HashMap<*, *>): GQLMessage =
             GQLMessage(
                     map["type"] as String,
-                    map["sequence"] as Long,
+                    map["sequence"] as String,
                     map["product_id"] as String,
-                    (map["price"] as String).toDouble(),
-                    (map["open_24h"] as String).toDouble(),
-                    (map["volume_24h"] as String).toDouble(),
-                    (map["low_24h"] as String).toDouble(),
-                    (map["high_24h"] as String).toDouble(),
-                    (map["volume_30d"] as String).toDouble(),
-                    (map["best_bid"] as String).toDouble(),
-                    (map["best_ask"] as String).toDouble(),
+                    map["price"] as String,
+                    map["open_24h"] as String,
+                    map["volume_24h"] as String,
+                    map["low_24h"] as String,
+                    map["high_24h"] as String,
+                    map["volume_30d"] as String,
+                    map["best_bid"] as String,
+                    map["best_ask"] as String,
                     map["side"] as String,
                     map["time"].toString(),
-                    map["trade_id"] as Long,
-                    (map["last_size"] as String).toDouble()
+                    map["trade_id"] as String,
+                    map["last_size"] as String
             )
     }
 }
