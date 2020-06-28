@@ -14,5 +14,5 @@ class CoinbaseAdapterService(private val coinbase: CoinbaseApi, private val coin
 
     fun getProductSubscriptions() = coinbaseAdapterRepository.getSubscriptions()
 
-    fun getMessagesGQL() = coinbaseAdapterRepository.getMessages()
+    fun getMessagesGQL(limit: Int?) = coinbaseAdapterRepository.getMessages(limit)
 }
