@@ -1,10 +1,10 @@
 package me.pysquad.cryptobot.coinbase
 
+import me.pysquad.cryptobot.CoinbaseAdapterJson.auto
+import me.pysquad.cryptobot.CoinbaseMessageType
 import org.http4k.core.Body
 import org.http4k.core.HttpMessage
 import org.http4k.format.Jackson.json
-import me.pysquad.cryptobot.CoinbaseAdapterJson.auto
-import me.pysquad.cryptobot.CoinbaseMessageType
 import org.http4k.websocket.WsMessage
 import java.time.Instant
 
@@ -25,6 +25,24 @@ data class CoinbaseProductMessage(
         val tradeId: TradeId,
         val lastSize: LastSize
 ) {
+    data class GQLMessage(
+            val type: String,
+            val sequence: String,
+            val productId: String,
+            val price: String,
+            val open24h: String,
+            val volume24h: String,
+            val low24h: String,
+            val high24h: String,
+            val volume30d: String,
+            val bestBid: String,
+            val bestAsk: String,
+            val side: String,
+            val time: String,
+            val tradeId: String,
+            val lastSize: String
+    )
+
     companion object {
         fun fromWsMessage(wsMessage: WsMessage): CoinbaseProductMessage {
             val wsJsonLens = WsMessage.json().toLens()
@@ -32,7 +50,7 @@ data class CoinbaseProductMessage(
             return with(wsJsonLens(wsMessage)) {
                 CoinbaseProductMessage(
                         Type.betterValueOf(get("type").asText()),
-                        CoinSequence(get("sequence").asLong()),
+                        CoinSequence(get("sequence").asText()),
                         ProductId(get("product_id").asText()),
                         Price(get("price").asText()),
                         Open24h(get("open_24h").asText()),
@@ -44,11 +62,30 @@ data class CoinbaseProductMessage(
                         BestAsk(get("best_ask").asText()),
                         Side.betterValueOf(get("side").asText()),
                         Instant.parse(get("time").asText() as CharSequence),
-                        TradeId(get("trade_id").asLong()),
+                        TradeId(get("trade_id").asText()),
                         LastSize(get("last_size").asText())
                 )
             }
         }
+
+        fun toGQLMessage(map: HashMap<*, *>): GQLMessage =
+            GQLMessage(
+                    map["type"] as String,
+                    map["sequence"] as String,
+                    map["product_id"] as String,
+                    map["price"] as String,
+                    map["open_24h"] as String,
+                    map["volume_24h"] as String,
+                    map["low_24h"] as String,
+                    map["high_24h"] as String,
+                    map["volume_30d"] as String,
+                    map["best_bid"] as String,
+                    map["best_ask"] as String,
+                    map["side"] as String,
+                    map["time"].toString(),
+                    map["trade_id"] as String,
+                    map["last_size"] as String
+            )
     }
 }
 

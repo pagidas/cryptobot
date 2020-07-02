@@ -18,7 +18,7 @@ enum class Side {
     }
 }
 
-data class CoinSequence(val value: Long)
+data class CoinSequence(val value: String)
 data class ProductId(val value: String)
 data class Price(val value: String)
 data class Open24h(val value: String)
@@ -28,5 +28,5 @@ data class High24h(val value: String)
 data class Volume30d(val value: String)
 data class BestBid(val value: String)
 data class BestAsk(val value: String)
-data class TradeId(val value: Long)
+data class TradeId(val value: String)
 data class LastSize(val value: String)

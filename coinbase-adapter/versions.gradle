@@ -8,6 +8,7 @@ ext {
     slf4j_version = '2.0.0-alpha1'
     rethinkdb_version = '2.4.2'
     swagger_version = '3.25.3'
+    kgraphql_version = '0.14.0'
 
     // Dependencies
     kotlin = [
@@ -65,5 +66,9 @@ ext {
 
     swaggerUi = [
             "org.webjars:swagger-ui:$swagger_version"
+    ]
+
+    kgraphql = [
+            "com.apurebase:kgraphql:$kgraphql_version"
     ]
 }

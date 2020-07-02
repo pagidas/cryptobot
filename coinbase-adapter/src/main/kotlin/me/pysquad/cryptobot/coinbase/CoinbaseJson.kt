@@ -8,8 +8,8 @@ import java.time.Instant
 fun AutoMappingConfiguration<ObjectMapper>.withCoinbaseMappings() = apply {
     text(BiDiMapping(::typeAsIn, ::typeAsOut))
     text(BiDiMapping(::sideAsIn, ::sideAsOut))
-    long(BiDiMapping(::CoinSequence, CoinSequence::value))
-    long(BiDiMapping(::TradeId, TradeId::value))
+    text(BiDiMapping(::CoinSequence, CoinSequence::value))
+    text(BiDiMapping(::TradeId, TradeId::value))
     text(BiDiMapping(::ProductId, ProductId::value))
     text(BiDiMapping(::Price, Price::value))
     text(BiDiMapping(::Open24h, Open24h::value))
