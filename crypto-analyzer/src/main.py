@@ -13,15 +13,15 @@ def main():
     print("Reading config file...")
     handler = ConfigHandler()
 
-    print("Sleeping for ten seconds...")
+    print("Sleeping...")
     time.sleep(5)
     cb_auth_request(handler)
     subscribe_products(handler, "BTC-EUR")
 
     connect_to_db(handler)
-    # print_feed()
-    values = get_latest_prices(20)
-    print(values)
+    print_feed()
+    # values = get_latest_prices(20)
+    # print(values)
 
 
 if __name__ == "__main__":
