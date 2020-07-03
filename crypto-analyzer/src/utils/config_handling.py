@@ -66,3 +66,9 @@ class ConfigHandler:
     @property
     def password(self):
         return os.environ['COINBASE_ADAPTER_BASIC_AUTH_PWD']
+
+    @property
+    def subscriptions(self):
+        return self.__construct_url(
+            self.config_data['coinbase_adapter']['subscriptions']
+        )

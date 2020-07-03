@@ -1,6 +1,7 @@
 coinbase_adapter:
     subscribe: /api/coinbase/wsFeed/subscribe
     auth: /api/auth
+    subscriptions: /api/subscriptions
     host: localhost
     port: 9000
     subscribe_body:
