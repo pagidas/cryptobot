@@ -67,7 +67,7 @@ def get_buy_price(timeseries, epsilon=0.1, p=2):
     prices = np.array(timeseries)
     _, w = get_MW_patterns(prices, epsilon, p)
     if w.size != 0:
-        return timeseries[w[:, 2]]
+        return prices[w[:, 2]]
     else:
         return np.array([])
 
@@ -82,6 +82,6 @@ def get_sell_price(timeseries, epsilon=0.1, p=2):
     prices = np.array(timeseries)
     m, _ = get_MW_patterns(prices, epsilon, p)
     if m.size != 0:
-        return timeseries[m[:, 2]]
+        return prices[m[:, 2]]
     else:
         return np.array([])
