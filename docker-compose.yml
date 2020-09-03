@@ -28,7 +28,7 @@ services:
     depends_on:
       - realtime-db
     container_name: crypto_analyzer
-    restart: always
+#    restart: always
     environment:
       RETHINK_DB_HOST: ${RETHINK_DB_HOST}
       COINBASE_ADAPTER_BASIC_AUTH_USER: ${COINBASE_ADAPTER_BASIC_AUTH_USER}
