@@ -27,6 +27,7 @@ services:
     build: ./crypto-analyzer
     depends_on:
       - realtime-db
+      - coinbase-adapter-service
     container_name: crypto_analyzer
 #    restart: always
     environment:
