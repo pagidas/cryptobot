@@ -3,7 +3,7 @@ import sys
 from utils.adapter_request_helper import subscribe_products, cb_auth_request, get_active_subs
 from utils.db_connection import connect_to_db, print_feed
 from utils.config_handling import ConfigHandler
-from data.query_functions import get_latest_prices
+import cryptonator
 
 
 def main():
@@ -27,9 +27,7 @@ def main():
     sys.stdout.flush()
 
     connect_to_db(handler)
-    print_feed()
-    # values = get_latest_prices(20)
-    # print(values)
+    cryptonator.start()
 
 
 if __name__ == "__main__":
