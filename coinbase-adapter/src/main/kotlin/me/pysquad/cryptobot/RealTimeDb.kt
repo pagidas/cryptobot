@@ -42,9 +42,9 @@ object RealTimeDb {
     fun runMigrations() {
         try {
             topLevelMigration()
-            migrateApiKeys()
             migrateAppAuth()
             migrateProductSubscriptions()
+            migrateApiKeys()
         } catch (e: RuntimeException) {
             println(e.message)
         }

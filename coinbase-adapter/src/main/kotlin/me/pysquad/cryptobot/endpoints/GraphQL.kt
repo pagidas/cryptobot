@@ -21,8 +21,8 @@ class GraphQL(private val coinbaseAdapter: CoinbaseAdapterService): Endpoint {
         configure { useDefaultPrettyPrinter = true }
 
         query("messages") {
-            resolver { limit: Int? ->
-                coinbaseAdapter.getMessagesGQL(limit)
+            resolver { limit: Int?, mostRecent: Int? ->
+                coinbaseAdapter.getMessagesGQL(limit, mostRecent)
             }
         }
     }

@@ -5,13 +5,16 @@ import me.pysquad.cryptobot.coinbase.CoinbaseProductMessage
 import me.pysquad.cryptobot.coinbase.ProductId
 import me.pysquad.cryptobot.coinbase.ProductsIds
 import org.http4k.core.Credentials
+import org.jetbrains.annotations.Nullable
 import java.time.Instant
 import java.time.OffsetDateTime
 import java.time.ZoneOffset
 
 interface CoinbaseAdapterRepository {
     fun storeMessages(messages: List<CoinbaseProductMessage>)
-    fun getMessages(limit: Int?): List<CoinbaseProductMessage.GQLMessage>
+    fun getMessages(): List<CoinbaseProductMessage.GQLMessage>
+    fun getMessagesByLimit(limit: Int): List<CoinbaseProductMessage.GQLMessage>
+    fun getMostRecentMessages(mostRecent: Int): List<CoinbaseProductMessage.GQLMessage>
     fun storeSubscriptions(givenSubscriptions: ProductsIds)
     fun getSubscriptions(): ProductsIds
     fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials
@@ -27,11 +30,18 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
             r.table(MESSAGES).insert(it.toDbHashMap()).runNoReply(conn)
         }
 
-    override fun getMessages(limit: Int?): List<CoinbaseProductMessage.GQLMessage> =
-            limit?.let {
-                r.table(MESSAGES).limit(it).run(conn, HashMap::class.java).map { row -> CoinbaseProductMessage.toGQLMessage(row) }
-            } ?:
+    override fun getMessages(): List<CoinbaseProductMessage.GQLMessage> =
             r.table(MESSAGES).run(conn, HashMap::class.java).map { row -> CoinbaseProductMessage.toGQLMessage(row) }
+
+    override fun getMessagesByLimit(limit: Int): List<CoinbaseProductMessage.GQLMessage> =
+            r.table(MESSAGES).limit(limit).run(conn, HashMap::class.java).map { row -> CoinbaseProductMessage.toGQLMessage(row) }
+
+    override fun getMostRecentMessages(mostRecent: Int): List<CoinbaseProductMessage.GQLMessage> =
+            r.table(MESSAGES)
+                    .orderBy("time")
+                    .limit(mostRecent)
+                    .run(conn, HashMap::class.java)
+                    .map { row -> CoinbaseProductMessage.toGQLMessage(row) }
 
     override fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials =
         r.table(API_KEYS)
