@@ -19,24 +19,18 @@ class GraphQLFactory {
     @Singleton
     fun graphQL(resourceResolver: ResourceResolver, helloDataFetcher: HelloDataFetcher): GraphQL {
 
-        val schemaParser = SchemaParser()
-        val schemaGenerator = SchemaGenerator()
-
         // Parse the schema.
-        val typeRegistry = TypeDefinitionRegistry();
-        typeRegistry.merge(schemaParser.parse(BufferedReader(InputStreamReader(
-                resourceResolver.getResourceAsStream("classpath:schema.graphqls").get()))))
+        val typeRegistry = TypeDefinitionRegistry().merge(SchemaParser().parse(BufferedReader(InputStreamReader(
+                resourceResolver.getResourceAsStream("classpath:schema.graphql").get()))))
 
         // Create the runtime wiring.
         val runtimeWiring = RuntimeWiring.newRuntimeWiring()
-                .type("Query") { typeWiring -> typeWiring
-                        .dataFetcher("hello", helloDataFetcher) }
+                .type("Query") { it.dataFetcher("hello", helloDataFetcher) }
                 .build()
 
         // Create the executable schema.
-        val graphQLSchema = schemaGenerator.makeExecutableSchema(typeRegistry, runtimeWiring)
-
-        // Return the GraphQL bean.
-        return GraphQL.newGraphQL(graphQLSchema).build()
+        return GraphQL.newGraphQL(
+                SchemaGenerator().makeExecutableSchema(typeRegistry, runtimeWiring)
+        ).build()
     }
 }

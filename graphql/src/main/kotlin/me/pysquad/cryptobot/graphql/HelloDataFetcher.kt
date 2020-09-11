@@ -8,10 +8,11 @@ import javax.inject.Singleton
 class HelloDataFetcher : DataFetcher<String> {
 
     override fun get(env: DataFetchingEnvironment): String {
-        var name = env.getArgument<String>("name")
-        if (name == null || name.trim().isEmpty()) {
-            name = "World"
-        }
-        return "Hello $name!"
+        val name = env.getArgument<String?>("name")
+
+        return name?.let {
+            "Hello $it!"
+
+        } ?: "Hello World!"
     }
 }
