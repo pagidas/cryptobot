@@ -5,10 +5,10 @@ import com.rethinkdb.net.Connection
 import javax.inject.Singleton
 
 // db name
-const val CRYPTOBOT = "CRYPTOBOT"
+const val CRYPTOBOT = "cryptobot"
 
 // table names
-const val MESSAGES = "MESSAGES"
+const val MESSAGES = "messages"
 
 @Singleton
 class RethinkDbDatasource(private var rethinkDbConfig: RethinkDbConfiguration) {

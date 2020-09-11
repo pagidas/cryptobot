@@ -1,3 +1,22 @@
 type Query {
-    hello(name: String): String!
+#    hello(name: String): String!
+    messages: [CoinbaseMessage!]
+}
+
+type CoinbaseMessage {
+    type: String
+    sequence: String
+    productId: String
+    price: String
+    open24h: String
+    volume24h: String
+    low24h: String
+    high24h: String
+    volume30d: String
+    bestBid: String
+    bestAsk: String
+    side: String
+    time: String
+    tradeId: String
+    lastSize: String
 }

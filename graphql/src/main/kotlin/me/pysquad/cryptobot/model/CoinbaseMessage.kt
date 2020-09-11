@@ -1,19 +1,23 @@
 package me.pysquad.cryptobot.model
 
+import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.annotation.JsonNaming
+
+@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 data class CoinbaseMessage(
-        val type: String,
-        val sequence: String,
-        val productId: String,
-        val price: String,
-        val open24h: String,
-        val volume24h: String,
-        val low24h: String,
-        val high24h: String,
-        val volume30d: String,
-        val bestBid: String,
-        val bestAsk: String,
-        val side: String,
-        val time: String,
-        val tradeId: String,
-        val lastSize: String
+    var type: String = "",
+    var sequence: String = "",
+    var productId: String = "",
+    var price: String = "",
+    var open24h: String = "",
+    var volume24h: String = "",
+    var low24h: String = "",
+    var high24h: String = "",
+    var volume30d: String = "",
+    var bestBid: String = "",
+    var bestAsk: String = "",
+    var side: String = "",
+    var time: String = "",
+    var tradeId: String = "",
+    var lastSize: String = ""
 )

@@ -2,17 +2,20 @@ package me.pysquad.cryptobot.graphql
 
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
+import me.pysquad.cryptobot.model.CoinbaseMessage
+import me.pysquad.cryptobot.repo.MessagesRepoImpl
 import javax.inject.Singleton
 
 @Singleton
-class CoinbaseDataFetcher : DataFetcher<String> {
+class CoinbaseDataFetcher(private val messagesRepoImpl: MessagesRepoImpl) : DataFetcher<List<CoinbaseMessage>?> {
 
-    override fun get(env: DataFetchingEnvironment): String {
-        val name = env.getArgument<String?>("name")
-
-        return name?.let {
-            "Hello $it!"
-
-        } ?: "Hello World!"
+    override fun get(env: DataFetchingEnvironment): List<CoinbaseMessage>? {
+        return messagesRepoImpl.getCoinbaseMessages()
+//        val name = env.getArgument<String?>("name")
+//
+//        return name?.let {
+//            "Hello $it!"
+//
+//        } ?: "Hello World!"
     }
 }
