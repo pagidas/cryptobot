@@ -5,7 +5,7 @@ import graphql.schema.DataFetchingEnvironment
 import javax.inject.Singleton
 
 @Singleton
-class HelloDataFetcher : DataFetcher<String> {
+class CoinbaseDataFetcher : DataFetcher<String> {
 
     override fun get(env: DataFetchingEnvironment): String {
         val name = env.getArgument<String?>("name")

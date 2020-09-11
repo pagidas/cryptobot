@@ -1,8 +1,12 @@
 micronaut:
   server:
-    port: 9090
+    port: ${GRAPHQL_PORT:9090}
   application:
     name: graphql
 
 graphql:
   graphiql.enabled: true
+
+rethinkdb:
+  port: ${RETHINK_PORT:28015}
+  host: ${RETHINK_HOST:localhost}
