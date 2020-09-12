@@ -9,7 +9,9 @@ import javax.inject.Singleton
 @Singleton
 class CoinbaseDataFetcher(private val messagesRepoImpl: MessagesRepoImpl) : DataFetcher<List<CoinbaseMessage>?> {
 
-    override fun get(env: DataFetchingEnvironment): List<CoinbaseMessage>? {
-        return messagesRepoImpl.getCoinbaseMessages()
-    }
+    override fun get(env: DataFetchingEnvironment): List<CoinbaseMessage>? =
+        env.getArgument<Int>("mostRecent")?.let {
+            messagesRepoImpl.getMostRecentCoinbaseMessages(it)
+        } ?:
+        messagesRepoImpl.getCoinbaseMessages()
 }

@@ -1,5 +1,5 @@
 type Query {
-    messages: [CoinbaseMessage]!
+    messages(mostRecent: Int): [CoinbaseMessage]!
 }
 
 type CoinbaseMessage {

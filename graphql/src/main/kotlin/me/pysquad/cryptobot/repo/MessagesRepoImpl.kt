@@ -9,7 +9,8 @@ import me.pysquad.cryptobot.rethinkdb.RethinkDbDatasource
 import javax.inject.Singleton
 
 interface MessagesRepo {
- fun getCoinbaseMessages(): List<CoinbaseMessage>?
+    fun getCoinbaseMessages(): List<CoinbaseMessage>?
+    fun getMostRecentCoinbaseMessages(mostRecent: Int): List<CoinbaseMessage>?
 }
 
 @Singleton
@@ -20,4 +21,11 @@ class MessagesRepoImpl(rethinkDbDatasource: RethinkDbDatasource): MessagesRepo {
 
     override fun getCoinbaseMessages(): List<CoinbaseMessage>? =
         r.table(MESSAGES).run(conn, object: TypeReference<CoinbaseMessage>() {}).toList()
+
+    override fun getMostRecentCoinbaseMessages(mostRecent: Int): List<CoinbaseMessage>? =
+        r.table(MESSAGES)
+                .orderBy(r.desc("time"))
+                .limit(mostRecent)
+                .run(conn, object : TypeReference<List<CoinbaseMessage>>() {})
+                .next()
 }
