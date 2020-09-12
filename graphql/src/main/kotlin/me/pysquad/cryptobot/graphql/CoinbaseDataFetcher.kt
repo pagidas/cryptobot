@@ -11,11 +11,5 @@ class CoinbaseDataFetcher(private val messagesRepoImpl: MessagesRepoImpl) : Data
 
     override fun get(env: DataFetchingEnvironment): List<CoinbaseMessage>? {
         return messagesRepoImpl.getCoinbaseMessages()
-//        val name = env.getArgument<String?>("name")
-//
-//        return name?.let {
-//            "Hello $it!"
-//
-//        } ?: "Hello World!"
     }
 }

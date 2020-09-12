@@ -25,7 +25,6 @@ class GraphQLFactory {
 
         // Create the runtime wiring.
         val runtimeWiring = RuntimeWiring.newRuntimeWiring()
-//                .type("Query") { it.dataFetcher("hello", coinbaseDataFetcher) }
                 .type("Query") { it.dataFetcher("messages", coinbaseDataFetcher) }
                 .build()
 

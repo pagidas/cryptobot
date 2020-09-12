@@ -1,6 +1,5 @@
 type Query {
-#    hello(name: String): String!
-    messages: [CoinbaseMessage!]
+    messages: [CoinbaseMessage]!
 }
 
 type CoinbaseMessage {
