@@ -98,7 +98,7 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
             "best_bid" to bestBid.value,
             "best_ask" to bestAsk.value,
             "side" to side.name,
-            "time" to time.toOffsetDateTimeUTC(),
+            "time" to time.toString(),
             "trade_id" to tradeId.value,
             "last_size" to lastSize.value
         )
