@@ -8,6 +8,16 @@ services:
     ports:
     - 8000:8080
     - 28015:28015
+  graphql:
+    build: ./graphql
+    depends_on:
+      - realtime-db
+    environment:
+      RETHINK_HOST: ${RETHINK_DB_HOST}
+    container_name: graphql
+    restart: always
+    ports:
+    - 9090:9090
   coinbase-adapter-service:
     build: ./coinbase-adapter
     depends_on:

@@ -6,6 +6,8 @@ plugins {
     id "application"
 }
 
+mainClassName = 'me.pysquad.cryptobot.GraphQLApplication'
+
 version "0.1"
 group "me.pysquad.cryptobot"
 
@@ -61,15 +63,13 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "me.pysquad.cryptobot.ApplicationKt"
-
 // use JUnit 5 platform
 test {
     useJUnitPlatform()
 }
 
 java {
-    sourceCompatibility = JavaVersion.toVersion('1.8')
+    sourceCompatibility = JavaVersion.toVersion('11')
 }
 
 allOpen {
@@ -77,14 +77,14 @@ allOpen {
 }
 compileKotlin {
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
         //Will retain parameter names for Java reflection
         javaParameters = true
     }
 }
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '11'
         javaParameters = true
     }
 }

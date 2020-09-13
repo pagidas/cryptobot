@@ -5,7 +5,13 @@ micronaut:
     name: graphql
 
 graphql:
-  graphiql.enabled: true
+  path: /graphql
+  # if enabled, this is a webapp client to send graphql requests
+  graphiql:
+    enabled: true
+    path: /graphiql
+    template-path: classpath:graphiql/index.html
+    page-title: GraphiQL
 
 rethinkdb:
   port: ${RETHINK_PORT:28015}
