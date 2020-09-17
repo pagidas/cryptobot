@@ -1,0 +1,18 @@
+micronaut:
+  server:
+    port: ${GRAPHQL_PORT:9090}
+  application:
+    name: graphql
+
+graphql:
+  path: /graphql
+  # if enabled, this is a webapp client to send graphql requests
+  graphiql:
+    enabled: true
+    path: /graphiql
+    template-path: classpath:graphiql/index.html
+    page-title: GraphiQL
+
+rethinkdb:
+  port: ${RETHINK_PORT:28015}
+  host: ${RETHINK_HOST:localhost}

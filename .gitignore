@@ -135,7 +135,7 @@ gradle-app.setting
 *.rar
 
 # Avoid ignoring Gradle wrapper jar file (.jar files are usually ignored)
-!coinbase-adapter/gradle/wrapper/gradle-wrapper.jar
+!**/gradle/wrapper/gradle-wrapper.jar
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
@@ -184,6 +184,7 @@ Temporary Items
 build/
 rethinkdb_data
 .env
+test_scripts
 
 # VSCode directories
 .vscode/*
