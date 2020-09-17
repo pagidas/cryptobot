@@ -17,5 +17,5 @@ fun buildApp() = object: Http4kApp {
 
 fun main() {
     RealTimeDb.connect(dbConfig = getDbConfig)
-    buildApp().invoke()
+    buildApp().run()
 }
