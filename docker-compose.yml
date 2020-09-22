@@ -8,6 +8,13 @@ services:
     ports:
     - 8000:8080
     - 28015:28015
+  db-initializer:
+    build: ./db-initializer
+    depends_on:
+      - realtime-db
+    environment:
+      RETHINK_HOST: ${RETHINK_DB_HOST}
+    container_name: db-initializer
   graphql:
     build: ./graphql
     depends_on:
