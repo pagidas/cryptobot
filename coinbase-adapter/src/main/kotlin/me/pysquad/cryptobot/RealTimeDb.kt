@@ -29,26 +29,26 @@ object RealTimeDb {
      * in the connection a different db like so connection.use("db-name")
      * or change the default database when connecting.
      */
-    fun connect(dbConfig: DbConfig, fn: RealTimeDb.() -> Unit) = apply {
+    fun connect(dbConfig: DbConfig, fn: RealTimeDb.() -> Unit = {}) = apply {
         connection = rethinkCtx.connection().hostname(dbConfig.host).port(dbConfig.port).db(CRYPTOBOT).connect()
         fn()
     }
 
     fun close() = connection?.close()
 
-    /**
-     * Call this function before starting the app so the specific tables are there.
-     */
-    fun runMigrations() {
-        try {
-            topLevelMigration()
-            migrateAppAuth()
-            migrateProductSubscriptions()
-            migrateApiKeys()
-        } catch (e: RuntimeException) {
-            println(e.message)
-        }
-    }
+//    /**
+//     * Call this function before starting the app so the specific tables are there.
+//     */
+//    fun runMigrations() {
+//        try {
+//            topLevelMigration()
+//            migrateAppAuth()
+//            migrateProductSubscriptions()
+//            migrateApiKeys()
+//        } catch (e: RuntimeException) {
+//            println(e.message)
+//        }
+//    }
 
     // --- Migration functions ---
 
