@@ -13,6 +13,7 @@
 
 ## Main technologies used:
 - [Http4k](https://www.http4k.org/) - a collection of lightweight libraries written natively in kotlin to handle http.
+- [Micronaut](https://micronaut.io/) - a JVM-based framework.
 - [RethinkDB](https://rethinkdb.com/) - RethinkDB pushes JSON to your apps in realtime.
 - [Requests](https://requests.readthedocs.io/en/master/) - a simple HTTP library for Python.
 
