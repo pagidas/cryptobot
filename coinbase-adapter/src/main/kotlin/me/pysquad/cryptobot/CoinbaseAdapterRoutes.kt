@@ -1,11 +1,8 @@
 package me.pysquad.cryptobot
 
-import me.pysquad.cryptobot.coinbase.CoinbaseApi
 import me.pysquad.cryptobot.endpoints.Auth
 import me.pysquad.cryptobot.endpoints.GetProductSubscriptions
 import me.pysquad.cryptobot.endpoints.GetSandboxCoinbaseProfiles
-import me.pysquad.cryptobot.endpoints.GraphQL
-import me.pysquad.cryptobot.endpoints.SubscribeToMarket
 import me.pysquad.cryptobot.security.SecurityProvider
 import org.http4k.contract.contract
 import org.http4k.contract.openapi.ApiInfo
@@ -31,7 +28,7 @@ private val swaggerUiVersion = with(Properties()) {
 }
 
 object CoinbaseAdapterRoutes {
-    operator fun invoke(coinbaseAdapter: CoinbaseAdapterService, coinbase: CoinbaseApi, securityProvider: SecurityProvider): RoutingHttpHandler {
+    operator fun invoke(coinbaseAdapter: CoinbaseAdapterService, securityProvider: SecurityProvider): RoutingHttpHandler {
 
         val coinbaseAdapterContract = contract {
             renderer = OpenApi3(
@@ -44,14 +41,10 @@ object CoinbaseAdapterRoutes {
                     GetProductSubscriptions(coinbaseAdapter),
 
                     // --- Coinbase ---
-                    SubscribeToMarket(coinbase),
                     GetSandboxCoinbaseProfiles(coinbaseAdapter),
 
                     // --- Auth ---
-                    Auth(securityProvider),
-
-                    // --- GraphQL ---
-                    GraphQL(coinbaseAdapter)
+                    Auth(securityProvider)
 
             ).map { it.contractRoute }
         }

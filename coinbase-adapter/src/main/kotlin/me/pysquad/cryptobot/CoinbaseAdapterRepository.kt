@@ -1,21 +1,11 @@
 package me.pysquad.cryptobot
 
 import com.rethinkdb.gen.exc.ReqlOpFailedError
-import me.pysquad.cryptobot.coinbase.CoinbaseProductMessage
 import me.pysquad.cryptobot.coinbase.ProductId
 import me.pysquad.cryptobot.coinbase.ProductsIds
 import org.http4k.core.Credentials
-import org.jetbrains.annotations.Nullable
-import java.time.Instant
-import java.time.OffsetDateTime
-import java.time.ZoneOffset
 
 interface CoinbaseAdapterRepository {
-    fun storeMessages(messages: List<CoinbaseProductMessage>)
-    fun getMessages(): List<CoinbaseProductMessage.GQLMessage>
-    fun getMessagesByLimit(limit: Int): List<CoinbaseProductMessage.GQLMessage>
-    fun getMostRecentMessages(mostRecent: Int): List<CoinbaseProductMessage.GQLMessage>
-    fun storeSubscriptions(givenSubscriptions: ProductsIds)
     fun getSubscriptions(): ProductsIds
     fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials
     fun getCoinbaseAdapterAuthCredentials(): Credentials
@@ -24,24 +14,6 @@ interface CoinbaseAdapterRepository {
 class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository {
     private val r = realTimeDb.rethinkCtx
     private val conn = realTimeDb.connection
-
-    override fun storeMessages(messages: List<CoinbaseProductMessage>) =
-        messages.forEach {
-            r.table(MESSAGES).insert(it.toDbHashMap()).runNoReply(conn)
-        }
-
-    override fun getMessages(): List<CoinbaseProductMessage.GQLMessage> =
-            r.table(MESSAGES).run(conn, HashMap::class.java).map { row -> CoinbaseProductMessage.toGQLMessage(row) }
-
-    override fun getMessagesByLimit(limit: Int): List<CoinbaseProductMessage.GQLMessage> =
-            r.table(MESSAGES).limit(limit).run(conn, HashMap::class.java).map { row -> CoinbaseProductMessage.toGQLMessage(row) }
-
-    override fun getMostRecentMessages(mostRecent: Int): List<CoinbaseProductMessage.GQLMessage> =
-            r.table(MESSAGES)
-                    .orderBy("time")
-                    .limit(mostRecent)
-                    .run(conn, HashMap::class.java)
-                    .map { row -> CoinbaseProductMessage.toGQLMessage(row) }
 
     override fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials =
         r.table(API_KEYS)
@@ -70,38 +42,12 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
                     )
                 } ?: throw ReqlOpFailedError("coinbase adapter auth credentials not found.")
 
-    override fun storeSubscriptions(givenSubscriptions: ProductsIds) =
-        r.table(PRODUCT_SUBSCRIPTIONS)
-                .filter { row -> row.g("sub_id").eq("coinbase_adapter_subs") }
-                .update {
-                    hashMapOf("product_ids" to (getSubscriptions() union givenSubscriptions).joinToString(separator = ",") { it.value } + ",")
-                }.runNoReply(conn)
-
     override fun getSubscriptions(): ProductsIds =
             r.table(PRODUCT_SUBSCRIPTIONS)
                     .filter { it.g("sub_id").eq("coinbase_adapter_subs") }
                     .pluck("product_ids")
                     .run(conn, HashMap::class.java).next()
                     ?.let { mapSplitStringToProductIds(it["product_ids"] as String) } ?: emptyList()
-
-    private fun CoinbaseProductMessage.toDbHashMap() =
-        hashMapOf(
-            "type" to type.name,
-            "sequence" to sequence.value,
-            "product_id" to productId.value,
-            "price" to price.value,
-            "open_24h" to open24h.value,
-            "volume_24h" to volume24h.value,
-            "low_24h" to low24h.value,
-            "high_24h" to high24h.value,
-            "volume_30d" to volume30d.value,
-            "best_bid" to bestBid.value,
-            "best_ask" to bestAsk.value,
-            "side" to side.name,
-            "time" to time.toString(),
-            "trade_id" to tradeId.value,
-            "last_size" to lastSize.value
-        )
 
     private val mapSplitStringToProductIds: (String) -> ProductsIds = { s ->
         if (s.isBlank()) emptyList()
@@ -112,6 +58,3 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
         }
     }
 }
-
-private fun Instant.toOffsetDateTimeUTC() =
-    OffsetDateTime.ofInstant(this, ZoneOffset.UTC)

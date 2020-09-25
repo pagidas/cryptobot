@@ -13,11 +13,4 @@ class CoinbaseAdapterService(private val coinbase: CoinbaseApi, private val coin
                     .map { message -> SandboxCoinbaseProfile.of(message) }
 
     fun getProductSubscriptions() = coinbaseAdapterRepository.getSubscriptions()
-
-    fun getMessagesGQL(limit: Int?, mostRecent: Int?) =
-            when {
-                limit != null -> coinbaseAdapterRepository.getMessagesByLimit(limit)
-                mostRecent != null -> coinbaseAdapterRepository.getMostRecentMessages(mostRecent)
-                else -> coinbaseAdapterRepository.getMessages()
-            }
 }
