@@ -17,7 +17,9 @@ class GraphQLFactory {
 
     @Bean
     @Singleton
-    fun graphQL(resourceResolver: ResourceResolver, coinbaseDataFetcher: CoinbaseDataFetcher): GraphQL {
+    fun graphQL(resourceResolver: ResourceResolver,
+                messagesDataFetcher: MessagesDataFetcher,
+                productSubscriptionsDataFetcher: ProductSubscriptionsDataFetcher): GraphQL {
 
         // Parse the schema.
         val typeRegistry = TypeDefinitionRegistry().merge(SchemaParser().parse(BufferedReader(InputStreamReader(
@@ -25,7 +27,8 @@ class GraphQLFactory {
 
         // Create the runtime wiring.
         val runtimeWiring = RuntimeWiring.newRuntimeWiring()
-                .type("Query") { it.dataFetcher("messages", coinbaseDataFetcher) }
+                .type("Query") { it.dataFetcher("messages", messagesDataFetcher) }
+                .type("Query") { it.dataFetcher("subscriptions", productSubscriptionsDataFetcher) }
                 .build()
 
         // Create the executable schema.
