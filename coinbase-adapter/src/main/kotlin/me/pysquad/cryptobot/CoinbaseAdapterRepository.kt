@@ -6,7 +6,6 @@ import me.pysquad.cryptobot.coinbase.ProductsIds
 import org.http4k.core.Credentials
 
 interface CoinbaseAdapterRepository {
-    fun getSubscriptions(): ProductsIds
     fun getCoinbaseSandboxApiCredentials(): CoinbaseSandboxApiCredentials
     fun getCoinbaseAdapterAuthCredentials(): Credentials
 }
@@ -41,20 +40,4 @@ class CoinbaseAdapterRepoImpl(realTimeDb: RealTimeDb): CoinbaseAdapterRepository
                         password = it["password"] as String
                     )
                 } ?: throw ReqlOpFailedError("coinbase adapter auth credentials not found.")
-
-    override fun getSubscriptions(): ProductsIds =
-            r.table(PRODUCT_SUBSCRIPTIONS)
-                    .filter { it.g("sub_id").eq("coinbase_adapter_subs") }
-                    .pluck("product_ids")
-                    .run(conn, HashMap::class.java).next()
-                    ?.let { mapSplitStringToProductIds(it["product_ids"] as String) } ?: emptyList()
-
-    private val mapSplitStringToProductIds: (String) -> ProductsIds = { s ->
-        if (s.isBlank()) emptyList()
-        else {
-            s.split(",").toMutableList()
-                    .apply { removeAll { it.isBlank() } }
-                    .map { ProductId(it) }
-        }
-    }
 }

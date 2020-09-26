@@ -1,7 +1,6 @@
 package me.pysquad.cryptobot
 
 import me.pysquad.cryptobot.endpoints.Auth
-import me.pysquad.cryptobot.endpoints.GetProductSubscriptions
 import me.pysquad.cryptobot.endpoints.GetSandboxCoinbaseProfiles
 import me.pysquad.cryptobot.security.SecurityProvider
 import org.http4k.contract.contract
@@ -37,9 +36,6 @@ object CoinbaseAdapterRoutes {
             )
             descriptionPath = "/coinbase-adapter"
             routes += listOf(
-                    // --- Adapter ---
-                    GetProductSubscriptions(coinbaseAdapter),
-
                     // --- Coinbase ---
                     GetSandboxCoinbaseProfiles(coinbaseAdapter),
 
