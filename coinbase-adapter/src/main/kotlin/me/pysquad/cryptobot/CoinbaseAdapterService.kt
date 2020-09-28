@@ -11,6 +11,4 @@ class CoinbaseAdapterService(private val coinbase: CoinbaseApi, private val coin
     fun getSandboxCoinbaseProfiles() =
             coinbase.getSandboxCoinbaseProfiles()
                     .map { message -> SandboxCoinbaseProfile.of(message) }
-
-    fun getProductSubscriptions() = coinbaseAdapterRepository.getSubscriptions()
 }

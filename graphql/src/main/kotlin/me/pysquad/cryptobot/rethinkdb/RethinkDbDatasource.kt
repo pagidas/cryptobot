@@ -9,6 +9,7 @@ const val CRYPTOBOT = "cryptobot"
 
 // table names
 const val MESSAGES = "messages"
+const val PRODUCT_SUBSCRIPTIONS = "product_subscriptions"
 
 @Singleton
 class RethinkDbDatasource(private var rethinkDbConfig: RethinkDbConfiguration) {

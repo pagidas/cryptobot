@@ -4,6 +4,8 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategy
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
+typealias ProductIds = List<String>
+
 @JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
 data class CoinbaseMessage(
     var type: String = "",

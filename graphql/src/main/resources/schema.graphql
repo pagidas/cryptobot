@@ -1,5 +1,6 @@
 type Query {
     messages(mostRecent: Int): [CoinbaseMessage]!
+    subscriptions: [String]!
 }
 
 type CoinbaseMessage {
