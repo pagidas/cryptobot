@@ -14,27 +14,47 @@ class ConfigHandler:
             print(err)
 
         if "RETHINK_DB_HOST" in os.environ:
-            self.config_data['rethinkdb']['host'] =\
+            self.config_data['rethinkdb']['host'] = \
                 os.environ['RETHINK_DB_HOST']
 
         if "CB_HOST" in os.environ:
-            self.config_data['coinbase_adapter']['host'] =\
-                os.environ['CB_HOST']
+            self.config_data['coinbase_adapter']['host'] = os.environ['CB_HOST']
 
-    def __construct_url(self, endpoint):
+        if "GQL_HOST" in os.environ:
+            self.config_data['graphql']['host'] = os.environ['GQL_HOST']
+
+        if "CB_SUBSCRIBER_HOST" in os.environ:
+            self.config_data['coinbase_subscriber']['host'] = \
+            os.environ['CB_SUBSCRIBER_HOST']
+
+    def __construct_url(self, host, port, endpoint):
         if not self.config_data:
             raise ValueError
 
         return 'http://{host}:{port}{endpoint}'.format(
-            host=self.config_data['coinbase_adapter']['host'],
-            port=self.config_data['coinbase_adapter']['port'],
+            host=host,
+            port=port,
             endpoint=endpoint
         )
 
     @property
+    def graphql_subscriptions_endpoint(self):
+        return self.__construct_url(
+            self.config_data['graphql']['host'],
+            self.config_data['graphql']['port'],
+            self.config_data['graphql']['endpoints']['base']
+        )
+
+    @property
+    def graphql_most_recent_endpoint(self):
+        return self.graphql_subscriptions_endpoint
+
+    @property
     def products_subscription_endpoint(self):
         return self.__construct_url(
-            self.config_data['coinbase_adapter']['subscribe']
+            self.config_data['coinbase_subscriber']['host'],
+            self.config_data['coinbase_subscriber']['port'],
+            self.config_data['coinbase_subscriber']['endpoints']['subscribe'],
         )
 
     @property
