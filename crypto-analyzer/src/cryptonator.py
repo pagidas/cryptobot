@@ -1,33 +1,47 @@
 import time
 from analysis.pattern_detection import get_buy_price, get_sell_price
 from simulation.base import Sim
-from data.query_functions import get_latest_prices
 
 
-def start():
-    broker = Sim()
+class Cryptonator:
+    """
+        Cryptonator class is the main analyzer class in which all the math magic
+        happens.
+    """
+    def __init__(self, client):
+        self.gql_client = client
 
-    while True:
-        time.sleep(1)
+    def start(self):
+        broker = Sim()
 
-        last_prices, ids, timestamps = get_latest_prices(50)
+        while True:
+            time.sleep(1)
 
-        # print(last_prices)
+            list_of_messages = self.gql_client.get_most_recent_messages(50)
+            # print(list_of_messages)
 
-        broker.update_orders(last_prices[0])
+            last_prices = self.parse_messages(list_of_messages)
+            # print(last_prices)
+            if last_prices is []:
+                continue
 
-        buy_prices = get_buy_price(last_prices)
-        sell_prices = get_sell_price(last_prices)
+            broker.update_orders(last_prices[0])
 
-        for bprice, sprice in zip(buy_prices, sell_prices):
-            broker.open_order(0.01, bprice, 'buy')
-            broker.open_order(0.01, sprice, 'sell')
+            buy_prices = get_buy_price(last_prices)
+            sell_prices = get_sell_price(last_prices)
 
-        print("{}, {}, {}".format(broker.budget, broker.coins, broker.open_orders))
+            for bprice, sprice in zip(buy_prices, sell_prices):
+                broker.open_order(0.01, bprice, 'buy')
+                broker.open_order(0.01, sprice, 'sell')
 
+            print("{}, {}, {}".format(broker.budget, broker.coins, broker.open_orders))
 
-if __name__ == '__main__':
-    from utils.config_handling import ConfigHandler
-    from utils.db_connection import connect_to_db
-    connect_to_db(ConfigHandler())
-    start()
+    @staticmethod
+    def parse_messages(lom):
+        prices = list()
+        for msg in lom:
+            for key, value in msg.items():
+                if key == 'price':
+                    prices.append(float(value))
+
+        return prices[::-1]
