@@ -52,7 +52,7 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "me.pysquad.cryptobot.ApplicationKt"
+mainClassName = "me.pysquad.cryptobot.CoinbaseAdapterKt"
 
 // use JUnit 5 platform
 test {
