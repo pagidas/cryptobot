@@ -41,6 +41,9 @@ dependencies {
     // Logback
     runtimeOnly("ch.qos.logback:logback-classic")
 
+    // Apache commons codec
+    implementation('commons-codec:commons-codec:1.15')
+
     // Test
     kaptTest(platform("io.micronaut:micronaut-bom:$micronautVersion"))
     kaptTest("io.micronaut:micronaut-inject-java")
