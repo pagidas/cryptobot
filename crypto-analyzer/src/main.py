@@ -1,32 +1,35 @@
-import time
 import sys
-from utils.adapter_request_helper import subscribe_products, cb_auth_request, get_active_subs
-from utils.db_connection import connect_to_db, print_feed
+import time
 from utils.config_handling import ConfigHandler
-import cryptonator
+from utils.graphqli import GraphqlClient
+from utils.subscriberi import subscribe_to
+from cryptonator import Cryptonator
 
 
 def main():
     print("==================================")
     print("HELLO!! -- CRYPTO-ANALYZER SERVICE")
     print("==================================")
-
+    time.sleep(1)
     print("Reading config file...")
     handler = ConfigHandler()
+    gql_client = GraphqlClient(handler)
+    cryptonator = Cryptonator(gql_client)
 
-    cb_auth_request(handler)
-
-    print("Subscribing...")
-    active_subs = list(get_active_subs(handler))
-    print(type(active_subs), active_subs)
+    active_subs = gql_client.get_subs()
+    # cb_auth_request(handler)
+    #
+    # print("Subscribing...")
+    # active_subs = list(get_active_subs(handler))
+    # print(type(active_subs), active_subs)
     if not active_subs:
-        subscribe_products(handler, "BTC-EUR")
+        print('Subscribing...')
+        subscribe_to(handler, 'BTC-EUR')
     else:
         print("Already subscribed")
 
     sys.stdout.flush()
 
-    connect_to_db(handler)
     cryptonator.start()
 
 
