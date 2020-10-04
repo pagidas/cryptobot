@@ -6,6 +6,8 @@ plugins {
     id "application"
 }
 
+mainClassName = "me.pysquad.cryptobot.CoinbaseAdapterAppKt"
+
 version "0.1"
 group "me.pysquad.cryptobot"
 
@@ -55,8 +57,6 @@ dependencies {
 
 test.classpath += configurations.developmentOnly
 
-mainClassName = "me.pysquad.cryptobot.CoinbaseAdapterKt"
-
 // use JUnit 5 platform
 test {
     useJUnitPlatform()
@@ -87,7 +87,7 @@ kapt {
         arg("micronaut.processing.incremental", true)
         arg("micronaut.processing.annotations", "me.pysquad.cryptobot.*")
         arg("micronaut.processing.group", "me.pysquad.cryptobot")
-        arg("micronaut.processing.module", "coinbaseAdapterV2")
+        arg("micronaut.processing.module", "coinbaseAdapter")
     }
 }
 
