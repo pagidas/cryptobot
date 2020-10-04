@@ -12,5 +12,5 @@ RUN ./gradlew --no-daemon shadowJar -i
 
 # Stage 2, distribution container
 FROM openjdk:${VERSION}-alpine
-COPY --from=BUILD /src/build/libs/coinbase-adapter-1.0-SNAPSHOT-all.jar /bin/app.jar
-CMD ["java", "-jar", "/bin/app.jar"]
+COPY --from=BUILD /src/build/libs/coinbase-adapter-*-all.jar /bin/app.jar
+CMD ["java", "-Dcom.sun.management.jmxremote", "-Xmx128m", "-jar", "/bin/app.jar"]

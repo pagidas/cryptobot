@@ -1,0 +1,13 @@
+micronaut:
+  server:
+    port: ${COINBASE_ADAPTER_PORT:9000}
+  application:
+    name: coinbaseAdapterV2
+
+# For now we are using the sandbox url
+coinbase:
+  url: https://api-public.sandbox.pro.coinbase.com
+  authentication:
+    key: ${CB_SANDBOX_API_KEY}
+    secret: ${CB_SANDBOX_API_SECRET}
+    passphrase: ${CB_SANDBOX_API_PASSPHRASE}

@@ -37,15 +37,10 @@ services:
     - 9999:9999
   coinbase-adapter:
     build: ./coinbase-adapter
-    depends_on:
-      - realtime-db
     environment:
-      RETHINK_HOST: ${RETHINK_DB_HOST}
       CB_SANDBOX_API_KEY: ${CB_SANDBOX_API_KEY}
       CB_SANDBOX_API_SECRET: ${CB_SANDBOX_API_SECRET}
       CB_SANDBOX_API_PASSPHRASE: ${CB_SANDBOX_API_PASSPHRASE}
-      COINBASE_ADAPTER_BASIC_AUTH_USER: ${COINBASE_ADAPTER_BASIC_AUTH_USER}
-      COINBASE_ADAPTER_BASIC_AUTH_PWD: ${COINBASE_ADAPTER_BASIC_AUTH_PWD}
     container_name: coinbase_adapter
     restart: always
     ports:

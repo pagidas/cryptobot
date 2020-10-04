@@ -1,19 +1,11 @@
 package me.pysquad.cryptobot
 
-import me.pysquad.cryptobot.common.Http4kApp
-import me.pysquad.cryptobot.config.getDbConfig
-import me.pysquad.cryptobot.config.getServerPort
-import me.pysquad.cryptobot.security.SecurityProvider
+import io.micronaut.runtime.Micronaut.build
 
-fun buildApp() = object: Http4kApp {
-    override val port = getServerPort
-    override val routes = CoinbaseAdapterRoutes(
-            CoinbaseAdapterService.buildIt(),
-            SecurityProvider.buildIt()
-    )
+fun main(args: Array<String>) {
+	build()
+	    .args(*args)
+		.packages("me.pysquad.cryptobot")
+		.start()
 }
 
-fun main() {
-    RealTimeDb.connect(dbConfig = getDbConfig)
-    buildApp().run()
-}
