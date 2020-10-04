@@ -1,4 +1,4 @@
-package me.pysquad.cryptobot.api
+package me.pysquad.cryptobot.client
 
 import io.micronaut.context.annotation.ConfigurationProperties
 import javax.validation.constraints.NotBlank

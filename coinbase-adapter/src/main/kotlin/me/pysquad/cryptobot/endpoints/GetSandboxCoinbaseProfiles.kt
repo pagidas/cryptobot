@@ -39,7 +39,7 @@ class GetSandboxCoinbaseProfiles(private val coinbaseAdapter: CoinbaseAdapterSer
         "/coinbase/sandbox/profiles" meta {
             summary = "Lists the profiles of that coinbase account."
             returning(OK, SandboxCoinbaseProfile.listLens to exampleGetSandboxCoinbaseProfilesResponse)
-            security = SecurityProvider.basicAuth()
+//            security = SecurityProvider.basicAuth()
         } bindContract GET to handler()
 
     private fun handler(): HttpHandler = { _: Request ->

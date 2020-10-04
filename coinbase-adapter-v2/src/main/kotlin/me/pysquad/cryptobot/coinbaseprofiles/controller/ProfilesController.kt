@@ -4,18 +4,15 @@ import io.micronaut.http.HttpResponse
 import io.micronaut.http.MediaType
 import io.micronaut.http.annotation.Controller
 import io.micronaut.http.annotation.Get
-import me.pysquad.cryptobot.api.CoinbaseApi
-import me.pysquad.cryptobot.api.model.CoinbaseProfiles
+import me.pysquad.cryptobot.client.model.CoinbaseProfiles
+import me.pysquad.cryptobot.coinbaseprofiles.service.ProfilesService
 
 @Controller("/profiles")
-class ProfilesController(private val coinbase: CoinbaseApi) {
+class ProfilesController(private val service: ProfilesService) {
 
-    @Get("/", produces = [ MediaType.APPLICATION_JSON ])
-    fun getCoinbaseProfiles(): HttpResponse<CoinbaseProfiles> =
-            coinbase.getProfiles().body()?.let {
-                if (it.isNotEmpty())
-                    HttpResponse.ok(it)
-                else
-                    HttpResponse.ok(emptyList())
-            } ?: HttpResponse.ok(emptyList())
+    @Get(produces = [ MediaType.APPLICATION_JSON ])
+    fun getCoinbaseProfiles(): HttpResponse<CoinbaseProfiles> {
+        val profiles = service.getCoinbaseProfiles()
+        return HttpResponse.ok(profiles)
+    }
 }

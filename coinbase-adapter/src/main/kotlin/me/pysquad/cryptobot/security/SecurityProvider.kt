@@ -1,6 +1,8 @@
 package me.pysquad.cryptobot.security
 
 import me.pysquad.cryptobot.CoinbaseAdapterRepoImpl
+import me.pysquad.cryptobot.CoinbaseSandboxApiCredentials
+import me.pysquad.cryptobot.EnvHelper
 import me.pysquad.cryptobot.EnvHelper.Companion.getEnvBasicAuthPassword
 import me.pysquad.cryptobot.EnvHelper.Companion.getEnvBasicAuthUsername
 import me.pysquad.cryptobot.RealTimeDb
@@ -65,26 +67,31 @@ class SecurityProvider(private val coinbaseAdapterRepoImpl: CoinbaseAdapterRepoI
             null
     }
 
-    fun coinbaseSandboxHeaders(request: Request) = with(getCoinbaseSandboxApiCredentials()) {
-        val timestamp = String.format("%.3f", Instant.now().toEpochMilli() / 1000.0)
+    fun coinbaseSandboxHeaders(request: Request) =
+            with(CoinbaseSandboxApiCredentials(
+                    EnvHelper.getEnvCoinbaseSandboxApiKey(),
+                    EnvHelper.getEnvCoinbaseSandboxApiSecret(),
+                    EnvHelper.getEnvCoinbaseSandboxApiPassphrase()
+            )) {
+                val timestamp = String.format("%.3f", Instant.now().toEpochMilli() / 1000.0)
 
-        // build the message
-        val message = (timestamp + request.method.name + request.uri.path + request.bodyString()).toByteArray()
+                // build the message
+                val message = (timestamp + request.method.name + request.uri.path + request.bodyString()).toByteArray()
 
-        // base64 decode the secret
-        val secret = Base64.decodeBase64(secret)
+                // base64 decode the secret
+                val secret = Base64.decodeBase64(secret)
 
-        // sign the message with the hmac key
-        val signature = hmacSHA256(message, secret)
+                // sign the message with the hmac key
+                val signature = hmacSHA256(message, secret)
 
-        // finally base64 encode the result
-        val encodedSignature = String(Base64.encodeBase64(signature))
+                // finally base64 encode the result
+                val encodedSignature = String(Base64.encodeBase64(signature))
 
-        request.headers(listOf(
-                "CB-ACCESS-KEY" to key,
-                "CB-ACCESS-SIGN" to encodedSignature,
-                "CB-ACCESS-TIMESTAMP" to timestamp,
-                "CB-ACCESS-PASSPHRASE" to passphrase
-        ))
-    }
+                request.headers(listOf(
+                        "CB-ACCESS-KEY" to key,
+                        "CB-ACCESS-SIGN" to encodedSignature,
+                        "CB-ACCESS-TIMESTAMP" to timestamp,
+                        "CB-ACCESS-PASSPHRASE" to passphrase
+                ))
+            }
 }
