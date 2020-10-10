@@ -33,6 +33,11 @@ dependencies {
 
     // RethinkDB
     implementation "com.rethinkdb:rethinkdb-driver:$rethinkdbVersion"
+
+    // Logback
+    compile "ch.qos.logback:logback-core:$logbackVersion"
+    runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
+
 }
 
 jar {

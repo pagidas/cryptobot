@@ -12,6 +12,7 @@ import me.pysquad.cryptobot.model.ProductIds
 import me.pysquad.cryptobot.repo.CoinbaseSubscriberRepo
 import org.http4k.format.Jackson.auto
 import org.http4k.websocket.WsMessage
+import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
 
 class CoinbaseSubscriberService(
@@ -20,8 +21,10 @@ class CoinbaseSubscriberService(
         private val coinbaseSubscriberRepo: CoinbaseSubscriberRepo) {
 
     private val objectMapper = jacksonObjectMapper().registerModule(KotlinModule())
+    private val logger = LoggerFactory.getLogger(CoinbaseSubscriberService::class.java)
 
     fun subscribe(productIds: ProductIds): SubscriberResponse {
+        logger.info("Subscribing to coinbase websocket feed with products: $productIds")
         val request = CoinbaseWsSubscribeRequest(
                 type = coinbaseConfig.subscribeRequest.getString("type"),
                 channels = coinbaseConfig.subscribeRequest.getStringList("channels"),
@@ -33,6 +36,7 @@ class CoinbaseSubscriberService(
 
             send(WsMessage(request))
             val wsFeedResp = wsFeedLens.extract(received().first())
+            logger.debug("Got response from coinbase websocket feed: $wsFeedResp")
 
             return if (wsFeedResp.type != "error") {
                 // right now we only send one channel, which is a 'ticker' channel
@@ -46,6 +50,7 @@ class CoinbaseSubscriberService(
                 )
             } else {
                 // closing websocket client
+                logger.info("Closing websocket connection with coinbase")
                 close()
 
                 SubscriberResponse.failure(
