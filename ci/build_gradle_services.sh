@@ -9,7 +9,7 @@ BASE_DIR=$(pwd)
 build_if_exists() {
   local folder=$1
 
-  if [[ -d $folder ]]; then
+  if [[ -d "../"$folder ]]; then
     echo "$folder gradle module is present"
     cd $folder
     echo "Building $folder..."
