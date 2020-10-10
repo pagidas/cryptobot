@@ -24,7 +24,7 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
           restore-keys: ${{ runner.os }}-gradle
       - name: Execute script to build all
-        run: cd ci/ && bash build_gradle_modules.sh
+        run: cd ci-scripts/ && bash build_gradle_modules.sh
 
   build-python-modules:
     runs-on: ubuntu-latest
