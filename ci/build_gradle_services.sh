@@ -14,7 +14,7 @@ build_if_exists() {
     echo "$folder gradle module is present"
     cd ../$folder
     echo "Building $folder..."
-    ./gradlew build -x shadowJar
+    ./gradlew build -x shadowJar -x jar
     cd "$BASE_DIR"
   fi
 }
