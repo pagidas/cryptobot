@@ -2,6 +2,7 @@
 # This script is only used by github actions to build the gradle projects
 
 BASE_DIR=$(pwd)
+echo $BASE_DIR
 
 
 # arg$1: the folder where the repo exists
@@ -9,9 +10,9 @@ BASE_DIR=$(pwd)
 build_if_exists() {
   local folder=$1
 
-  if [[ -d "../"$folder ]]; then
+  if [[ -d "../$folder" ]]; then
     echo "$folder gradle module is present"
-    cd $folder
+    cd ../$folder
     echo "Building $folder..."
     ./gradlew build
     cd "$BASE_DIR"
