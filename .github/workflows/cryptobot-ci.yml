@@ -29,16 +29,13 @@ jobs:
   build-python-modules:
     runs-on: ubuntu-latest
     name: Build python modules
-    strategy:
-      matrix:
-        python-version: [ 2.7, 3.5, 3.6, 3.7, 3.8 ]
 
     steps:
       - uses: actions/checkout@v2
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python 3.x
         uses: actions/setup-python@v2
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: '3.x'
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
