@@ -75,3 +75,6 @@ To get you up-and-running and test how the project behaves at the moment, you ne
  
  connect to `localhost:8080` and it will prompt you to a rethinkdb gui where you can
  watch the messages stored when retreived from coinbase open api websocket.
+ 
+ 
+ A CHANGE!!!
