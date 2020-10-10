@@ -17,4 +17,4 @@ jobs:
         with:
           java-version: '11'
       - name: Build with Gradle
-        run: sh ./ci/build_gradle_services.sh
+        run: cd ci/ && sh ./build_gradle_services.sh
