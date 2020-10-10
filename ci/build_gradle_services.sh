@@ -6,7 +6,6 @@ echo $BASE_DIR
 
 
 # arg$1: the folder where the repo exists
-# arg$2: the docker compose stack we will use to spin services in this repo
 build_if_exists() {
   local folder=$1
 
@@ -14,6 +13,7 @@ build_if_exists() {
     echo "$folder gradle module is present"
     cd ../$folder
     echo "Building $folder..."
+    # we only care if they compile, thus skip building the fatjar
     ./gradlew build -x shadowJar -x jar
     cd "$BASE_DIR"
   fi
