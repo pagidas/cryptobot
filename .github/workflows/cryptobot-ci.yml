@@ -28,6 +28,7 @@ jobs:
 
   build-python-modules:
     runs-on: ubuntu-latest
+    name: Build python modules
     strategy:
       matrix:
         python-version: [ 2.7, 3.5, 3.6, 3.7, 3.8 ]
