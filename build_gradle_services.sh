@@ -8,7 +8,6 @@ BASE_DIR=$(pwd)
 # arg$2: the docker compose stack we will use to spin services in this repo
 build_if_exists() {
   local folder=$1
-  local docker_compose_file=$2
 
   if [[ -d $folder ]]; then
     echo "$folder gradle module is present"
