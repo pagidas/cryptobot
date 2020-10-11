@@ -1,5 +1,5 @@
 #!/bin/bash
-# This script is only used by github actions to build the gradle projects
+# This script is only used by github actions to build the gradle fatjars
 
 BASE_DIR=$(pwd)
 
@@ -9,10 +9,9 @@ build_if_exists() {
 
   if [[ -d "../$folder" ]]; then
     echo "$folder gradle module is present"
-    cd ../$folder
+    cd ../"$folder"
     echo "Building $folder..."
-    # we only care if they compile, thus skip building the fatjar
-    ./gradlew build -x shadowJar -x jar
+    ./gradlew build shadowJar
     cd "$BASE_DIR"
   fi
 }
