@@ -60,6 +60,12 @@ To get you up-and-running and test how the project behaves at the moment, you ne
  ```
  and at the root of the project for the first time run
  ```shell
+./spin_all build
+ ```
+By putting a `build` argument on the script, you force-build to build the docker images
+
+or
+```shell
  docker-compose up -d --build
  ```
 
@@ -74,4 +80,11 @@ To get you up-and-running and test how the project behaves at the moment, you ne
  ```
  
  connect to `localhost:8080` and it will prompt you to a rethinkdb gui where you can
- watch the messages stored when retreived from coinbase open api websocket.
+ watch the messages stored when retrieved from coinbase open api websocket.
+ 
+ once you have done your testing you can run:
+ ```shell
+./stop_all_and_cleanup
+ ```
+
+which stops all containers, and removes untangled images used to spin all the services
