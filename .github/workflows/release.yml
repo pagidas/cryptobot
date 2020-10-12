@@ -54,3 +54,6 @@ jobs:
       - name: Execute script to build and publish graphql
         working-directory: ./ci-scripts
         run: bash build_image_and_publish.sh graphql ${{ secrets.PAT_GHCR }}
+      - name: Execute script to build and publish crypto-analyzer
+        working-directory: ./ci-scripts
+        run: bash build_image_and_publish.sh crypto-analyzer ${{ secrets.PAT_GHCR }}

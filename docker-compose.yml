@@ -2,7 +2,7 @@ version: "3"
 
 services:
   realtime-db:
-    image: "rethinkdb:2.4.0"
+    image: rethinkdb:2.4.0
     container_name: rethinkdb
     restart: always
     ports:
@@ -16,7 +16,7 @@ services:
       RETHINK_HOST: ${RETHINK_DB_HOST}
     container_name: db-initializer
   graphql:
-    build: ./graphql
+    image: ghcr.io/pagidas/graphql
     depends_on:
       - realtime-db
     environment:
@@ -26,7 +26,7 @@ services:
     ports:
     - 9090:9090
   coinbase-subscriber:
-    build: ./coinbase-subscriber
+    image: ghcr.io/pagidas/coinbase-subscriber
     depends_on:
       - realtime-db
     environment:
@@ -36,7 +36,7 @@ services:
     ports:
     - 9999:9999
   coinbase-adapter:
-    build: ./coinbase-adapter
+    image: ghcr.io/pagidas/coinbase-adapter
     environment:
       CB_SANDBOX_API_KEY: ${CB_SANDBOX_API_KEY}
       CB_SANDBOX_API_SECRET: ${CB_SANDBOX_API_SECRET}
@@ -46,7 +46,7 @@ services:
     ports:
     - 9000:9000
   crypto-analyzer:
-    build: ./crypto-analyzer
+    image: ghcr.io/pagidas/crypto-analyzer
     depends_on:
       - realtime-db
       - coinbase-adapter
