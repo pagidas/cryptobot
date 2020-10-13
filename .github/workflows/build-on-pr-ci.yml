@@ -1,4 +1,4 @@
-name: cryptobot CI
+name: PR build
 
 on:
   pull_request:

@@ -1,4 +1,4 @@
-name: cryptobot publish images CI
+name: Build and Publish images
 
 on:
   push:
