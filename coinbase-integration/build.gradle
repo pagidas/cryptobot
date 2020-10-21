@@ -1,0 +1,58 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}" apply false
+    id 'com.github.johnrengelman.shadow' version "${shadowJarPluginVersion}"
+}
+
+subprojects {
+    apply plugin: "java-library"
+    apply plugin: "org.jetbrains.kotlin.jvm"
+    apply plugin: "com.github.johnrengelman.shadow"
+
+    group 'me.pysquad.cryptobot'
+
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        jcenter()
+    }
+
+    dependencies {
+        // kotlin
+        implementation "org.jetbrains.kotlin:kotlin-bom"
+        implementation "org.jetbrains.kotlin:kotlin-stdlib"
+        implementation "org.jetbrains.kotlin:kotlin-reflect"
+
+        // http4k
+        implementation platform("org.http4k:http4k-bom:${http4kVersion}")
+        implementation "org.http4k:http4k-core"
+        implementation "org.http4k:http4k-format-jackson"
+        implementation "org.http4k:http4k-contract"
+        implementation "org.http4k:http4k-server-jetty"
+
+        // TypesafeConfig
+        implementation "com.typesafe:config:$typesafeVersion"
+
+        // Slf4JLogging
+        implementation "org.slf4j:slf4j-api:$slf4jVersion"
+        implementation "org.slf4j:slf4j-simple:$slf4jVersion"
+
+        // RethinkDB
+        implementation "com.rethinkdb:rethinkdb-driver:$rethinkdbVersion"
+
+        // Logback
+        compile "ch.qos.logback:logback-core:$logbackVersion"
+        runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
+    }
+
+    shadowJar {
+        mergeServiceFiles()
+    }
+
+    compileKotlin {
+        kotlinOptions.jvmTarget = "11"
+    }
+    compileTestKotlin {
+        kotlinOptions.jvmTarget = "11"
+    }
+}
