@@ -38,7 +38,7 @@ jobs:
           python-version: '3.x'
       - name: Install dependencies
         run: |
-          pip install pipenv flake8
+          pip install --upgrade pip pipenv flake8
           cd crypto-analyzer/
           pipenv install --system --deploy
       - name: Lint with flake8

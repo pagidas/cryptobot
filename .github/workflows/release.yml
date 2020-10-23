@@ -45,12 +45,12 @@ jobs:
       - name: Execute script to build all fat jars
         working-directory: ./ci-scripts
         run: bash build_all_gradle_fatjars.sh
+      - name: Execute script to build and publish coinbase-integration
+        working-directory: ./ci-scripts
+        run: bash build_image_and_publish.sh coinbase-integration ${{ secrets.PAT_GHCR }}
       - name: Execute script to build and publish coinbase-adapter
         working-directory: ./ci-scripts
         run: bash build_image_and_publish.sh coinbase-adapter ${{ secrets.PAT_GHCR }}
-      - name: Execute script to build and publish coinbase-subscriber
-        working-directory: ./ci-scripts
-        run: bash build_image_and_publish.sh coinbase-subscriber ${{ secrets.PAT_GHCR }}
       - name: Execute script to build and publish graphql
         working-directory: ./ci-scripts
         run: bash build_image_and_publish.sh graphql ${{ secrets.PAT_GHCR }}
