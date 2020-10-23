@@ -12,13 +12,13 @@ build_if_exists() {
     cd ../$folder
     echo "Building $folder..."
     # we only care if they compile, thus skip building the fatjar
-    ./gradlew build -x shadowJar -x jar
+    ./gradlew clean build -x shadowJar -x jar
     cd "$BASE_DIR"
   fi
 }
 
 
 ## main script
+build_if_exists "coinbase-integration"
 build_if_exists "coinbase-adapter"
-build_if_exists "coinbase-subscriber"
 build_if_exists "graphql"
