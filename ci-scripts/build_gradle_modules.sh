@@ -9,7 +9,16 @@ build_if_exists() {
 
   if [[ -d "../$folder" ]]; then
     echo "$folder gradle module is present"
-    cd ../$folder
+
+    if [ "$folder" == 'http4k-starter' ]; then
+      # First build and publish to local maven http4k-starter
+      cd ../http4k-starter
+      ./gradlew clean build publishToMavenLocal
+      cd "$BASE_DIR"
+      return 1
+    fi
+
+    cd ../"$folder"
     echo "Building $folder..."
     # we only care if they compile, thus skip building the fatjar
     ./gradlew clean build -x shadowJar -x jar
@@ -19,6 +28,7 @@ build_if_exists() {
 
 
 ## main script
+build_if_exists "http4k-starter"
 build_if_exists "coinbase-integration"
 build_if_exists "coinbase-adapter"
 build_if_exists "graphql"
