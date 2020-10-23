@@ -24,14 +24,14 @@ subprojects {
         implementation "org.jetbrains.kotlin:kotlin-reflect"
 
         // http4k
+        // custom http4k starter
+        implementation "me.pysquad.cryptobot:http4k-starter:${http4kStarterVersion}"
+
         implementation platform("org.http4k:http4k-bom:${http4kVersion}")
         implementation "org.http4k:http4k-core"
         implementation "org.http4k:http4k-format-jackson"
         implementation "org.http4k:http4k-contract"
         implementation "org.http4k:http4k-server-jetty"
-
-        // custom http4k starter
-        implementation "me.pysquad.cryptobot:http4k-starter:1.0"
 
         // TypesafeConfig
         implementation "com.typesafe:config:$typesafeVersion"
