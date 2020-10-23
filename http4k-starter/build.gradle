@@ -1,0 +1,54 @@
+plugins {
+    id 'java-library'
+    id 'org.jetbrains.kotlin.jvm' version "${kotlinVersion}"
+    id "maven-publish"
+}
+
+group 'me.pysquad.cryptobot'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    jcenter()
+}
+
+dependencies {
+    // kotlin
+    implementation platform("org.jetbrains.kotlin:kotlin-bom")
+    implementation "org.jetbrains.kotlin:kotlin-stdlib"
+    implementation "org.jetbrains.kotlin:kotlin-reflect"
+
+    // http4k
+    implementation platform("org.http4k:http4k-bom:${http4kVersion}")
+    implementation "org.http4k:http4k-core"
+    implementation "org.http4k:http4k-format-jackson"
+    implementation "org.http4k:http4k-contract"
+    implementation "org.http4k:http4k-server-jetty"
+
+    // Slf4JLogging
+    implementation "org.slf4j:slf4j-api:$slf4jVersion"
+    implementation "org.slf4j:slf4j-simple:$slf4jVersion"
+}
+
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = project.getGroup()
+            artifactId = project.getName()
+            version = "1.0"
+            from components.java
+
+            pom {
+                name = 'Http4k starter lib'
+                description = 'Declares a top-level function to easily create an http4k app'
+            }
+        }
+    }
+}
+
+compileKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
+compileTestKotlin {
+    kotlinOptions.jvmTarget = "11"
+}
