@@ -1,21 +1,22 @@
 package me.pysquad.cryptobot
 
 import org.http4k.contract.ContractRoute
+import org.http4k.contract.bindContract
 import org.http4k.contract.contract
-import org.http4k.core.then
+import org.http4k.core.*
 import org.http4k.filter.RequestFilters
 import org.http4k.server.Http4kServer
 import org.http4k.server.Jetty
 import org.http4k.server.asServer
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.http4k.format.Jackson.auto
 
 typealias ContractRoutes = MutableList<ContractRoute>
 
 /*
-Common top-level function to create an http4k app.
-Used in all http4k apps coming from a separated common
-gradle project, published in local maven.
+Common top-level function to bootstrap a http4k app.
+Used in all http4k apps, published in local maven repo.
  */
 fun http4kApp(port: Int = 8080, buildRoutes: () -> ContractRoutes): Http4kApp {
     return object: Http4kApp {
@@ -31,8 +32,18 @@ interface Http4kApp {
     val endpoints: ContractRoutes
 
     fun run(): Http4kServer {
+        // declares basic health route to audit if server is up and running.
+        val health: ContractRoute =
+                "/health" bindContract Method.GET to {
+                    val lens = Body.auto<Map<String, String>>().toLens()
+                    Response(Status.OK).with(lens of mapOf("status" to "UP"))
+                }
+
         // builds the contract
-        val contract = contract { routes += endpoints }
+        val contract = contract {
+            routes += health
+            routes += endpoints
+        }
 
         // builds tapping request filter
         val tapReqFilter = RequestFilters.Tap { req ->
@@ -43,7 +54,7 @@ interface Http4kApp {
         val routes = tapReqFilter.then(contract)
 
         return routes.asServer(Jetty(port)).start().apply {
-            logger.info("Startup complete. Server running[:$port]")
+            logger.info("Startup complete. Http4k app running[:$port]")
         }
     }
 }

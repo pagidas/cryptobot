@@ -5,6 +5,7 @@ plugins {
 }
 
 group 'me.pysquad.cryptobot'
+version '1.1'
 
 repositories {
     mavenLocal()
@@ -23,6 +24,7 @@ dependencies {
     implementation "org.http4k:http4k-core"
     implementation "org.http4k:http4k-contract"
     implementation "org.http4k:http4k-server-jetty"
+    implementation "org.http4k:http4k-format-jackson"
 
     // Slf4JLogging
     implementation "org.slf4j:slf4j-api:$slf4jVersion"
@@ -32,9 +34,9 @@ dependencies {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = project.getGroup()
-            artifactId = project.getName()
-            version = "1.0"
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
             from components.java
 
             pom {
