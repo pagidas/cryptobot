@@ -26,13 +26,12 @@ then
       docker push $BASE_CONTAINER_REPO/coinbase-subscriber:latest
       cd "$BASE_DIR"
 
-      # This is when the adapter is implemented within the multiproject.
-#      echo "Building coinbase-adapter..."
-#      cd ../coinbase-integration/adapter
-#      docker build . --tag $BASE_CONTAINER_REPO/coinbase-adapter:latest
-#      echo "Pushing coinbase-adapter docker image to ghcr.io..."
-#      docker push $BASE_CONTAINER_REPO/coinbase-adapter:latest
-#      cd "$BASE_DIR"
+      echo "Building coinbase-adapter..."
+      cd ../coinbase-integration/adapter
+      docker build . --tag $BASE_CONTAINER_REPO/coinbase-adapter:latest
+      echo "Pushing coinbase-adapter docker image to ghcr.io..."
+      docker push $BASE_CONTAINER_REPO/coinbase-adapter:latest
+      cd "$BASE_DIR"
   exit 0
   fi
 

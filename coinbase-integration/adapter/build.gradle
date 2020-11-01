@@ -1,0 +1,14 @@
+dependencies {
+    implementation "org.http4k:http4k-client-okhttp"
+
+    // Apache commons codec
+    implementation "commons-codec:commons-codec:$commonsCodecVersion"
+}
+
+jar {
+    manifest {
+        attributes(
+                'Main-Class': 'me.pysquad.cryptobot.AdapterAppKt'
+        )
+    }
+}

@@ -1,3 +1,3 @@
 rootProject.name = 'coinbase-integration'
-include 'subscriber'
+include "subscriber", "adapter"
 

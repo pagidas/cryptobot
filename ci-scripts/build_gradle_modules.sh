@@ -30,5 +30,4 @@ build_if_exists() {
 ## main script
 build_if_exists "http4k-starter"
 build_if_exists "coinbase-integration"
-build_if_exists "coinbase-adapter"
 build_if_exists "graphql"
