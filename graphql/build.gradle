@@ -37,6 +37,7 @@ dependencies {
     implementation("io.micronaut:micronaut-runtime")
     implementation("io.micronaut:micronaut-http-server-netty")
     implementation("io.micronaut:micronaut-http-client")
+    implementation("io.micronaut:micronaut-management")
     developmentOnly("io.micronaut:micronaut-runtime-osx:$micronautVersion")
 
     // RethinkDB

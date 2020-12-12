@@ -3,7 +3,7 @@ coinbase_adapter:
     auth: /api/auth
     subscriptions: /api/subscriptions
     host: localhost
-    port: 9000
+    port: 8080
     subscribe_body:
         type: Subscribe
         productIds: []
@@ -17,12 +17,12 @@ rethinkdb:
 
 graphql:
     host: localhost
-    port: 9090
+    port: 8080
     endpoints:
         base: /graphql
 
 coinbase_subscriber:
     host: localhost
-    port: 9999
+    port: 8080
     endpoints:
         subscribe: /subscribe

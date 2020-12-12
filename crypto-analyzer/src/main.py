@@ -7,9 +7,6 @@ from cryptonator import Cryptonator
 
 
 def main():
-    print("==================================")
-    print("HELLO!! -- CRYPTO-ANALYZER SERVICE")
-    print("==================================")
     time.sleep(1)
     print("Reading config file...")
     handler = ConfigHandler()

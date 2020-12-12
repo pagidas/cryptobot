@@ -1,8 +1,16 @@
 micronaut:
   server:
-    port: ${GRAPHQL_PORT:9090}
+    port: 8080
   application:
     name: graphql
+
+endpoints:
+  health:
+    enabled: true
+    sensitive: false
+    details-visible: ANONYMOUS
+    url:
+      enabled: true
 
 graphql:
   path: /graphql

@@ -1,61 +1,84 @@
 version: "3"
 
 services:
-  realtime-db:
+  rethinkdb:
     image: rethinkdb:2.4.0
     container_name: rethinkdb
-    restart: always
+    hostname: rethinkdb
     ports:
-    - 8000:8080
-    - 28015:28015
+      - "${RETHINKDB_PORT}:8080"
+      - "28015:28015"
+    restart: always
   db-initializer:
     build: ./db-initializer
     depends_on:
-      - realtime-db
+      - rethinkdb
     environment:
-      RETHINK_HOST: ${RETHINK_DB_HOST}
+      RETHINK_HOST: rethinkdb
     container_name: db-initializer
   graphql:
     image: ghcr.io/pagidas/graphql
-    depends_on:
-      - realtime-db
-    environment:
-      RETHINK_HOST: ${RETHINK_DB_HOST}
     container_name: graphql
-    restart: always
+    hostname: graphql
     ports:
-    - 9090:9090
+      - "${GRAPHQL_PORT}:8080"
+    environment:
+      RETHINK_HOST: rethinkdb
+    depends_on:
+      - rethinkdb
+    restart: always
+    healthcheck:
+      test: curl -f http://localhost:8080/health || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   coinbase-subscriber:
     image: ghcr.io/pagidas/coinbase-subscriber
-    depends_on:
-      - realtime-db
-    environment:
-      RETHINK_HOST: ${RETHINK_DB_HOST}
-    container_name: coinbase_subscriber
-    restart: always
+    container_name: coinbase-subscriber
+    hostname: coinbase-subscriber
     ports:
-    - 9999:9999
+      - "${CB_SUBSCRIBER_PORT}:8080"
+    environment:
+      RETHINKDB_HOST: rethinkdb
+    depends_on:
+      - rethinkdb
+    restart: always
+    healthcheck:
+      test: curl -f http://localhost:8080/health || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   coinbase-adapter:
     image: ghcr.io/pagidas/coinbase-adapter
+    container_name: coinbase-adapter
+    hostname: coinbase-adapter
+    ports:
+      - "${CB_ADAPTER_PORT}:8080"
     environment:
       CB_SANDBOX_API_KEY: ${CB_SANDBOX_API_KEY}
       CB_SANDBOX_API_SECRET: ${CB_SANDBOX_API_SECRET}
       CB_SANDBOX_API_PASSPHRASE: ${CB_SANDBOX_API_PASSPHRASE}
-    container_name: coinbase_adapter
     restart: always
-    ports:
-    - 9000:9000
+    healthcheck:
+      test: curl -f http://localhost:8080/health || exit 1
+      interval: 3s
+      timeout: 10s
+      retries: 3
+      start_period: 5s
   crypto-analyzer:
     image: ghcr.io/pagidas/crypto-analyzer
-    depends_on:
-      - realtime-db
-      - coinbase-adapter
-    container_name: crypto_analyzer
-    restart: always
+    container_name: crypto-analyzer
+    hostname: crypto-analyzer
     environment:
-      RETHINK_DB_HOST: ${RETHINK_DB_HOST}
+      RETHINK_DB_HOST: rethinkdb
+      CB_HOST: coinbase-adapter
+      CB_SUBSCRIBER_HOST: coinbase-subscriber
+      GQL_HOST: graphql
       COINBASE_ADAPTER_BASIC_AUTH_USER: ${COINBASE_ADAPTER_BASIC_AUTH_USER}
       COINBASE_ADAPTER_BASIC_AUTH_PWD: ${COINBASE_ADAPTER_BASIC_AUTH_PWD}
-      CB_HOST: ${CB_HOST}
-      GQL_HOST: ${GQL_HOST}
-      CB_SUBSCRIBER_HOST: ${CB_SUBSCRIBER_HOST}
+    depends_on:
+      - rethinkdb
+      - coinbase-adapter
+    restart: always
