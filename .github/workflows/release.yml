@@ -3,6 +3,8 @@ name: Build and Publish images
 on:
   push:
     branches: [ master ]
+    paths-ignore:
+      - '**/README.md'
 
 jobs:
   release:
