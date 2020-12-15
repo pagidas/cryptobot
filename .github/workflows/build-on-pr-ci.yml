@@ -5,6 +5,7 @@ on:
     branches: [ master ]
     paths-ignore:
       - '**/README.md'
+      - '.github/'
 
 jobs:
   build-gradle-modules:
