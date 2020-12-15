@@ -74,15 +74,15 @@ or
  docker-compose up -d
  ```
 
- there is also a command to force-build the images from scratch
+ There is also a command to download the latest images from github container registry, and not use the ones already cached in docker. Simply by adding the `fetch-new` argument in the following script
  ```shell
- docker-compose build
+ ./spin_all fetch-new
  ```
  
- connect to `localhost:8080` and it will prompt you to a rethinkdb gui where you can
+ Connect to `localhost:8080` and it will prompt you to a rethinkdb gui where you can
  watch the messages stored when retrieved from coinbase open api websocket.
  
- once you have done your testing you can run:
+ After you have done your testing you can run:
  ```shell
 ./stop_all_and_cleanup
  ```
