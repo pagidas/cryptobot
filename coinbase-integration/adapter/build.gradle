@@ -5,10 +5,12 @@ dependencies {
     implementation "commons-codec:commons-codec:$commonsCodecVersion"
 }
 
+group 'me.pysquad.cryptobot.adapter'
+
 jar {
     manifest {
         attributes(
-                'Main-Class': 'me.pysquad.cryptobot.AdapterAppKt'
+                'Main-Class': 'me.pysquad.cryptobot.adapter.ApplicationKt'
         )
     }
 }

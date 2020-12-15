@@ -9,8 +9,6 @@ subprojects {
     apply plugin: "org.jetbrains.kotlin.jvm"
     apply plugin: "com.github.johnrengelman.shadow"
 
-    group 'me.pysquad.cryptobot'
-
     repositories {
         mavenLocal()
         mavenCentral()
@@ -25,7 +23,7 @@ subprojects {
 
         // http4k
         // custom http4k starter
-        implementation "me.pysquad.cryptobot:http4k-starter:${http4kStarterVersion}"
+        implementation "me.pysquad.cryptobot.http4k.starter:http4k-starter:${http4kStarterVersion}"
 
         implementation platform("org.http4k:http4k-bom:${http4kVersion}")
         implementation "org.http4k:http4k-core"

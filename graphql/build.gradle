@@ -6,10 +6,10 @@ plugins {
     id "application"
 }
 
-mainClassName = 'me.pysquad.cryptobot.GraphQLApplication'
+mainClassName = 'me.pysquad.cryptobot.graphql.Application'
 
 version "0.1"
-group "me.pysquad.cryptobot"
+group "me.pysquad.cryptobot.graphql"
 
 repositories {
     mavenCentral()

@@ -2,10 +2,12 @@ dependencies {
     implementation "org.http4k:http4k-client-websocket"
 }
 
+group 'me.pysquad.cryptobot.subscriber'
+
 jar {
     manifest {
         attributes(
-                'Main-Class': 'me.pysquad.cryptobot.SubscriberAppKt'
+                'Main-Class': 'me.pysquad.cryptobot.subscriber.ApplicationKt'
         )
     }
 }

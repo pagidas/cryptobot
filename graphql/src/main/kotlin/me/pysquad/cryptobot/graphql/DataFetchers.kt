@@ -2,9 +2,9 @@ package me.pysquad.cryptobot.graphql
 
 import graphql.schema.DataFetcher
 import graphql.schema.DataFetchingEnvironment
-import me.pysquad.cryptobot.model.CoinbaseMessage
-import me.pysquad.cryptobot.model.ProductIds
-import me.pysquad.cryptobot.repo.MessagesRepoImpl
+import me.pysquad.cryptobot.graphql.model.CoinbaseMessage
+import me.pysquad.cryptobot.graphql.model.ProductIds
+import me.pysquad.cryptobot.graphql.repo.MessagesRepoImpl
 import javax.inject.Singleton
 
 @Singleton
