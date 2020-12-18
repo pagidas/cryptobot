@@ -1,13 +1,25 @@
 version: "3"
 
 services:
+  nginx:
+    image: nginx:1.19.6-alpine
+    container_name: gateway
+    hostname: gateway
+    ports:
+      - "${GATEWAY_PORT}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+    depends_on:
+      - coinbase-subscriber
+      - coinbase-adapter
+      - graphql
   rethinkdb:
     image: rethinkdb:2.4.0
     container_name: rethinkdb
     hostname: rethinkdb
     ports:
       - "${RETHINKDB_PORT}:8080"
-      - "28015:28015"
+    #      - "28015:28015"
     restart: always
   db-initializer:
     build: ./db-initializer
