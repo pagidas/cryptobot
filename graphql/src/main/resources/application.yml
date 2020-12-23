@@ -13,7 +13,7 @@ endpoints:
       enabled: true
 
 graphql:
-  path: /graphql
+  path: /
   # if enabled, this is a webapp client to send graphql requests
   graphiql:
     enabled: true
