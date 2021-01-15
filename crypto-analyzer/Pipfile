@@ -12,6 +12,7 @@ pandas = "*"
 numpy = "*"
 scipy = "*"
 pyaml = "*"
+envyaml = "*"
 
 [requires]
 python_version = "3.8"
