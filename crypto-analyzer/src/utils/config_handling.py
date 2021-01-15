@@ -7,7 +7,7 @@ class ConfigHandler:
 
     def __init__(self):
         try:
-            with open("./resources/analyzer_configuration.yml",
+            with open("./resources/env.yml",
                       "r") as config_file:
                 self.config_data = yaml.load(config_file, Loader=yaml.Loader)
         except OSError as err:
