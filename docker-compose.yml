@@ -80,16 +80,12 @@ services:
       retries: 3
       start_period: 5s
   crypto-analyzer:
-    image: ghcr.io/pagidas/crypto-analyzer
+    # image: ghcr.io/pagidas/crypto-analyzer
+    build: ./crypto-analyzer
     container_name: crypto-analyzer
     hostname: crypto-analyzer
     environment:
-      RETHINK_DB_HOST: rethinkdb
-      CB_HOST: coinbase-adapter
-      CB_SUBSCRIBER_HOST: coinbase-subscriber
-      GQL_HOST: graphql
-      COINBASE_ADAPTER_BASIC_AUTH_USER: ${COINBASE_ADAPTER_BASIC_AUTH_USER}
-      COINBASE_ADAPTER_BASIC_AUTH_PWD: ${COINBASE_ADAPTER_BASIC_AUTH_PWD}
+      GATEWAY_HOST: gateway
     depends_on:
       - rethinkdb
       - coinbase-adapter
