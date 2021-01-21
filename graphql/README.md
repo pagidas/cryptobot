@@ -9,7 +9,7 @@ These price fluctuations are contained in `messages` table in
 
 ### Types of queries
 
-`POST at index /` along with body:
+`POST /` along with body:
 ```graphql
 {
   messages {
@@ -22,7 +22,7 @@ These price fluctuations are contained in `messages` table in
 ```
 fetches all messages, only listing the fields supplied in the block. 
 
-`POST at index /` along with body:
+`POST /` along with body:
 ```graphql
 {
   messages(mostRecent: 5) {
@@ -34,6 +34,14 @@ fetches all messages, only listing the fields supplied in the block.
 ```
 fetches a collection of ***most recent*** messages (given the number after `mostRecent`),
 listing only fields supplied in the block.
+
+`POST /` along with body:
+```graphql
+{
+  subscriptions
+}
+```
+fetches the ***coinbase*** product ids we are subsribed to.
 
 ## To Run Locally
 
