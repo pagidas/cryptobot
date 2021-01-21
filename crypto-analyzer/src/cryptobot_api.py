@@ -14,16 +14,28 @@ if __name__ == "__main__":
     env = EnvYAML("./resources/env.yml")
 
     # create http_client
-    http_client = HttpClient(env['gateway_host'], 80)
+    http_client = HttpClient(env['gateway_host'], env['gateway_port'])
 
     # create graphql_client
-    graphql_client = GraphqlClient(env['gateway_host'], 80)
+    graphql_client = GraphqlClient(env['gateway_host'], env['gateway_port'])
 
     # check if there are current subscriptions
     # response = graphql_client.get_subs("/subscriptions", "POST")
+    response = graphql_client.send_request(
+        "/view",
+        "POST",
+        '{"query":"{\\n    subscriptions\\n}","variables":{}}'
+    )
+    subscriptions = response.json()['data'].get('subscriptions')
+    # print(subscriptions)
 
-    #subscibe
-    body = parse_product_to_http(Product("BTC-EUR"))
-    http_client.send_http_request("/subscribe", "POST", body)
+    # create product to subscribe
+    btc_eur_product = Product("BTC-EUR")
+
+    if btc_eur_product.title not in subscriptions:
+        #subscibe
+        body = parse_product_to_http(btc_eur_product)
+        response = http_client.send_http_request("/subscribe", "POST", body)
+        print(response.status_code)
 
     # start cryptonator

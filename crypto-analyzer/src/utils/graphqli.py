@@ -3,42 +3,47 @@ import requests
 
 class GraphqlClient:
     """
-        This is a client class. It communicates with the graphql server and
+        This is a client class. It communicates with the proxy server and
         requests various data fetches from rethinkdb.
     """
-    def __init__(self, handler):
-        self.handler = handler
+    def __init__(self, host, port):
+        self.base = "http://{}:{}".format(host, port)
 
-    def get_subs(self):
+    def send_request(self, endpoint, method, payload):
+        url = self.base + endpoint
+        headers = {
+            'Content-Type': 'application/json'
+        }
+        return requests.request(method, url, headers=headers, data=payload)
+
+    def get_subs(self, endpoint, method):
         """
         Speaks with graphql service to receive all current subscriptions
-        :return: a list of strings representing the active subs.
-        For example, ['BTC-EUR']
+        :param endpoint: the endpoint for getting current subscriptions
+        :param method: the method of the request
+        :return: http response.
         """
-        url = self.handler.graphql_subscriptions_endpoint
-        print("Getting subscriptions from {}".format(url))
+        url = self.base + endpoint
         payload = '{"query":"{\\n    subscriptions\\n}","variables":{}}'
         headers = {
             'Content-Type': 'application/json'
         }
-        response = requests.request("POST", url, headers=headers, data=payload)
+        return requests.request(method, url, headers=headers, data=payload)
 
-        return response.json()['data']['subscriptions']
-
-    def get_most_recent_messages(self, number):
+    def get_most_recent_messages(self, endpoint, method, number=100):
         """
         In this function we request from graphql service to fetch the most
         recent messages from rethinkdb
-        :param number: is the number of most recent messages
-        :return: a list of dictionaries
+        :param endpoint: the endpoint for getting recent messages from graphql server
+        :param method: the method of the request
+        :param number: is the number of most recent messages (default is 100)
+        :return: http response.
         """
-        url = self.handler.graphql_most_recent_endpoint
-        payload = "{{\"query\":\"{{\\n  messages(mostRecent: {}) {{\\n    productId\\n    price\\n    time\\n  }}\\n}}\",\"variables\":{{}} }}".format(number)
+        url = self.base + endpoint
+        payload = "{{\"query\":\"{{\\n  messages(mostRecent: {}) {{\\n    productId\\n    price\\n    time\\n  " \
+                  "}}\\n}}\",\"variables\":{{}} }}".format(number)
         headers = {
             'Content-Type': 'application/json'
         }
 
-        response = requests.request("POST", url, headers=headers, data=payload)
-
-        return response.json()['data']['messages']
-
+        return requests.request(method, url, headers=headers, data=payload)
