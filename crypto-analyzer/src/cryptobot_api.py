@@ -2,6 +2,7 @@ from envyaml import EnvYAML
 from utils.http import HttpClient
 from utils.graphqli import GraphqlClient
 from model.market import Product
+from cryptonator import Cryptonator
 
 
 def parse_product_to_http(product):
@@ -14,10 +15,10 @@ if __name__ == "__main__":
     env = EnvYAML("./resources/env.yml")
 
     # create http_client
-    http_client = HttpClient(env['gateway_host'], env['gateway_port'])
+    http_client = HttpClient(env['gateway']['host'], env['gateway']['port'])
 
     # create graphql_client
-    graphql_client = GraphqlClient(env['gateway_host'], env['gateway_port'])
+    graphql_client = GraphqlClient(env['gateway']['host'], env['gateway']['port'])
 
     # check if there are current subscriptions
     # response = graphql_client.get_subs("/subscriptions", "POST")
@@ -39,3 +40,5 @@ if __name__ == "__main__":
         print(response.status_code)
 
     # start cryptonator
+    cryptonator = Cryptonator(graphql_client)
+    cryptonator.start()

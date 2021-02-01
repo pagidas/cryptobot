@@ -17,9 +17,14 @@ class Cryptonator:
         while True:
             time.sleep(1)
 
-            list_of_messages = self.gql_client.get_most_recent_messages(50)
-            # print(list_of_messages)
+            response = self.gql_client.send_request(
+                "/view",
+                "POST",
+                "{{\"query\":\"{{\\n  messages(mostRecent: {}) {{\\n    productId\\n    price\\n    time\\n  }}\\n}}\",\"variables\":{{}} }}".format(50)
+            )
+            # print(response.json())
 
+            list_of_messages = response.json()['data'].get('messages')
             last_prices = self.parse_messages(list_of_messages)
             # print(last_prices)
             if last_prices is []:
@@ -30,9 +35,11 @@ class Cryptonator:
             buy_prices = get_buy_price(last_prices)
             sell_prices = get_sell_price(last_prices)
 
-            for bprice, sprice in zip(buy_prices, sell_prices):
-                broker.open_order(0.01, bprice, 'buy')
-                broker.open_order(0.01, sprice, 'sell')
+            for price in buy_prices:
+                broker.open_order(0.01, price, 'buy')
+
+            for price in sell_prices:
+                broker.open_order(0.01, price, 'sell')
 
             print("{}, {}, {}".format(broker.budget, broker.coins, broker.open_orders))
 
