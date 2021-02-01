@@ -3,10 +3,10 @@ from simulation.order import SellOrder, BuyOrder
 
 class Sim:
 
-    def __init__(self, budget=200000):
+    def __init__(self, fiat=200000, coins=5):
         self._open_orders = list()
-        self.budget = budget
-        self.coins = 0
+        self.budget = fiat
+        self.coins = coins
 
     @property
     def open_orders(self):
