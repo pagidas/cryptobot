@@ -34,6 +34,8 @@ class Predictor:
         self.forecasts = pd.Series(index = self.test_index)
         # init empty panda dataframe that will contain the lagged forecasted values
         self.forecast_frame = pd.DataFrame(np.nan, index=self.test_index, columns=range(self.n_lags))
+        # set a linear regression model that will fit the forecasting values
+        self.linear_reg = LinearRegression()
 
     def forecasting(self):
         """
@@ -69,12 +71,15 @@ class Predictor:
         self.forecast_frame.iloc[0, 1:] = train_x.iloc[-1, :-1].values
         self.forecast_frame.iloc[0, 0] = train_y.iloc[-1]
 
-        for i in range(self.horizon-1):
+        for i in range(self.horizon):
             pred = self.model.predict(self.forecast_frame.iloc[i, :].values.reshape(1, -1))
             pred_num = self.get_mean_from_class(pred[0])
             self.forecasts.iloc[i] = pred_num
-            self.forecast_frame.iloc[i + 1, 1:] = self.forecast_frame.iloc[i, :-1].values
-            self.forecast_frame.iloc[i + 1, 0] = pred[0]
+            try:
+                self.forecast_frame.iloc[i + 1, 1:] = self.forecast_frame.iloc[i, :-1].values
+                self.forecast_frame.iloc[i + 1, 0] = pred[0]
+            except:
+                pass
         # retransform the forecasts for final prediction
         self.trend_test = np.arange(len(self.train_index), len(self.train_index) + len(self.test_index)).reshape(-1, 1)
         self.final_forecast = self.forecasts.cumsum() * ((self.trend_test + 1) ** (1 / 2)).reshape(-1) + self.data.iloc[-1]
@@ -123,4 +128,12 @@ class Predictor:
         """
             :return: (boolean) indicate if there should be put a buy order or not in the current timestep
         """
-        pass
+        # call the forecasting procedure to create forecast for future unseen data
+        self.forecasting()
+        # fit a linear regressor to the forecasting values
+        self.linear_reg.fit(self.final_forecast.values.reshape(-1, 1), self.final_forecast.index)
+        # check if the slope is positive or negative to decide buy order
+        if np.sign(self.linear_reg.coef_):
+            return True
+        else:
+            return False
