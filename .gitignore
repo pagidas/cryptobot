@@ -206,5 +206,5 @@ __pycache__/
 *.so
 
 # Hugo
-/public.
-/resources/_gen/
+**/public/
+**/resources/_gen/
