@@ -1,0 +1,29 @@
+baseURL = "/"
+languageCode = "en-US"
+defaultContentLanguage = "en"
+
+title = "Cryptobot Documentaion"
+theme = "hugo-theme-learn"
+themesdir = "themes/"
+metaDataFormat = "yaml"
+defaultContentLanguageInSubdir = true
+
+[params]
+themeVariant = "blue"
+showVisitedLinks = false
+disableBreadcrumb = false
+disableNextPrev = false
+disableLandingPageButton = true
+disableMermaid = false
+disableInlineCopyToClipBoard = true
+customMermaidURL = "https://unpkg.com/mermaid@8.8.0/dist/mermaid.min.js"
+titleSeparator = "::"
+
+[outputs]
+home = [ "HTML", "RSS", "JSON"]
+
+[[Languages.en.menu.shortcuts]]
+name = "<i class='fab fa-fw fa-github'></i> GitHub repo"
+identifier = "ds"
+url = "https://github.com/pagidas/cryptobot"
+weight = 10
