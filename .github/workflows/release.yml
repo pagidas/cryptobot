@@ -6,6 +6,8 @@ on:
     paths-ignore:
       - '**/README.md'
       - '.github/'
+      - 'netlify.toml'
+      - 'docs/'
 
 jobs:
   release:
