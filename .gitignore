@@ -204,3 +204,7 @@ __pycache__/
 
 # C extensions
 *.so
+
+# Hugo
+**/public/
+**/resources/_gen/
