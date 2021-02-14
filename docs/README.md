@@ -1,2 +1,4 @@
-# README
-[![Netlify Status](https://api.netlify.com/api/v1/badges/20f27746-3748-4042-b2be-ae698bd641dc/deploy-status)](https://app.netlify.com/sites/cryptobot-docs/deploys)
+# Hi!
+
+This is the `Hugo` project which lets us, using markdown, to generate
+nice pages to view for our documentation.
