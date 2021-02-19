@@ -124,14 +124,14 @@ class NaiveBayes:
         lagged_frame = pd.concat(lagged_list, 1).dropna()
         return lagged_frame
 
-    def should_I_buy(self):
+    def should_buy(self):
         """
             :return: (boolean) indicate if there should be put a buy order or not in the current timestep
         """
         # call the forecasting procedure to create forecast for future unseen data
         self.forecasting()
         # fit a linear regressor to the forecasting values
-        self.linear_reg.fit(self.final_forecast.values.reshape(-1, 1), fetself.final_forecast.index)
+        self.linear_reg.fit(self.final_forecast.values.reshape(-1, 1), self.final_forecast.index)
         # check if the slope is positive or negative to decide buy order
         if np.sign(self.linear_reg.coef_):
             return True
