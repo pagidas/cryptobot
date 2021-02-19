@@ -3,7 +3,8 @@ import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LinearRegression
 
-class Predictor:
+
+class NaiveBayes:
     """
         Predictor class is the class that tries to predict the trend in the data that is given as input.
     """
@@ -78,8 +79,8 @@ class Predictor:
             try:
                 self.forecast_frame.iloc[i + 1, 1:] = self.forecast_frame.iloc[i, :-1].values
                 self.forecast_frame.iloc[i + 1, 0] = pred[0]
-            except:
-                pass
+            except IndexError:
+                passrn
         # retransform the forecasts for final prediction
         self.trend_test = np.arange(len(self.train_index), len(self.train_index) + len(self.test_index)).reshape(-1, 1)
         self.final_forecast = self.forecasts.cumsum() * ((self.trend_test + 1) ** (1 / 2)).reshape(-1) + self.data.iloc[-1]
@@ -99,7 +100,6 @@ class Predictor:
         preprocessed_data = trend_removed / ((t_timeseries + 1) ** (1 / 2)).reshape(-1)
         # preprocessed_data = preprocessed_data[5:]
         return pd.Series(preprocessed_data)
-
 
     def binning_data(self, data):
         """
@@ -131,7 +131,7 @@ class Predictor:
         # call the forecasting procedure to create forecast for future unseen data
         self.forecasting()
         # fit a linear regressor to the forecasting values
-        self.linear_reg.fit(self.final_forecast.values.reshape(-1, 1), self.final_forecast.index)
+        self.linear_reg.fit(self.final_forecast.values.reshape(-1, 1), fetself.final_forecast.index)
         # check if the slope is positive or negative to decide buy order
         if np.sign(self.linear_reg.coef_):
             return True
