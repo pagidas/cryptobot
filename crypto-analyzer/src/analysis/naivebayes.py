@@ -1,4 +1,4 @@
-import numpy as np
+git import numpy as np
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LinearRegression
@@ -80,7 +80,7 @@ class NaiveBayes:
                 self.forecast_frame.iloc[i + 1, 1:] = self.forecast_frame.iloc[i, :-1].values
                 self.forecast_frame.iloc[i + 1, 0] = pred[0]
             except IndexError:
-                passrn
+                pass
         # retransform the forecasts for final prediction
         self.trend_test = np.arange(len(self.train_index), len(self.train_index) + len(self.test_index)).reshape(-1, 1)
         self.final_forecast = self.forecasts.cumsum() * ((self.trend_test + 1) ** (1 / 2)).reshape(-1) + self.data.iloc[-1]
