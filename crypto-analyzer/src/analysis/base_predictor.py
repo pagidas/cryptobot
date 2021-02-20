@@ -14,6 +14,14 @@ class BasePredictor(ABC):
     def forecasting(self):
         raise NotImplementedError()
 
+    @abstractmethod
+    def should_buy(self):
+        raise NotImplementedError()
+
+    @abstractmethod
+    def should_sell(self):
+        raise NotImplementedError()
+
     @property
     def data(self):
         return self._data
