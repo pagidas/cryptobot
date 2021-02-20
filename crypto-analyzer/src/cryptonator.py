@@ -14,6 +14,7 @@ class Cryptonator:
         self._predictor = None
 
     def start(self, predictor_cls):
+        print("test-change")
         broker = Sim(coins=0)
         self._init_predictor(predictor_cls, 20)  # Horizon value is half the length of the timeseries
 
