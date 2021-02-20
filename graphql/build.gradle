@@ -102,6 +102,8 @@ shadowJar {
     mergeServiceFiles()
 }
 
+tasks.build.dependsOn tasks.shadowJar
+
 tasks.withType(JavaExec) {
     classpath += configurations.developmentOnly
     jvmArgs('-XX:TieredStopAtLevel=1', '-Dcom.sun.management.jmxremote')
