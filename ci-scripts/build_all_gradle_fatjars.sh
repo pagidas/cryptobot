@@ -20,7 +20,7 @@ build_if_exists() {
 
     cd ../"$folder"
     echo "Building $folder..."
-    ./gradlew clean build shadowJar
+    ./gradlew clean build
     cd "$BASE_DIR"
   fi
 }

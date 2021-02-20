@@ -47,7 +47,10 @@ interface Http4kApp {
 
         // builds tapping request filter
         val tapReqFilter = RequestFilters.Tap { req ->
-            logger.debug("${req.method} ${req.uri}")
+            if (req.uri.path.contentEquals("/health"))
+                logger.trace("${req.method} ${req.uri}")
+            else
+                logger.debug("${req.method} ${req.uri}")
         }
 
         // applies the filter to routes
