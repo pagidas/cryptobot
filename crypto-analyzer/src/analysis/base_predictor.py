@@ -11,11 +11,7 @@ class BasePredictor(ABC):
         self.trend_evaluator = LinearRegression()
 
     @abstractmethod
-    def should_sell(self, recent_prices):
-        raise NotImplementedError()
-
-    @abstractmethod
-    def should_buy(self, recent_prices):
+    def forecasting(self):
         raise NotImplementedError()
 
     @property
