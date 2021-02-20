@@ -1,4 +1,4 @@
-from simulation.order import SellOrder, BuyOrder
+from .order import SellOrder, BuyOrder
 
 
 class Sim:
@@ -7,6 +7,7 @@ class Sim:
         self._open_orders = list()
         self.budget = fiat
         self.coins = coins
+        self.profile_history = list()
 
     @property
     def open_orders(self):
@@ -20,6 +21,12 @@ class Sim:
             "open_orders": [str(order) for order in self._open_orders]
         }
 
+    @property
+    def performance(self):
+        delta = self.profile_history[-1] - self.profile_history[0]
+        perc = delta / self.profile_history[0] * 100
+        return f"Change: {delta}€\nPercentage: {perc}%"
+
     def open_order(self, size, price, side):
         my_order = None
 
@@ -32,6 +39,7 @@ class Sim:
             self._open_orders.append(my_order)
 
     def update_orders(self, price):
+        self.profile_history.append(self.budget + self.coins * price)
         closing_orders = []
         for order in self._open_orders:
             if order.is_covered(price):

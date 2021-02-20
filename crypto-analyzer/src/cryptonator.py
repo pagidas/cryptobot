@@ -14,7 +14,7 @@ class Cryptonator:
         self._predictor = None
 
     def start(self, predictor_cls):
-        broker = Sim()
+        broker = Sim(coins=0)
         self._init_predictor(predictor_cls, 20)  # Horizon value is half the length of the timeseries
 
         prev_price = None
@@ -51,7 +51,8 @@ class Cryptonator:
                 broker.open_order(0.01, last_prices[-1] * 1.0001, 'sell')
 
             prev_price = last_prices[-1]
-            print(f"price: {last_prices[-1]}€, budget: {broker.budget}€, Coins: {broker.coins}")
+            print(f"\nprice: {last_prices[-1]}€, budget: {broker.budget}€, Coins: {broker.coins}")
+            print(broker.performance)
 
     @staticmethod
     def _parse_messages(lom):
