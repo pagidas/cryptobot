@@ -1,5 +1,5 @@
 [build]
-ignore = "git diff --quiet HEAD^ HEAD docs/"
-base = "docs/"
-publish = "public/"
-command = "hugo"
+  base = "docs/"
+  publish = "public/"
+  command = "hugo"
+  ignore = "git diff --quiet HEAD^ HEAD"
