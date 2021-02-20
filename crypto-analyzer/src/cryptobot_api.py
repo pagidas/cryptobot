@@ -3,6 +3,7 @@ from utils.http import HttpClient
 from utils.graphqli import GraphqlClient
 from model.market import Product
 from cryptonator import Cryptonator
+from analysis.naivebayes import NaiveBayes
 
 
 def parse_product_to_http(product):
@@ -41,4 +42,4 @@ if __name__ == "__main__":
 
     # start cryptonator
     cryptonator = Cryptonator(graphql_client)
-    cryptonator.start()
+    cryptonator.start(NaiveBayes)

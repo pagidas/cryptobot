@@ -2,7 +2,7 @@ import numpy as np
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LinearRegression
-from analysis.base_predictor import BasePredictor
+from .base_predictor import BasePredictor
 
 
 class NaiveBayes(BasePredictor):
