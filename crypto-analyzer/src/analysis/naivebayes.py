@@ -2,24 +2,24 @@ import numpy as np
 import pandas as pd
 from sklearn.naive_bayes import GaussianNB
 from sklearn.linear_model import LinearRegression
+from analysis.base_predictor import BasePredictor
 
 
-class NaiveBayes:
+class NaiveBayes(BasePredictor):
     """
-        Predictor class is the class that tries to predict the trend in the data that is given as input.
+    Predictor class is the class that tries to predict the trend in the data that is given as input.
     """
 
     def __init__(self, timeseries, horizon, preprocess=True, n_bins=10, n_lags=12):
         """
-            :param timeseries: (python list or numpy array) input that contains the prices data in time
-            :param horizon: integer that indicates the number of predicted values
-            :param n_lags: (int) number of lag timeseries that will be used to fit the model
-            :param n_bins: (int) number of bins that will be used to bin the data
-            :param preprocess: (boolean) indicates whether there will be preprocess or not
+        :param timeseries: (python list or numpy array) input that contains the prices data in time
+        :param horizon: integer that indicates the number of predicted values
+        :param n_lags: (int) number of lag timeseries that will be used to fit the model
+        :param n_bins: (int) number of bins that will be used to bin the data
+        :param preprocess: (boolean) indicates whether there will be preprocess or not
         """
-        self.data = pd.Series(np.array(timeseries))
+        super().__init__(timeseries, horizon)
         self.preprocess = preprocess
-        self.horizon = horizon
         self.n_bins = n_bins
         self.n_lags = n_lags
         self.bin_means = {}
@@ -44,19 +44,19 @@ class NaiveBayes:
         """
         # preprocess timeseries by removing the trend and heteroscedasticity
         if self.preprocess:
-            self.preprocessed_data = self.preprocess_data(self.data)
+            self.preprocessed_data = self.preprocess_data()
 
         # bin the data
-        binned_series = self.binning_data(self.preprocessed_data)
+        self.binned_series = self.binning_data()
         # map the category of each interval to the mean of the values in that interval
         for binn in range(1, self.n_bins + 1):
-            self.bin_means[binn] = self.preprocessed_data[binned_series.to_numpy() == binn].mean()
+            self.bin_means[binn] = self.preprocessed_data[self.binned_series.to_numpy() == binn].mean()
         # create lagged timeseries frame from data
-        lagged_frame = self.create_lagged_frame(binned_series, self.n_lags)
+        self.lagged_frame = self.create_lagged_frame()
 
         # set train and target timeseries from lagged frame to fit the model
-        train_x = lagged_frame.iloc[:, 1:]
-        train_y = lagged_frame.iloc[:, 0]
+        train_x = self.lagged_frame.iloc[:, 1:]
+        train_y = self.lagged_frame.iloc[:, 0]
 
         self.model.fit(train_x, train_y)
         insample_predictions = self.model.predict(train_x)
@@ -86,47 +86,52 @@ class NaiveBayes:
         self.final_forecast = self.forecasts.cumsum() * ((self.trend_test + 1) ** (1 / 2)).reshape(-1) + self.data.iloc[-1]
 
     def get_mean_from_class(self, prediction):
+        """
+        :param prediction: (float) prediction value
+        :return: (int) map of predicted value to one the predefined bins
+        """
         return self.bin_means[prediction]
 
-    def preprocess_data(self, data):
+    def preprocess_data(self):
         """
-            :param data: (panda Series object) input that contains the prices data in time
-            :return: (panda Series object) that contains the preprocessed data
+        :return: (panda Series object) that contains the preprocessed data
         """
         # removing the trend in the data
-        trend_removed = data.diff()
+        trend_removed = self.data.diff()
         # dealing with heteroscedasticity (variance of a variable is unequal across time) by dividing the data with √t
-        t_timeseries = np.arange(len(data)).reshape(-1, 1)
+        t_timeseries = np.arange(len(self.data)).reshape(-1, 1)
         preprocessed_data = trend_removed / ((t_timeseries + 1) ** (1 / 2)).reshape(-1)
         # preprocessed_data = preprocessed_data[5:]
         return pd.Series(preprocessed_data)
 
-    def binning_data(self, data):
+    def binning_data(self):
         """
-           :param data: (panda Series object) input that contains the prices data in time
-           :return: (panda Series object) that contains the binned data
-       """
+        :return: (panda Series object) that contains the binned data
+        """
         # bin the data
-        bins = np.linspace(data.min(), data.max(), self.n_bins)
-        binned = np.digitize(data, bins)
+        bins = np.linspace(self.preprocessed_data.min(), self.preprocessed_data.max(), self.n_bins)
+        binned = np.digitize(self.preprocessed_data, bins)
 
-        binned_series = pd.Series(binned, index=data.index)
+        binned_series = pd.Series(binned, index=self.preprocessed_data.index)
 
         return binned_series
 
-    def create_lagged_frame(self, binned_series, n_lags):
+    def create_lagged_frame(self):
+        """
+        :return: (panda DataFrame) lagged timeseries that will be used to fit naive bayes model for prediction
+        """
         # To forecast future values we use the lagged value approach
         # We create lag versions of the data series in order to create a dataset to fit our model with
         lagged_list = []
-        for s in range(n_lags+1):
-            lagged_list.append(binned_series.shift(s))
+        for s in range(self.n_lags+1):
+            lagged_list.append(self.binned_series.shift(s))
 
         lagged_frame = pd.concat(lagged_list, 1).dropna()
         return lagged_frame
 
     def should_buy(self):
         """
-            :return: (boolean) indicate if there should be put a buy order or not in the current timestep
+        :return: (boolean) indicate if there should be put a buy order or not in the current timestep
         """
         # call the forecasting procedure to create forecast for future unseen data
         self.forecasting()
@@ -137,3 +142,17 @@ class NaiveBayes:
             return True
         else:
             return False
+
+    def should_sell(self):
+        """
+        :return: (boolean) indicate if there should be put a buy order or not in the current timestep
+        """
+        # call the forecasting procedure to create forecast for future unseen data
+        self.forecasting()
+        # fit a linear regressor to the forecasting values
+        self.linear_reg.fit(self.final_forecast.values.reshape(-1, 1), self.final_forecast.index)
+        # check if the slope is positive or negative to decide buy order
+        if np.sign(self.linear_reg.coef_):
+            return False
+        else:
+            return True
