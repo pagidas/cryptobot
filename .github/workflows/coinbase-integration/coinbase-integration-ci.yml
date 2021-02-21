@@ -7,6 +7,10 @@ on:
       - 'coinbase-integration/**'
       - '!coinbase-integration/README.md'
 
+defaults:
+  run:
+    working-directory: coinbase-integration
+
 jobs:
   build-gradle-modules:
     runs-on: ubuntu-latest
