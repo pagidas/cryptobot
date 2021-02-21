@@ -56,6 +56,4 @@ subprojects {
     compileTestKotlin {
         kotlinOptions.jvmTarget = "11"
     }
-
-    tasks.build.dependsOn tasks.shadowJar
 }
