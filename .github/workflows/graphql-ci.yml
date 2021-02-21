@@ -27,4 +27,4 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle
       - name: Execute script to build all
         working-directory: ci-scripts/
-        run: bash build_gradle_modules.sh graphql
+        run: bash build_and_test.sh graphql

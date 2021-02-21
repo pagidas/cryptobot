@@ -1,12 +1,12 @@
 package me.pysquad.cryptobot.subscriber.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 
 typealias ProductIds = List<String>
 
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class CoinbaseMessage(
         var type: String = "",
         var sequence: String = "",

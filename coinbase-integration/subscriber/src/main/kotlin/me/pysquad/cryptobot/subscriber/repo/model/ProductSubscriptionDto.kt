@@ -1,11 +1,11 @@
 package me.pysquad.cryptobot.subscriber.repo.model
 
 import com.fasterxml.jackson.annotation.JsonIgnore
-import com.fasterxml.jackson.databind.PropertyNamingStrategy
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import me.pysquad.cryptobot.subscriber.model.ProductIds
 
-@JsonNaming(PropertyNamingStrategy.SnakeCaseStrategy::class)
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class ProductSubscriptionDto(
         var subId: String = "",
         var productIds: String = ""

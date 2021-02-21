@@ -9,10 +9,17 @@ folder=$1
 if [[ -d "../$folder" ]]; then
   echo "$folder gradle module is present"
 
-  if [ "$folder" == 'http4k-starter' ]; then
-    # First build and publish to local maven http4k-starter
+  if [ "$folder" == 'coinbase-integration' ]; then
+    # First build and publish to local maven http4k-starter.
+    echo "Building and publish to maven local http4k-starter..."
     cd ../http4k-starter
     ./gradlew clean build publishToMavenLocal
+    cd "$BASE_DIR"
+
+    # Build the target module dependent on http4k-starter.
+    cd ../"$folder"
+    echo "Building $folder..."
+    ./gradlew clean build -x shadowJar -x jar
     cd "$BASE_DIR"
     return 1
   fi
