@@ -1,0 +1,33 @@
+name: graphql project publish image
+
+on:
+  pull_request:
+    branches: [ master ]
+    paths:
+      - 'graphql/**'
+      - '!graphql/README.md'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v2
+      - name: Set up JDK 11
+        uses: actions/setup-java@v1
+        with:
+          java-version: '11'
+      - name: Cache Gradle packages
+        uses: actions/cache@v2
+        with:
+          path: ~/.gradle/caches
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle') }}
+          restore-keys: ${{ runner.os }}-gradle
+      - name: Build fatjar
+        working-directory: ./ci-scripts
+        run: bash build_fatjar.sh graphql
+      - name: Publish docker image to ghcr
+        working-directory: ./ci-scripts
+        run: bash build_image_and_publish.sh graphql ${{ secrets.PAT_GHCR }}
