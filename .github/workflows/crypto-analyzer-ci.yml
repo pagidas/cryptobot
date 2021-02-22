@@ -18,14 +18,29 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
+      # You can test by printing the current Python version
+      - name: Display Python version
+        run: python -c "import sys; print(sys.version)"
+      # install prerequisites for installing packages and testing
+      - name: Install prerequisites
+        run: python -m pip install --upgrade pipenv flake8 wheel
+      # Caching dependencies
+      - name: Cache Pipenv dependencies
+        uses: actions/cache@v2
+        with:
+          # This path is specific to Ubuntu
+          path: ~/.local/share/virtualenvs
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+          restore-keys: ${{ runner.os }}-pipenv-
       - name: Install dependencies
         run: |
-          pip install --upgrade pip pipenv flake8
           cd crypto-analyzer/
           pipenv install --system --deploy
       - name: Lint with flake8
         run: |
+          flake8 .
           # stop the build if there are Python syntax errors or undefined names
-          flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
+          # flake8 . --count --select=E9,F63,F7,F82 --show-source --statistics
           # exit-zero treats all errors as warnings. The GitHub editor is 127 chars wide
-          flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
+          # flake8 . --count --exit-zero --max-complexity=10 --max-line-length=127 --statistics
