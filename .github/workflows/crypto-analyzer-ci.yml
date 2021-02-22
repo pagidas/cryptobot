@@ -32,7 +32,8 @@ jobs:
           path: ~/.local/share/virtualenvs
           # Look to see if there is a cache hit for the corresponding requirements file
           key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
-          restore-keys: ${{ runner.os }}-pipenv-
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
       - name: Install dependencies
         run: |
           cd crypto-analyzer/
