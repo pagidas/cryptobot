@@ -32,7 +32,7 @@ if __name__ == "__main__":
     # print(subscriptions)
 
     # create product to subscribe
-    btc_eur_product = Product("BTC-USD")
+    btc_eur_product = Product("ETH-USD")
 
     if btc_eur_product.title not in subscriptions:
         # subscibe
