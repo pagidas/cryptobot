@@ -1,5 +1,5 @@
 import numpy as np
-from scipy.signal import argrelextrema
+# from scipy.signal import argrelextrema
 
 
 def _check_pattern(cand_prices, epsilon, p):
@@ -70,6 +70,7 @@ def get_buy_price(timeseries, epsilon=0.1, p=2):
         return prices[w[:, 2]]
     else:
         return np.array([])
+
 
 def get_sell_price(timeseries, epsilon=0.1, p=2):
     """

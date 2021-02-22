@@ -32,10 +32,10 @@ if __name__ == "__main__":
     # print(subscriptions)
 
     # create product to subscribe
-    btc_eur_product = Product("BTC-EUR")
+    btc_eur_product = Product("BTC-USD")
 
     if btc_eur_product.title not in subscriptions:
-        #subscibe
+        # subscibe
         body = parse_product_to_http(btc_eur_product)
         response = http_client.send_http_request("/subscribe", "POST", body)
         print(response.status_code)

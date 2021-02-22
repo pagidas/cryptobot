@@ -1,5 +1,5 @@
 import time
-from analysis.pattern_detection import get_buy_price, get_sell_price
+# from analysis.pattern_detection import get_buy_price, get_sell_price
 from simulation.base import Sim
 from analysis.base_predictor import BasePredictor
 
@@ -24,7 +24,8 @@ class Cryptonator:
             response = self.gql_client.send_request(
                 "/view",
                 "POST",
-                "{{\"query\":\"{{\\n  messages(mostRecent: {}) {{\\n    productId\\n    price\\n    time\\n  }}\\n}}\",\"variables\":{{}} }}".format(50)
+                "{{\"query\":\"{{\\n  messages(mostRecent: {}) {{\\n    productId\\n    price\\n    time\\n  }}\\n}}\","
+                "\"variables\":{{}} }}".format(50)
             )
             # print(response.json())
 
@@ -47,8 +48,8 @@ class Cryptonator:
 
             # TODO constraint buy orders with a better way because they are too frequent
             if self._predictor.should_buy() and last_prices[-1] != prev_price:
-                broker.open_order(0.01, last_prices[-1], 'buy')
-                broker.open_order(0.01, last_prices[-1] * 1.0001, 'sell')
+                broker.open_order(0.5, last_prices[-1], 'buy')
+                broker.open_order(0.5, last_prices[-1] * 1.001, 'sell')
 
             prev_price = last_prices[-1]
             print(f"\nprice: {last_prices[-1]}€, budget: {broker.budget}€, Coins: {broker.coins}")
@@ -74,8 +75,8 @@ class Cryptonator:
             response = self.gql_client.send_request(
                 "/view",
                 "POST",
-                "{{\"query\":\"{{\\n  messages(mostRecent: {}) {{\\n    productId\\n    price\\n    time\\n  }}\\n}}\",\"variables\":{{}} }}".format(
-                    50)
+                "{{\"query\":\"{{\\n  messages(mostRecent: {}) {{\\n    productId\\n    price\\n    time\\n  }}\\n}}\","
+                "\"variables\":{{}} }}".format(50)
             )
             # print(response.json())
 
