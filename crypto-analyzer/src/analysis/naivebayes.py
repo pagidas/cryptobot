@@ -32,7 +32,7 @@ class NaiveBayes(BasePredictor):
         # init panda series for remapped predictions within train data of the model
         self.remapped_insample_predictions = pd.Series(np.nan, index=self.train_index)
         # init empty panda series for the actual final forecasting of unknown future values of input timeseries
-        self.forecasts = pd.Series(index = self.test_index)
+        self.forecasts = pd.Series(index=self.test_index)
         # init empty panda dataframe that will contain the lagged forecasted values
         self.forecast_frame = pd.DataFrame(np.nan, index=self.test_index, columns=range(self.n_lags))
         # set a linear regression model that will fit the forecasting values

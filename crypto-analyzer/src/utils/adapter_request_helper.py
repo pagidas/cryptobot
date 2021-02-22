@@ -31,6 +31,7 @@ def subscribe_products(config_handler, *args):
     r = requests.post(subscribe_endpoint, json=body, headers=headers)
     print(r.text)
 
+
 def get_active_subs(config_handler):
     headers = {"Authorization": "Basic {}".format(
         config_handler.auth_token)}
