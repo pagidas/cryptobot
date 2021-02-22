@@ -37,7 +37,7 @@ jobs:
       - name: Install dependencies
         run: |
           cd crypto-analyzer/
-          pipenv install --system --deploy
+          pipenv install --system --deploy --verbose
       - name: Lint with flake8
         run: |
           flake8 --max-line-length 125 .
