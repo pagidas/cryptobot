@@ -1,0 +1,41 @@
+name: crypto-analyzer project publish image
+
+on:
+  push:
+    branches: [ master ]
+    paths:
+      - 'crypto-analyzer/**'
+      - '!crypto-analyzer/README.md'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    name: Publish
+
+    steps:
+      - name: Checkout
+      - uses: actions/checkout@v2
+      - name: Set up Python 3.x
+        uses: actions/setup-python@v2
+        with:
+          python-version: '3.x'
+      # install prerequisites for installing packages and testing
+      - name: Install prerequisites
+        run: python -m pip install --upgrade pipenv flake8 wheel
+      # Caching dependencies
+      - name: Cache Pipenv dependencies
+        uses: actions/cache@v2
+        with:
+          # This path is specific to Ubuntu
+          path: ~/.local/share/virtualenvs
+          # Look to see if there is a cache hit for the corresponding requirements file
+          key: ${{ runner.os }}-pipenv-${{ hashFiles('**/Pipfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-pipenv-
+      - name: Install dependencies
+        run: |
+          cd crypto-analyzer/
+          pipenv install --system --deploy
+      - name: Publish docker image to ghcr
+        working-directory: ./ci-scripts
+        run: bash build_image_and_publish.sh crypto-analyzer ${{ secrets.PAT_GHCR }}
