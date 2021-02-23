@@ -15,6 +15,7 @@ pyaml = "*"
 envyaml = "*"
 sklearn = "*"
 matplotlib = "*"
+plotly = "*"
 
 [requires]
 python_version = "3.8"
