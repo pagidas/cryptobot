@@ -16,6 +16,7 @@ envyaml = "*"
 sklearn = "*"
 matplotlib = "*"
 plotly = "*"
+dash = "==1.19.0"
 
 [requires]
 python_version = "3.8"
