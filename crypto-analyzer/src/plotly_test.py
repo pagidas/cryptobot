@@ -59,7 +59,7 @@ app.layout = html.Div([
     dcc.Graph(figure=fig, id='live-update-graph'),
     dcc.Interval(
             id='interval-component',
-            interval=5*1000, # in milliseconds
+            interval=1000,  # in milliseconds
             n_intervals=0
     )
 ])
@@ -69,13 +69,15 @@ app.layout = html.Div([
               Input('interval-component', 'n_intervals'))
 def update_graph_live(n):
     # print("T")
-    # with fig.batch_update():
-    #     fig.data[0].y = fig.data[0].y
-    fig.update_layout(
-        title_text=fig['layout'].title.text+"a"
-    )
-    fig.update(data=[{'y': [4, 5, 6]}])
+    with fig.batch_update():
+        fig.data[0].y = df.High.values[:n]
+    # fig.update_layout(
+    #     title_text=fig['layout'].title.text+"a"
+    # )
+    # fig.update(data=[{'y': [4, 5, 6]}])
     return fig
 # fig.show()
 
-app.run_server(debug=True, use_reloader=False)  # Turn off reloader if inside Jupyter
+
+# WARNING: for development purposes only use a different server for production
+app.run_server(host="0.0.0.0", port=8050, debug=True)

@@ -84,6 +84,8 @@ services:
     build: ./crypto-analyzer
     container_name: crypto-analyzer
     hostname: crypto-analyzer
+    ports:
+      - 8050:8050
     environment:
       GATEWAY_HOST: gateway
       GATEWAY_PORT: 80
