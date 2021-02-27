@@ -15,9 +15,9 @@ df.columns = [col.replace("AAPL.", "") for col in df.columns]
 # Create figure
 fig = go.Figure()
 
-fig.add_trace(
-    go.Scatter(x=list(df.Date), y=list(df.High)))
+fig.add_traces([go.Scatter(x=list(df.Date), y=list(df.High)),
 
+                go.Scatter(x=list(df.Date[20:40]), y=list(df.High[40:60]), line=dict(width=5, color='red'))])
 # Set title
 fig.update_layout(
     title_text="Time series with range slider and selectors"
@@ -47,9 +47,9 @@ fig.update_layout(
                 dict(step="all")
             ])
         ),
-        rangeslider=dict(
-            visible=True
-        ),
+        # rangeslider=dict(
+        #     visible=True
+        # ),
         type="date"
     )
 )
@@ -60,7 +60,7 @@ app.layout = html.Div([
     dcc.Interval(
             id='interval-component',
             interval=1000,  # in milliseconds
-            n_intervals=0
+            n_intervals=21 # number of interval the plot will start
     )
 ])
 
@@ -71,6 +71,9 @@ def update_graph_live(n):
     # print("T")
     with fig.batch_update():
         fig.data[0].y = df.High.values[:n]
+        # fig.data[0].x = df.Date.values[:n]
+        # fig.data[1].y = df.High.values[n:n+20]
+        # fig.data[2].x = df.Date.values[n:n+20]
     # fig.update_layout(
     #     title_text=fig['layout'].title.text+"a"
     # )
