@@ -1,12 +1,15 @@
 import plotly.graph_objects as go
 
 import pandas as pd
+from sklearn.linear_model import LinearRegression
 
 import dash
 import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
+import numpy as np
 
+reg = LinearRegression()
 # Load data
 df = pd.read_csv(
     "https://raw.githubusercontent.com/plotly/datasets/master/finance-charts-apple.csv")
@@ -15,9 +18,15 @@ df.columns = [col.replace("AAPL.", "") for col in df.columns]
 # Create figure
 fig = go.Figure()
 
-fig.add_traces([go.Scatter(x=list(df.Date), y=list(df.High)),
+forecasting = df.High[80:100]
+reg.fit(forecasting.index.values.reshape(-1,1), forecasting.values)
+# draw a line based on the slope and intercept of the forecasting
+abline = [reg.coef_[0] * i + reg.intercept_ for i in forecasting.index.values]
+fig.add_traces([go.Scatter(x=list(df.Date), y=list(df.High), name='current price'),
 
-                go.Scatter(x=list(df.Date[20:40]), y=list(df.High[40:60]), line=dict(width=5, color='red'))])
+                go.Scatter(x=list(df.Date[20:40]), y=list(forecasting), line=dict(width=3, color='red'), name='forecasting'),
+                go.Scatter(x=list(df.Date[20:40]), y=abline, line=dict(width=5, color='black'), name='linear-fit')
+                ])
 # Set title
 fig.update_layout(
     title_text="Time series with range slider and selectors"
