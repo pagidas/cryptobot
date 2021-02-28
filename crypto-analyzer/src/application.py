@@ -1,4 +1,8 @@
 import plots
+import cryptobot_api
 
-plotter = plots.Plotter()
+
+bot = cryptobot_api.initialize_cryptonator()
+plotter = plots.Plotter(bot)
+plotter.initiate_figure()
 plotter.run()

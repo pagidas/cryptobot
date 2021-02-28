@@ -1,4 +1,5 @@
 import time
+import pandas as pd
 # from analysis.pattern_detection import get_buy_price, get_sell_price
 from simulation.base import Sim
 from analysis.base_predictor import BasePredictor
@@ -12,6 +13,16 @@ class Cryptonator:
     def __init__(self, client):
         self.gql_client = client
         self._predictor = None
+
+    def get_dataframe(self, samples=10):
+        response = self.gql_client.send_request(
+            "/view",
+            "POST",
+            f"{{\"query\":\"{{\\n  messages(mostRecent: {samples}) {{\\n    productId\\n    price\\n    time\\n  }}\\n}}\", \
+            \"variables\":{{}} }}"
+        )
+        list_of_messages = response.json()['data'].get('messages')
+        return pd.DataFrame(list_of_messages)
 
     def start(self, predictor_cls):
         broker = Sim(coins=0)
