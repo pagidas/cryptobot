@@ -2,6 +2,10 @@
 
 ## Docs
 [![Netlify Status](https://api.netlify.com/api/v1/badges/20f27746-3748-4042-b2be-ae698bd641dc/deploy-status)](https://app.netlify.com/sites/cryptobot-docs/deploys)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/pagidas/cryptobot/coinbase-integration%20project%20Java%20CI?label=coinbase-integration)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/pagidas/cryptobot/graphql%20project%20Java%20CI?label=graphql)
+![GitHub Workflow Status](https://img.shields.io/github/workflow/status/pagidas/cryptobot/crypto-analyzer%20project%20Python%20CI?label=crypto-analyzer)
+[![GitHub license](https://img.shields.io/github/license/pagidas/cryptobot)](https://github.com/pagidas/cryptobot/blob/master/LICENSE)
 
 The url is shared in slack.
 
