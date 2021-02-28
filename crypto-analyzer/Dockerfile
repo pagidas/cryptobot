@@ -5,4 +5,4 @@ WORKDIR ${PROJECT_DIR}
 COPY Pipfile Pipfile.lock ${PROJECT_DIR}/
 RUN pipenv install --system --deploy
 COPY src/ ${PROJECT_DIR}/
-ENTRYPOINT ["python", "./cryptobot_api.py"]
+ENTRYPOINT ["python", "./application.py"]
