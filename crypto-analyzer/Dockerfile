@@ -5,4 +5,5 @@ WORKDIR ${PROJECT_DIR}
 COPY Pipfile Pipfile.lock ${PROJECT_DIR}/
 RUN pipenv install --system --deploy
 COPY src/ ${PROJECT_DIR}/
+EXPOSE 8050
 ENTRYPOINT ["python", "./application.py"]
