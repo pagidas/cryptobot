@@ -8,6 +8,7 @@ import dash_core_components as dcc
 import dash_html_components as html
 from dash.dependencies import Input, Output
 import numpy as np
+from scipy import interpolate
 
 reg = LinearRegression()
 # Load data
@@ -22,11 +23,22 @@ forecasting = df.High[80:100]
 reg.fit(forecasting.index.values.reshape(-1,1), forecasting.values)
 # draw a line based on the slope and intercept of the forecasting
 abline = [reg.coef_[0] * i + reg.intercept_ for i in forecasting.index.values]
+# f = interpolate.interp1d(np.arange(20, 40), abline, kind='linear')
+# xnew = np.arange(20, 39, 0.1)
+
 fig.add_traces([go.Scatter(x=list(df.Date), y=list(df.High), name='current price'),
 
                 go.Scatter(x=list(df.Date[20:40]), y=list(forecasting), line=dict(width=3, color='red'), name='forecasting'),
-                go.Scatter(x=list(df.Date[20:40]), y=abline, line=dict(width=5, color='black'), name='linear-fit')
+                go.Scatter(x=list(df.Date[20:40]), y=abline, line=dict(width=5, color='black'), name='linear-fit'),
+                # go.Scatter(x=list(df.Date[20:40]), y=f(xnew), line=dict(width=5, color='blue'), name='linear-fit'),
+                go.Indicator(mode="number+delta",
+                             value=reg.coef_[0],
+                             number={"font": {"size": 35, "color":"red"}, "suffix":"%"},
+                             title={"text": "Trend Slope", "font":{"size": 35, "color":"black"}},
+                             domain={'x': [0.75, 1], 'y': [0.75, 1]}
+                            )
                 ])
+
 # Set title
 fig.update_layout(
     title_text="Time series with range slider and selectors"
