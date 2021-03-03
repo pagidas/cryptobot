@@ -90,3 +90,10 @@ services:
       - rethinkdb
       - coinbase-adapter
     restart: always
+  crypto-plotter:
+    build:
+      ./crypto-plotter
+    container_name: crypto-plotter
+    hostname: crypto-plotter
+    ports:
+    - "${PLOTTER_PORT}:8080"
