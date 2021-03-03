@@ -19,7 +19,7 @@ services:
     hostname: rethinkdb
     ports:
       - "${RETHINKDB_PORT}:8080"
-    #      - "28015:28015"
+      - "28015:28015"
     restart: always
   db-initializer:
     build: ./db-initializer
@@ -90,3 +90,10 @@ services:
       - rethinkdb
       - coinbase-adapter
     restart: always
+  crypto-plotter:
+    build:
+      ./crypto-plotter
+    container_name: crypto-plotter
+    hostname: crypto-plotter
+    ports:
+    - "${PLOTTER_PORT}:8080"
