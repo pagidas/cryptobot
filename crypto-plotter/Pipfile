@@ -6,6 +6,7 @@ name = "pypi"
 [packages]
 dash = "*"
 rethinkdb = "*"
+dataclasses-json = "*"
 
 [dev-packages]
 
