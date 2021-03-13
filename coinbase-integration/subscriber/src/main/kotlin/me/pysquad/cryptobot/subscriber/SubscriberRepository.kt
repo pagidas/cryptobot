@@ -1,22 +1,16 @@
-package me.pysquad.cryptobot.subscriber.repo
+package me.pysquad.cryptobot.subscriber
 
 import com.fasterxml.jackson.core.type.TypeReference
 import com.rethinkdb.RethinkDB
 import com.rethinkdb.net.Connection
-import me.pysquad.cryptobot.subscriber.model.CoinbaseMessage
-import me.pysquad.cryptobot.subscriber.model.ProductIds
-import me.pysquad.cryptobot.subscriber.repo.model.ProductSubscriptionDto
-import me.pysquad.cryptobot.subscriber.rethinkdb.MESSAGES
-import me.pysquad.cryptobot.subscriber.rethinkdb.PRODUCT_SUBSCRIPTIONS
-import me.pysquad.cryptobot.subscriber.rethinkdb.RethinkDbDatasource
 
-interface SubscriberRepo {
+interface SubscriberRepository {
     fun storeMessages(messages: List<CoinbaseMessage>)
     fun getSubscriptions(): ProductIds
     fun storeSubscriptions(givenSubscriptions: ProductIds)
 
     companion object {
-        fun impl(rethinkDbDatasource: RethinkDbDatasource) = object: SubscriberRepo {
+        fun impl(rethinkDbDatasource: RethinkDbDatasource) = object: SubscriberRepository {
 
             private val conn: Connection = rethinkDbDatasource.connection
             private val r: RethinkDB = rethinkDbDatasource.ctx
@@ -27,7 +21,7 @@ interface SubscriberRepo {
             override fun getSubscriptions(): ProductIds =
                     r.table(PRODUCT_SUBSCRIPTIONS)
                             .filter { row -> row.g("sub_id").eq("coinbase-pro-subscription") }
-                            .run(conn, object: TypeReference<ProductSubscriptionDto>() {})
+                            .run(conn, object: TypeReference<CoinbaseProductSubscription>() {})
                             .next()
                             ?.productIdsAsList ?: emptyList()
 
@@ -35,7 +29,7 @@ interface SubscriberRepo {
                     r.table(PRODUCT_SUBSCRIPTIONS)
                             .filter { row -> row.g("sub_id").eq("coinbase-pro-subscription") }
                             .update {
-                                ProductSubscriptionDto(
+                                CoinbaseProductSubscription(
                                         "coinbase-pro-subscription",
                                         (getSubscriptions() union givenSubscriptions)
                                                 .joinToString(separator = ",") + ",")

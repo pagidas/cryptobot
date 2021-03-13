@@ -1,4 +1,4 @@
-package me.pysquad.cryptobot.subscriber.rethinkdb
+package me.pysquad.cryptobot.subscriber
 
 import com.rethinkdb.RethinkDB
 import com.rethinkdb.net.Connection

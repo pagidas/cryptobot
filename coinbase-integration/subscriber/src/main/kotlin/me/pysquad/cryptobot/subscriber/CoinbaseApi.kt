@@ -1,4 +1,4 @@
-package me.pysquad.cryptobot.subscriber.coinbase
+package me.pysquad.cryptobot.subscriber
 
 import org.http4k.client.WebsocketClient
 import org.http4k.websocket.WsClient
