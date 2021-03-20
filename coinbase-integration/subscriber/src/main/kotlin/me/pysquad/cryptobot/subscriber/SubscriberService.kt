@@ -1,8 +1,13 @@
 package me.pysquad.cryptobot.subscriber
 
+import com.fasterxml.jackson.annotation.JsonInclude
+import com.fasterxml.jackson.databind.PropertyNamingStrategies
+import com.fasterxml.jackson.databind.annotation.JsonNaming
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.http4k.format.Jackson.auto
+import org.http4k.lens.LensFailure
+import org.http4k.lens.LensFailures
 import org.http4k.websocket.WsMessage
 import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
@@ -63,4 +68,27 @@ class SubscriberService(
             subscriberRepository.storeMessages(coinbaseMessages)
         }
     }
+}
+
+// internal models
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+private data class CoinbaseWsSubscribeRequest(
+    val type: String,
+    val productIds: ProductIds,
+    val channels: List<String>
+)
+
+@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+private data class CoinbaseWsResponse(
+    var type: String = "",
+    var message: String = "",
+    var reason: String = "",
+    var channels: List<CoinbaseWsChannel> = emptyList()
+) {
+    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
+    data class CoinbaseWsChannel(
+        var name: String = "",
+        var productIds: ProductIds = emptyList()
+    )
 }

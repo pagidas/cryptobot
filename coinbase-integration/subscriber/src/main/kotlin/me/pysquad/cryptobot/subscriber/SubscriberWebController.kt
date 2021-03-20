@@ -24,7 +24,7 @@ class SubscriberWebController(private val subscriberService: SubscriberService) 
                 if (response.type != "error")
                     Response(Status.CREATED).with(SubscriberResponse.lens of response)
                 else
-                    Response(Status.FORBIDDEN).with(SubscriberResponse.lens of response)
+                    Response(Status.UNPROCESSABLE_ENTITY).with(SubscriberResponse.lens of response)
             }
         }
 
@@ -37,7 +37,7 @@ class SubscriberWebController(private val subscriberService: SubscriberService) 
                 if (response.type != "error")
                     Response(Status.CREATED).with(SubscriberResponse.lens of response)
                 else
-                    Response(Status.FORBIDDEN).with(SubscriberResponse.lens of response)
+                    Response(Status.UNPROCESSABLE_ENTITY).with(SubscriberResponse.lens of response)
             }
         }
 }
