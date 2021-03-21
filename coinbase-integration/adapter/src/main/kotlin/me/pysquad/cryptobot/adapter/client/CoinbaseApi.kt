@@ -15,7 +15,7 @@ interface CoinbaseApi {
 
     companion object {
         fun client(coinbaseConfig: CoinbaseConfiguration) = object : CoinbaseApi {
-            private val logger = LoggerFactory.getLogger(CoinbaseApi::class.java)
+            private val log = LoggerFactory.getLogger(this::class.java)
 
             override val baseUri: Uri = coinbaseConfig.uri
             override val httpClient: HttpHandler =
@@ -24,7 +24,7 @@ interface CoinbaseApi {
             override fun getProfiles(): CoinbaseProfiles {
                 val lens = Body.auto<CoinbaseProfiles>().toLens()
                 val response = httpClient(Request(Method.GET, "/profiles"))
-                logger.debug("Got response from coinbase api: {}, {}", response.status, response.bodyString())
+                log.debug("Got response from coinbase api: {}, {}", response.status, response.bodyString())
                 return lens(response)
             }
         }

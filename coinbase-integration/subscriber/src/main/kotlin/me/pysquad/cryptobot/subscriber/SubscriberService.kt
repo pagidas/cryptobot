@@ -6,8 +6,6 @@ import com.fasterxml.jackson.databind.annotation.JsonNaming
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import org.http4k.format.Jackson.auto
-import org.http4k.lens.LensFailure
-import org.http4k.lens.LensFailures
 import org.http4k.websocket.WsMessage
 import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
@@ -19,10 +17,10 @@ class SubscriberService(
 ) {
 
     private val objectMapper = jacksonObjectMapper().registerModule(KotlinModule())
-    private val logger = LoggerFactory.getLogger(SubscriberService::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
 
     fun subscribe(productIds: ProductIds): SubscriberResponse {
-        logger.info("Subscribing to coinbase websocket feed with products: $productIds")
+        log.info("Subscribing to coinbase websocket feed with products: $productIds")
         val request = CoinbaseWsSubscribeRequest(
                 type = coinbaseConfig.subscribeRequest.getString("type"),
                 channels = coinbaseConfig.subscribeRequest.getStringList("channels"),
@@ -34,7 +32,7 @@ class SubscriberService(
 
             send(WsMessage(request))
             val wsFeedResp = wsFeedLens.extract(received().first())
-            logger.debug("Got response from coinbase websocket feed: $wsFeedResp")
+            log.debug("Got response from coinbase websocket feed: $wsFeedResp")
 
             return if (wsFeedResp.type != "error") {
                 // right now we only send one channel, which is a 'ticker' channel
@@ -48,7 +46,7 @@ class SubscriberService(
                 )
             } else {
                 // closing websocket client
-                logger.info("Closing websocket connection with coinbase")
+                log.info("Closing websocket connection with coinbase")
                 close()
 
                 SubscriberResponse.failure(

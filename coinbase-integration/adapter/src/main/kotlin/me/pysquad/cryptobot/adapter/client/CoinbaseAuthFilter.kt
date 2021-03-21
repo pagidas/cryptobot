@@ -10,16 +10,16 @@ import javax.crypto.Mac
 import javax.crypto.spec.SecretKeySpec
 
 object CoinbaseAuthFilter {
-    private val logger = LoggerFactory.getLogger(CoinbaseAuthFilter::class.java)
+    private val log = LoggerFactory.getLogger(this::class.java)
     private const val HMAC_SHA256 = "HmacSHA256"
 
     operator fun invoke(coinbaseConfig: CoinbaseConfiguration) = Filter {
         next: HttpHandler -> {
             request: Request ->
                 with(coinbaseConfig.authentication) {
-                    logger.info("Authenticating incoming request with coinbase: {}", request)
+                    log.info("Authenticating incoming request with coinbase: {}", request)
                     val signed = request.signIt(key, secret, passphrase)
-                    logger.debug("Produced headers through auth filter {}", signed.headers)
+                    log.debug("Produced headers through auth filter {}", signed.headers)
                     next(signed)
                 }
         }

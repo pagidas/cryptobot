@@ -1,13 +1,14 @@
 package me.pysquad.cryptobot.subscriber
 
-import org.http4k.contract.ContractRoute
-import org.http4k.contract.bindContract
+import me.pysquad.cryptobot.http4k.starter.RoutingHttpHandlers
 import org.http4k.core.*
 import org.http4k.format.Jackson.auto
+import org.http4k.routing.RoutingHttpHandler
+import org.http4k.routing.bind
 
 class SubscriberWebController(private val subscriberService: SubscriberService) {
 
-    fun routes() = mutableListOf(
+    fun routes(): RoutingHttpHandlers = listOf(
         subscribe(subscriberService),
         createCoinbaseProductSubscription(subscriberService)
     )
@@ -15,8 +16,8 @@ class SubscriberWebController(private val subscriberService: SubscriberService) 
     /**
      * Should be removed once the new endpoint is merged and used from the client.
      */
-    private fun subscribe(service: SubscriberService): ContractRoute =
-        "/subscribe" bindContract Method.POST to { req: Request ->
+    private fun subscribe(service: SubscriberService): RoutingHttpHandler =
+        "/subscribe" bind Method.POST to { req: Request ->
 
             with(Body.auto<ProductIds>().toLens()) {
                 val response = service.subscribe(extract(req))
@@ -28,8 +29,8 @@ class SubscriberWebController(private val subscriberService: SubscriberService) 
             }
         }
 
-    private fun createCoinbaseProductSubscription(service: SubscriberService): ContractRoute =
-        "/coinbase-product-subscriptions" bindContract Method.POST to { req: Request ->
+    private fun createCoinbaseProductSubscription(service: SubscriberService): RoutingHttpHandler =
+        "/coinbase-product-subscriptions" bind Method.POST to { req: Request ->
 
             with(Body.auto<ProductIds>().toLens()) {
                 val response = service.subscribe(extract(req))
