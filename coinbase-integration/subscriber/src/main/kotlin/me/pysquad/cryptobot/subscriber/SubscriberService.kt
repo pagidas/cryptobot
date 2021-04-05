@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import io.vavr.control.Either
 import org.http4k.format.Jackson.auto
 import org.http4k.websocket.WsMessage
 import org.slf4j.LoggerFactory
@@ -12,18 +13,19 @@ import kotlin.concurrent.thread
 
 class SubscriberService(
     private val coinbaseApi: CoinbaseApi,
-    private val coinbaseConfig: CoinbaseConfiguration,
     private val subscriberRepository: SubscriberRepository
 ) {
 
     private val objectMapper = jacksonObjectMapper().registerModule(KotlinModule())
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    fun subscribe(productIds: ProductIds): SubscriberResponse {
+    fun createCoinbaseProductSubscription(productIds: ProductIds):
+            Either<CoinbaseProductSubscriptionFailure, CoinbaseProductSubscriptionSuccess> {
+
         log.info("Subscribing to coinbase websocket feed with products: $productIds")
         val request = CoinbaseWsSubscribeRequest(
-                type = coinbaseConfig.subscribeRequest.getString("type"),
-                channels = coinbaseConfig.subscribeRequest.getStringList("channels"),
+                type = CoinbaseRequestResponseTypes.SUBSCRIBE.name.toLowerCase(),
+                channels = listOf(CoinbaseChannelTypes.TICKER.name.toLowerCase()),
                 productIds = productIds
         ).run(objectMapper::writeValueAsString)
 
@@ -34,26 +36,19 @@ class SubscriberService(
             val wsFeedResp = wsFeedLens.extract(received().first())
             log.debug("Got response from coinbase websocket feed: $wsFeedResp")
 
-            return if (wsFeedResp.type != "error") {
+            return if (!wsFeedResp.type.equals(CoinbaseRequestResponseTypes.ERROR.name, true)) {
                 // right now we only send one channel, which is a 'ticker' channel
                 subscriberRepository.storeSubscriptions(wsFeedResp.channels.first().productIds)
+                // new thread to store received messages from websocket
                 thread { received().storeInChunks() }
 
-                SubscriberResponse.success(
-                        wsFeedResp.type,
-                        "Successfully subscribed to coinbase pro websocket feed",
-                        wsFeedResp.channels.first().productIds
-                )
+                Either.right(CoinbaseProductSubscriptionSuccess(wsFeedResp.channels.first().productIds))
             } else {
                 // closing websocket client
                 log.info("Closing websocket connection with coinbase")
                 close()
 
-                SubscriberResponse.failure(
-                        wsFeedResp.type,
-                        wsFeedResp.message,
-                        wsFeedResp.reason
-                )
+                Either.left(CoinbaseProductSubscriptionFailure(wsFeedResp.type, wsFeedResp.message, wsFeedResp.reason))
             }
         }
     }
@@ -89,4 +84,13 @@ private data class CoinbaseWsResponse(
         var name: String = "",
         var productIds: ProductIds = emptyList()
     )
+}
+
+private enum class CoinbaseRequestResponseTypes {
+    SUBSCRIBE,
+    ERROR
+}
+
+private enum class CoinbaseChannelTypes {
+    TICKER
 }

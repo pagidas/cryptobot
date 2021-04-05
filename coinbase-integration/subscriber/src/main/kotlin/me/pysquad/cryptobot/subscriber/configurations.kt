@@ -17,6 +17,5 @@ data class RethinkDbConfiguration(
 )
 
 data class CoinbaseConfiguration(
-        val wsFeedUri: Uri = Uri.of(configReader.getString("coinbase.wsFeedUri")),
-        val subscribeRequest: Config = configReader.getObject("coinbase.subscribeRequest").toConfig()
+        val wsFeedUri: Uri = Uri.of(configReader.getString("coinbase.wsFeedUri"))
 )

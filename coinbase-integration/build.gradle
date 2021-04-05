@@ -40,6 +40,9 @@ subprojects {
         // RethinkDB
         implementation "com.rethinkdb:rethinkdb-driver:$rethinkdbVersion"
 
+        // Vavr
+        implementation "io.vavr:vavr:$vavrVersion"
+
         // Logback
         compile "ch.qos.logback:logback-core:$logbackVersion"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"

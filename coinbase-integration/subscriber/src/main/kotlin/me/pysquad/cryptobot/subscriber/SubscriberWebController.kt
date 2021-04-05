@@ -20,12 +20,14 @@ class SubscriberWebController(private val subscriberService: SubscriberService) 
         "/subscribe" bind Method.POST to { req: Request ->
 
             with(Body.auto<ProductIds>().toLens()) {
-                val response = service.subscribe(extract(req))
+                val response = service.createCoinbaseProductSubscription(extract(req))
 
-                if (response.type != "error")
-                    Response(Status.CREATED).with(SubscriberResponse.lens of response)
+                if (response.isRight)
+                    Response(Status.CREATED)
+                        .with(CoinbaseProductSubscriptionSuccess.lens of response.get())
                 else
-                    Response(Status.UNPROCESSABLE_ENTITY).with(SubscriberResponse.lens of response)
+                    Response(Status.UNPROCESSABLE_ENTITY)
+                        .with(CoinbaseProductSubscriptionFailure.lens of response.left)
             }
         }
 
@@ -33,12 +35,14 @@ class SubscriberWebController(private val subscriberService: SubscriberService) 
         "/coinbase-product-subscriptions" bind Method.POST to { req: Request ->
 
             with(Body.auto<ProductIds>().toLens()) {
-                val response = service.subscribe(extract(req))
+                val response = service.createCoinbaseProductSubscription(extract(req))
 
-                if (response.type != "error")
-                    Response(Status.CREATED).with(SubscriberResponse.lens of response)
+                if (response.isRight)
+                    Response(Status.CREATED)
+                        .with(CoinbaseProductSubscriptionSuccess.lens of response.get())
                 else
-                    Response(Status.UNPROCESSABLE_ENTITY).with(SubscriberResponse.lens of response)
+                    Response(Status.UNPROCESSABLE_ENTITY)
+                        .with(CoinbaseProductSubscriptionFailure.lens of response.left)
             }
         }
 }
