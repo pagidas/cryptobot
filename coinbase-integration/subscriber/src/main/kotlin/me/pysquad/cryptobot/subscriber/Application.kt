@@ -11,7 +11,7 @@ fun main() {
         val rethinkDbConfig = RethinkDbConfiguration()
 
         val subscriberService = SubscriberService(
-                CoinbaseApi.client(coinbaseConfig),
+                CoinbaseWsApi.client(coinbaseConfig),
                 SubscriberRepository.impl(RethinkDbDatasource(rethinkDbConfig))
         )
 

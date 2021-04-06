@@ -1,10 +1,5 @@
 package me.pysquad.cryptobot.subscriber
 
-import com.fasterxml.jackson.annotation.JsonInclude
-import com.fasterxml.jackson.databind.PropertyNamingStrategies
-import com.fasterxml.jackson.databind.annotation.JsonNaming
-import com.fasterxml.jackson.module.kotlin.KotlinModule
-import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import io.vavr.control.Either
 import org.http4k.format.Jackson.auto
 import org.http4k.websocket.WsMessage
@@ -12,44 +7,34 @@ import org.slf4j.LoggerFactory
 import kotlin.concurrent.thread
 
 class SubscriberService(
-    private val coinbaseApi: CoinbaseApi,
+    private val coinbaseWsClient: CoinbaseWsApi,
     private val subscriberRepository: SubscriberRepository
 ) {
-
-    private val objectMapper = jacksonObjectMapper().registerModule(KotlinModule())
     private val log = LoggerFactory.getLogger(this::class.java)
 
     fun createCoinbaseProductSubscription(productIds: ProductIds):
             Either<CoinbaseProductSubscriptionFailure, CoinbaseProductSubscriptionSuccess> {
 
         log.info("Subscribing to coinbase websocket feed with products: $productIds")
-        val request = CoinbaseWsSubscribeRequest(
+        val coinbaseProductSubscriptions = subscriberRepository.getSubscriptions()
+        if (productIds.any { given -> coinbaseProductSubscriptions.contains(given) })
+            return Either.left(alreadySubscribed(productIds))
+
+        val response = coinbaseWsClient.createProductSubscription(
+            CoinbaseWsSubscribeRequest(
                 type = CoinbaseRequestResponseTypes.SUBSCRIBE.name.toLowerCase(),
                 channels = listOf(CoinbaseChannelTypes.TICKER.name.toLowerCase()),
-                productIds = productIds
-        ).run(objectMapper::writeValueAsString)
+                productIds = productIds))
 
-        with(coinbaseApi.wsFeed()) {
-            val wsFeedLens = WsMessage.auto<CoinbaseWsResponse>().toLens()
+        return if (!response.type.equals(CoinbaseRequestResponseTypes.ERROR.name, true) && response.channels.isNotEmpty()) {
+            // right now we only send one channel, which is a 'ticker' channel
+            subscriberRepository.storeSubscriptions(response.channels.first().productIds)
+            // new thread to store received ticker messages from websocket
+            thread { coinbaseWsClient.getReceived().storeInChunks() }
 
-            send(WsMessage(request))
-            val wsFeedResp = wsFeedLens.extract(received().first())
-            log.debug("Got response from coinbase websocket feed: $wsFeedResp")
-
-            return if (!wsFeedResp.type.equals(CoinbaseRequestResponseTypes.ERROR.name, true)) {
-                // right now we only send one channel, which is a 'ticker' channel
-                subscriberRepository.storeSubscriptions(wsFeedResp.channels.first().productIds)
-                // new thread to store received messages from websocket
-                thread { received().storeInChunks() }
-
-                Either.right(CoinbaseProductSubscriptionSuccess(wsFeedResp.channels.first().productIds))
-            } else {
-                // closing websocket client
-                log.info("Closing websocket connection with coinbase")
-                close()
-
-                Either.left(CoinbaseProductSubscriptionFailure(wsFeedResp.type, wsFeedResp.message, wsFeedResp.reason))
-            }
+            Either.right(CoinbaseProductSubscriptionSuccess(response.channels.first().productIds))
+        } else {
+            Either.left(CoinbaseProductSubscriptionFailure(response.type, response.message, response.reason))
         }
     }
 
@@ -57,35 +42,21 @@ class SubscriberService(
         val wsLens = WsMessage.auto<CoinbaseMessage>().toLens()
 
         for(listOfMessages in chunked(6)) {
-            val coinbaseMessages = listOfMessages.map(wsLens::extract)
+            val coinbaseMessages = listOfMessages
+                .map(wsLens::extract)
+                .filter { it.type.equals(CoinbaseChannelTypes.TICKER.name, true) }
             subscriberRepository.storeMessages(coinbaseMessages)
         }
     }
-}
 
-// internal models
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-private data class CoinbaseWsSubscribeRequest(
-    val type: String,
-    val productIds: ProductIds,
-    val channels: List<String>
-)
-
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
-private data class CoinbaseWsResponse(
-    var type: String = "",
-    var message: String = "",
-    var reason: String = "",
-    var channels: List<CoinbaseWsChannel> = emptyList()
-) {
-    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-    data class CoinbaseWsChannel(
-        var name: String = "",
-        var productIds: ProductIds = emptyList()
+    private fun alreadySubscribed(productIds: ProductIds) = CoinbaseProductSubscriptionFailure(
+        "failure",
+        "Failed to subscribe",
+        "Already subscribed to $productIds"
     )
 }
 
+// internal models
 private enum class CoinbaseRequestResponseTypes {
     SUBSCRIBE,
     ERROR

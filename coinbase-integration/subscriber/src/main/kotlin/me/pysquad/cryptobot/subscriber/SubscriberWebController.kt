@@ -13,9 +13,7 @@ class SubscriberWebController(private val subscriberService: SubscriberService) 
         createCoinbaseProductSubscription(subscriberService)
     )
 
-    /**
-     * Should be removed once the new endpoint is merged and used from the client.
-     */
+    // TODO: 06/04/2021 Should be removed once the new endpoint is merged and used from the client.
     private fun subscribe(service: SubscriberService): RoutingHttpHandler =
         "/subscribe" bind Method.POST to { req: Request ->
 
