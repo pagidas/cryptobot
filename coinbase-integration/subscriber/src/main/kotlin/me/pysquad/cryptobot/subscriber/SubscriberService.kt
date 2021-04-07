@@ -57,11 +57,12 @@ class SubscriberService(
 }
 
 // internal models
-private enum class CoinbaseRequestResponseTypes {
+enum class CoinbaseRequestResponseTypes {
+    SUBSCRIPTIONS,
     SUBSCRIBE,
     ERROR
 }
 
-private enum class CoinbaseChannelTypes {
+enum class CoinbaseChannelTypes {
     TICKER
 }

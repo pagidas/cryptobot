@@ -26,9 +26,13 @@ interface CoinbaseWsApi {
                 return with(wsClient) {
                     send(wsRequest)
                     // FIXME: 06/04/2021 received() will not guarantee we're getting the result we're expecting.
-                    val first = received().take(1).first()
-                    log.debug("Got raw response from coinbase websocket feed: ${first.bodyString()}")
-                    val wsFeedResp = wsFeedLens.extract(first)
+                    val wsFeedResp = received()
+                        .map(wsFeedLens)
+                        .filter { isTickerProductId(it, request.productIds) || isErrorProductId(it, request.productIds) }
+                        .first()
+//                    val first = received().take(1).first()
+//                    log.debug("Got raw response from coinbase websocket feed: ${first.bodyString()}")
+//                    val wsFeedResp = wsFeedLens.extract(first)
                     log.debug("Got response from coinbase websocket feed: $wsFeedResp")
                     wsFeedResp
                 }
@@ -37,6 +41,15 @@ interface CoinbaseWsApi {
             override fun getReceived(): Sequence<WsMessage> = wsClient.received()
 
             override fun close() = wsClient.close()
+
+            private fun isTickerProductId(coinbaseWsResponse: CoinbaseWsResponse, productIds: ProductIds): Boolean =
+                coinbaseWsResponse.type.equals(CoinbaseRequestResponseTypes.SUBSCRIPTIONS.name, true)
+                        && coinbaseWsResponse.channels.first().name.equals(CoinbaseChannelTypes.TICKER.name, true)
+                        && coinbaseWsResponse.channels.first().productIds == productIds
+
+            private fun isErrorProductId(coinbaseWsResponse: CoinbaseWsResponse, productIds: ProductIds): Boolean =
+                coinbaseWsResponse.type.equals(CoinbaseRequestResponseTypes.ERROR.name, true)
+                        && coinbaseWsResponse.reason.contains(productIds.first())
         }
     }
 }
