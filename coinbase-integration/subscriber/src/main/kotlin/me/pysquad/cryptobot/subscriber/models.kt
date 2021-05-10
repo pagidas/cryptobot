@@ -5,12 +5,15 @@ import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
 import org.http4k.core.Body
 import org.http4k.format.Jackson.auto
+import org.http4k.websocket.WsMessage
 
-data class CoinbaseProductSubscriptionSuccess(val productIds: ProductIds) {
+data class CoinbaseProductSubscriptionRequest(val productId: ProductId) {
     companion object {
-        val lens = Body.auto<CoinbaseProductSubscriptionSuccess>().toLens()
+        val lens = Body.auto<CoinbaseProductSubscriptionRequest>().toLens()
     }
 }
+
+data class CoinbaseProductSubscriptionSuccess(val message: String)
 
 data class CoinbaseProductSubscriptionFailure(
     val type: String,
@@ -30,16 +33,24 @@ data class CoinbaseWsSubscribeRequest(
 )
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-@JsonInclude(JsonInclude.Include.NON_DEFAULT)
+@JsonInclude(JsonInclude.Include.NON_EMPTY)
 data class CoinbaseWsResponse(
     var type: String = "",
     var message: String = "",
     var reason: String = "",
     var channels: List<CoinbaseWsChannel> = emptyList()
 ) {
+    companion object {
+        val wsLens = WsMessage.auto<CoinbaseWsResponse>().toLens()
+    }
+
     @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
     data class CoinbaseWsChannel(
         var name: String = "",
         var productIds: ProductIds = emptyList()
-    )
+    ) {
+        companion object {
+            val lens = Body.auto<CoinbaseWsChannel>().toLens()
+        }
+    }
 }

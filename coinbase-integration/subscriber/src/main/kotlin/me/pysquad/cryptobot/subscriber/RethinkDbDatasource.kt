@@ -7,21 +7,20 @@ import com.rethinkdb.net.Connection
 const val CRYPTOBOT = "cryptobot"
 
 // table names
-const val MESSAGES = "messages"
-const val PRODUCT_SUBSCRIPTIONS = "product_subscriptions"
+const val COINBASE_MESSAGES = "coinbase_messages"
+const val COINBASE_PRODUCT_SUBSCRIPTIONS = "coinbase_product_subscriptions"
 
-class RethinkDbDatasource(private var rethinkDbConfig: RethinkDbConfiguration) {
+class RethinkDbDatasource(private val rethinkDbConfig: RethinkDbConfiguration) {
 
-    var ctx: RethinkDB = RethinkDB.r
-    lateinit var connection: Connection
+    val ctx: RethinkDB = RethinkDB.r
+    val connection: Connection
 
-    init { connect(ctx) }
+    init { connection = connect(ctx) }
 
-    private fun connect(r: RethinkDB) = apply {
-        connection = r.connection()
-                .hostname(rethinkDbConfig.host)
-                .port(rethinkDbConfig.port)
-                .db(CRYPTOBOT)
-                .connect()
-    }
+    private fun connect(r: RethinkDB): Connection =
+        r.connection()
+            .hostname(rethinkDbConfig.host)
+            .port(rethinkDbConfig.port)
+            .db(CRYPTOBOT)
+            .connect()
 }

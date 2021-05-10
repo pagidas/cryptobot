@@ -1,18 +1,20 @@
 package me.pysquad.cryptobot.subscriber
 
+import com.typesafe.config.ConfigFactory
 import me.pysquad.cryptobot.http4k.starter.http4kApp
 
 fun main() {
-    val appConfig = AppConfiguration()
+    val configReader = ConfigFactory.load()
+
+    val appConfig = AppConfiguration(configReader)
+    val coinbaseConfig = CoinbaseConfiguration(configReader)
+    val rethinkDbConfig = RethinkDbConfiguration(configReader)
 
     http4kApp(appConfig.port) {
         // building the service
-        val coinbaseConfig = CoinbaseConfiguration()
-        val rethinkDbConfig = RethinkDbConfiguration()
-
         val subscriberService = SubscriberService(
-                CoinbaseWsApi.client(coinbaseConfig),
-                SubscriberRepository.impl(RethinkDbDatasource(rethinkDbConfig))
+            CoinbaseWsFeedNonBlocking(coinbaseConfig),
+            SubscriberRepository.impl(RethinkDbDatasource(rethinkDbConfig))
         )
 
         // passing the routes

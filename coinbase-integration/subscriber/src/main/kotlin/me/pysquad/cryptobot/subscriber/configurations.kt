@@ -1,21 +1,18 @@
 package me.pysquad.cryptobot.subscriber
 
 import com.typesafe.config.Config
-import com.typesafe.config.ConfigFactory
 import org.http4k.core.Uri
 
-private val configReader: Config by lazy { ConfigFactory.load() }
+class AppConfiguration(config: Config) {
+        val port: Int = config.getInt("application.port")
+        val host: String = config.getString("application.host")
+}
 
-data class AppConfiguration(
-        val port: Int = configReader.getInt("application.port"),
-        val host: String = configReader.getString("application.host")
-)
+class RethinkDbConfiguration(config: Config) {
+        val port: Int = config.getInt("rethinkdb.port")
+        val host: String = config.getString("rethinkdb.host")
+}
 
-data class RethinkDbConfiguration(
-        val port: Int = configReader.getInt("rethinkdb.port"),
-        val host: String = configReader.getString("rethinkdb.host")
-)
-
-data class CoinbaseConfiguration(
-        val wsFeedUri: Uri = Uri.of(configReader.getString("coinbase.wsFeedUri"))
-)
+class CoinbaseConfiguration(config: Config) {
+        val wsFeedUri: Uri = Uri.of(config.getString("coinbase.wsFeedUri"))
+}

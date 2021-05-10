@@ -2,57 +2,70 @@ package me.pysquad.cryptobot.subscriber
 
 import io.vavr.control.Either
 import org.http4k.format.Jackson.auto
+import org.http4k.format.Jackson.json
 import org.http4k.websocket.WsMessage
 import org.slf4j.LoggerFactory
-import kotlin.concurrent.thread
 
 class SubscriberService(
-    private val coinbaseWsClient: CoinbaseWsApi,
+    private val coinbaseWsNonBlockingClient: CoinbaseWsFeedNonBlocking,
     private val subscriberRepository: SubscriberRepository
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    fun createCoinbaseProductSubscription(productIds: ProductIds):
+    fun createCoinbaseProductSubscriptionV2(productId: ProductId):
             Either<CoinbaseProductSubscriptionFailure, CoinbaseProductSubscriptionSuccess> {
 
-        log.info("Subscribing to coinbase websocket feed with products: $productIds")
-        val coinbaseProductSubscriptions = subscriberRepository.getSubscriptions()
-        if (productIds.any { given -> coinbaseProductSubscriptions.contains(given) })
-            return Either.left(alreadySubscribed(productIds))
+        log.info("Subscribing to coinbase websocket feed v2 with product id: $productId")
+        if (subscriberRepository.getSubscriptions().map(CoinbaseProductSubscriptionV2::productId).contains(productId))
+            return Either.left(alreadySubscribed(productId))
 
-        val response = coinbaseWsClient.createProductSubscription(
+        coinbaseWsNonBlockingClient.onMessage { wsMessage ->
+            val jsonWsLens = WsMessage.json().toLens()
+            val tickerMessageLens = WsMessage.auto<CoinbaseMessage>().toLens()
+
+            val jsonWsMessage = jsonWsLens(wsMessage)
+
+            when(jsonWsMessage["type"].asText()) {
+                CoinbaseRequestResponseTypes.ERROR.name.toLowerCase() -> {
+                    val coinbaseWsResponse = CoinbaseWsResponse.wsLens(wsMessage)
+                    log.error("Failed to subscribe to coinbase $coinbaseWsResponse")
+                }
+                CoinbaseRequestResponseTypes.SUBSCRIPTIONS.name.toLowerCase() -> {
+                    val coinbaseWsResponse = CoinbaseWsResponse.wsLens(wsMessage)
+                    if (coinbaseWsResponse.channels.isNotEmpty()) {
+                        log.info("SUBSCRIPTION $coinbaseWsResponse") // test -- remove me
+                        subscriberRepository.storeSubscription(
+                            CoinbaseProductSubscriptionV2(
+                                coinbaseWsResponse.channels.first().name,
+                                coinbaseWsResponse.channels.first().productIds.first()
+                            )
+                        )
+                    }
+                }
+                CoinbaseChannelTypes.TICKER.name.toLowerCase() -> {
+                    val coinbaseMessage = tickerMessageLens(wsMessage)
+                    subscriberRepository.storeMessage(coinbaseMessage)
+                    // store me!
+                }
+                else -> log.info("UNKNOWN message: ${CoinbaseWsResponse.wsLens(wsMessage)}")
+            }
+        }
+
+        coinbaseWsNonBlockingClient.createProductSubscription(
             CoinbaseWsSubscribeRequest(
-                type = CoinbaseRequestResponseTypes.SUBSCRIBE.name.toLowerCase(),
-                channels = listOf(CoinbaseChannelTypes.TICKER.name.toLowerCase()),
-                productIds = productIds))
+                "subscribe",
+                listOf(productId),
+                listOf("ticker")
+            )
+        )
 
-        return if (!response.type.equals(CoinbaseRequestResponseTypes.ERROR.name, true) && response.channels.isNotEmpty()) {
-            // right now we only send one channel, which is a 'ticker' channel
-            subscriberRepository.storeSubscriptions(response.channels.first().productIds)
-            // new thread to store received ticker messages from websocket
-            thread { coinbaseWsClient.getReceived().storeInChunks() }
-
-            Either.right(CoinbaseProductSubscriptionSuccess(response.channels.first().productIds))
-        } else {
-            Either.left(CoinbaseProductSubscriptionFailure(response.type, response.message, response.reason))
-        }
+        return Either.right(CoinbaseProductSubscriptionSuccess("ACCEPTED"))
     }
 
-    private fun Sequence<WsMessage>.storeInChunks() {
-        val wsLens = WsMessage.auto<CoinbaseMessage>().toLens()
-
-        for(listOfMessages in chunked(6)) {
-            val coinbaseMessages = listOfMessages
-                .map(wsLens::extract)
-                .filter { it.type.equals(CoinbaseChannelTypes.TICKER.name, true) }
-            subscriberRepository.storeMessages(coinbaseMessages)
-        }
-    }
-
-    private fun alreadySubscribed(productIds: ProductIds) = CoinbaseProductSubscriptionFailure(
+    private fun alreadySubscribed(productId: ProductId) = CoinbaseProductSubscriptionFailure(
         "failure",
         "Failed to subscribe",
-        "Already subscribed to $productIds"
+        "Already subscribed to $productId"
     )
 }
 
