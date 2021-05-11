@@ -10,17 +10,17 @@ const val CRYPTOBOT = "cryptobot"
 const val COINBASE_MESSAGES = "coinbase_messages"
 const val COINBASE_PRODUCT_SUBSCRIPTIONS = "coinbase_product_subscriptions"
 
-class RethinkDbDatasource(private val rethinkDbConfig: RethinkDbConfiguration) {
+class RethinkDbDatasource(rethinkDbConfig: RethinkDbConfiguration) {
 
     val ctx: RethinkDB = RethinkDB.r
     val connection: Connection
 
-    init { connection = connect(ctx) }
+    init { connection = connect(rethinkDbConfig) }
 
-    private fun connect(r: RethinkDB): Connection =
-        r.connection()
-            .hostname(rethinkDbConfig.host)
-            .port(rethinkDbConfig.port)
+    private fun connect(config: RethinkDbConfiguration): Connection =
+        ctx.connection()
+            .hostname(config.host)
+            .port(config.port)
             .db(CRYPTOBOT)
             .connect()
 }

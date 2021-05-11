@@ -15,7 +15,7 @@ class SubscriberService(
     fun createCoinbaseProductSubscriptionV2(productId: ProductId):
             Either<CoinbaseProductSubscriptionFailure, CoinbaseProductSubscriptionSuccess> {
 
-        log.info("Subscribing to coinbase websocket feed v2 with product id: $productId")
+        log.info("Subscribing to coinbase websocket feed with product id: $productId")
         if (subscriberRepository.getSubscriptions().map(CoinbaseProductSubscriptionV2::productId).contains(productId))
             return Either.left(alreadySubscribed(productId))
 
@@ -45,7 +45,6 @@ class SubscriberService(
                 CoinbaseChannelTypes.TICKER.name.toLowerCase() -> {
                     val coinbaseMessage = tickerMessageLens(wsMessage)
                     subscriberRepository.storeMessage(coinbaseMessage)
-                    // store me!
                 }
                 else -> log.info("UNKNOWN message: ${CoinbaseWsResponse.wsLens(wsMessage)}")
             }
