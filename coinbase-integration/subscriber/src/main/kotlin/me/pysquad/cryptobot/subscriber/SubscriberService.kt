@@ -12,11 +12,11 @@ class SubscriberService(
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
 
-    fun createCoinbaseProductSubscriptionV2(productId: ProductId):
+    fun createCoinbaseProductSubscription(productId: ProductId):
             Either<CoinbaseProductSubscriptionFailure, CoinbaseProductSubscriptionSuccess> {
 
         log.info("Subscribing to coinbase websocket feed with product id: $productId")
-        if (subscriberRepository.getSubscriptions().map(CoinbaseProductSubscriptionV2::productId).contains(productId))
+        if (subscriberRepository.getSubscriptions().map(CoinbaseProductSubscription::productId).contains(productId))
             return Either.left(alreadySubscribed(productId))
 
         coinbaseWsNonBlockingClient.onMessage { wsMessage ->
@@ -35,7 +35,7 @@ class SubscriberService(
                     if (coinbaseWsResponse.channels.isNotEmpty()) {
                         log.info("SUBSCRIPTION $coinbaseWsResponse") // test -- remove me
                         subscriberRepository.storeSubscription(
-                            CoinbaseProductSubscriptionV2(
+                            CoinbaseProductSubscription(
                                 coinbaseWsResponse.channels.first().name,
                                 coinbaseWsResponse.channels.first().productIds.first()
                             )

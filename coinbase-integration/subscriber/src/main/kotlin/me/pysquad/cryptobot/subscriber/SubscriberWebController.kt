@@ -16,7 +16,7 @@ class SubscriberWebController(private val service: SubscriberService) {
 
             with(CoinbaseProductSubscriptionRequest.lens) {
                 val productId = extract(request).productId
-                val response = service.createCoinbaseProductSubscriptionV2(productId)
+                val response = service.createCoinbaseProductSubscription(productId)
 
                 if (response.isRight)
                     Response(Status.ACCEPTED)

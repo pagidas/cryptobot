@@ -6,8 +6,8 @@ import com.rethinkdb.net.Connection
 
 interface SubscriberRepository {
     fun storeMessage(message: CoinbaseMessage)
-    fun storeSubscription(subscription: CoinbaseProductSubscriptionV2)
-    fun getSubscriptions(): List<CoinbaseProductSubscriptionV2>
+    fun storeSubscription(subscription: CoinbaseProductSubscription)
+    fun getSubscriptions(): List<CoinbaseProductSubscription>
 
     companion object {
         fun impl(rethinkDbDatasource: RethinkDbDatasource) = object: SubscriberRepository {
@@ -18,10 +18,10 @@ interface SubscriberRepository {
             override fun storeMessage(message: CoinbaseMessage) =
                 r.table(COINBASE_MESSAGES).insert(message).runNoReply(conn)
 
-            override fun getSubscriptions(): List<CoinbaseProductSubscriptionV2> =
-                r.table(COINBASE_PRODUCT_SUBSCRIPTIONS).run(conn, object: TypeReference<CoinbaseProductSubscriptionV2>() {}).toList()
+            override fun getSubscriptions(): List<CoinbaseProductSubscription> =
+                r.table(COINBASE_PRODUCT_SUBSCRIPTIONS).run(conn, object: TypeReference<CoinbaseProductSubscription>() {}).toList()
 
-            override fun storeSubscription(subscription: CoinbaseProductSubscriptionV2) =
+            override fun storeSubscription(subscription: CoinbaseProductSubscription) =
                 r.table(COINBASE_PRODUCT_SUBSCRIPTIONS).insert(subscription).runNoReply(conn)
         }
     }

@@ -1,6 +1,5 @@
 package me.pysquad.cryptobot.subscriber
 
-import com.fasterxml.jackson.annotation.JsonIgnore
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.fasterxml.jackson.databind.PropertyNamingStrategies
 import com.fasterxml.jackson.databind.annotation.JsonNaming
@@ -33,24 +32,7 @@ data class CoinbaseMessage(
 )
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-data class CoinbaseProductSubscriptionV2(
+data class CoinbaseProductSubscription(
     val channel: String,
     val productId: ProductId
 )
-
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
-data class CoinbaseProductSubscription(
-    var subId: String = "",
-    var productIds: String = ""
-) {
-    val productIdsAsList: ProductIds
-        @JsonIgnore
-        get() =
-            if (productIds.isBlank())
-                emptyList()
-            else {
-                productIds.split(",").toMutableList()
-                    .apply { removeAll { it.isBlank() } }
-                    .toList()
-            }
-}
