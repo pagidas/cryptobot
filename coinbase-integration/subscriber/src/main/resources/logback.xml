@@ -7,9 +7,11 @@
         </encoder>
     </appender>
 
-    <!-- LOGGERS -->
-    <logger name="me.pysquad.cryptobot" additivity="false" level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="STDOUT"/>
-    </logger>
+    </root>
 
+    <!-- LOGGERS -->
+    <logger name="me.pysquad.cryptobot" level="DEBUG"/>
+    <logger name="org.eclipse" level="OFF"/>
 </configuration>

@@ -19,14 +19,14 @@ services:
     hostname: rethinkdb
     ports:
       - "${RETHINKDB_PORT}:8080"
-    #      - "28015:28015"
+#      - "28015:28015"
     restart: always
   db-initializer:
     build: ./db-initializer
     depends_on:
       - rethinkdb
     environment:
-      RETHINK_HOST: rethinkdb
+      RETHINKDB_HOST: rethinkdb
     container_name: db-initializer
   graphql:
     image: ghcr.io/pagidas/graphql
