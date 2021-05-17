@@ -11,6 +11,11 @@ class SubscriberService(
     private val subscriberRepository: SubscriberRepository
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
+    /*
+    In-memory store of subscriptions for quick-access by async websocket client.
+    It's faster to check the subscription than connecting to RethinkDb.
+    However, the subscription is still stored in RethinkDb for consumers that need it.
+     */
     val subscriptions = ArrayList<CoinbaseProductSubscription>()
 
     fun createCoinbaseProductSubscription(productId: ProductId):
@@ -51,7 +56,7 @@ class SubscriberService(
 
         coinbaseWsNonBlockingClient.createProductSubscription(
             CoinbaseWsSubscribeRequest(
-                "subscribe",
+                CoinbaseRequestResponseTypes.SUBSCRIBE.name.toLowerCase(),
                 listOf(productId),
                 listOf("ticker")
             )

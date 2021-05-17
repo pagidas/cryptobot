@@ -1,0 +1,19 @@
+<configuration>
+
+    <!-- APPENDERS -->
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%cyan(%d{HH:mm:ss.SSS}) %white([%thread]) %highlight(%-5level) %magenta(%logger{36}) - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="STDOUT"/>
+    </root>
+
+    <!-- LOGGERS -->
+    <logger name="me.pysquad.cryptobot" level="DEBUG"/>
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
+    <logger name="org.eclipse" level="OFF"/>
+</configuration>
