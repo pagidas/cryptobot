@@ -33,6 +33,8 @@ data class CoinbaseMessage(
 
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy::class)
 data class CoinbaseProductSubscription(
+    @JsonProperty("channel")
     val channel: String,
+    @JsonProperty("productId")
     val productId: ProductId
 )
