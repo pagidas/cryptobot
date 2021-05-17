@@ -19,7 +19,7 @@ if [[ -d "../$folder" ]]; then
     # Build the target module dependent on http4k-starter.
     cd ../"$folder"
     echo "Building $folder..."
-    ./gradlew clean build -x shadowJar -x jar
+    ./gradlew clean build test -x shadowJar -x jar
     cd "$BASE_DIR"
     return 1
   fi
@@ -27,6 +27,6 @@ if [[ -d "../$folder" ]]; then
   cd ../"$folder"
   echo "Building $folder..."
   # we only care if they compile, thus skip building the fatjar
-  ./gradlew clean build -x shadowJar -x jar
+  ./gradlew clean build test -x shadowJar -x jar
   cd "$BASE_DIR"
 fi

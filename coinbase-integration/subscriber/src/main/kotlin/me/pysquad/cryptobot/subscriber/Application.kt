@@ -1,29 +1,25 @@
 package me.pysquad.cryptobot.subscriber
 
+import com.typesafe.config.Config
+import com.typesafe.config.ConfigFactory
 import me.pysquad.cryptobot.http4k.starter.http4kApp
-import me.pysquad.cryptobot.subscriber.coinbase.CoinbaseApi
-import me.pysquad.cryptobot.subscriber.coinbase.CoinbaseConfiguration
-import me.pysquad.cryptobot.subscriber.endpoints.subscriberRoutes
-import me.pysquad.cryptobot.subscriber.repo.SubscriberRepo
-import me.pysquad.cryptobot.subscriber.rethinkdb.RethinkDbConfiguration
-import me.pysquad.cryptobot.subscriber.rethinkdb.RethinkDbDatasource
-import me.pysquad.cryptobot.subscriber.service.SubscriberService
+
+class Application(config: Config) {
+    val appConfig = AppConfiguration(config)
+    val coinbaseConfig = CoinbaseConfiguration(config)
+    val rethinkDbConfig = RethinkDbConfiguration(config)
+
+    val subscriberService = SubscriberService(
+        CoinbaseWsFeedNonBlocking(coinbaseConfig),
+        SubscriberRepository.impl(RethinkDbDatasource(rethinkDbConfig))
+    )
+
+    fun start() = http4kApp(appConfig.port) {
+        // passing the routes
+        SubscriberWebController(subscriberService).routes()
+    }.run()
+}
 
 fun main() {
-    val appConfig = AppConfiguration()
-
-    http4kApp(appConfig.port) {
-        // building the service
-        val coinbaseConfig = CoinbaseConfiguration()
-        val rethinkDbConfig = RethinkDbConfiguration()
-
-        val service = SubscriberService(
-                CoinbaseApi.client(coinbaseConfig),
-                coinbaseConfig,
-                SubscriberRepo.impl(RethinkDbDatasource(rethinkDbConfig))
-        )
-
-        // passing the routes
-        subscriberRoutes(service)
-    }.run()
+    Application(ConfigFactory.load()).start()
 }

@@ -13,5 +13,7 @@
 
     <!-- LOGGERS -->
     <logger name="me.pysquad.cryptobot" level="DEBUG"/>
+    <logger name="org.testcontainers" level="INFO"/>
+    <logger name="com.github.dockerjava" level="WARN"/>
     <logger name="org.eclipse" level="OFF"/>
 </configuration>

@@ -36,14 +36,27 @@ subprojects {
 
         // Slf4JLogging
         implementation "org.slf4j:slf4j-api:$slf4jVersion"
-        implementation "org.slf4j:slf4j-simple:$slf4jVersion"
 
         // RethinkDB
         implementation "com.rethinkdb:rethinkdb-driver:$rethinkdbVersion"
 
+        // Vavr
+        implementation "io.vavr:vavr:$vavrVersion"
+
         // Logback
         compile "ch.qos.logback:logback-core:$logbackVersion"
         runtimeOnly "ch.qos.logback:logback-classic:$logbackVersion"
+
+        // test
+        testImplementation "org.http4k:http4k-client-apache"
+        testImplementation "org.awaitility:awaitility:$awaitilityVersion"
+        testImplementation "org.assertj:assertj-core:$assertjVersion"
+        testImplementation "org.junit.jupiter:junit-jupiter-api:$junitJupiterVersion"
+        testImplementation "org.junit.jupiter:junit-jupiter-params:$junitJupiterVersion"
+        testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:$junitJupiterVersion"
+
+        testImplementation(platform("org.testcontainers:testcontainers-bom:$testContainersVersion"))
+        testImplementation "org.testcontainers:junit-jupiter"
     }
 
     shadowJar {
@@ -55,5 +68,17 @@ subprojects {
     }
     compileTestKotlin {
         kotlinOptions.jvmTarget = "11"
+    }
+
+    test {
+        useJUnitPlatform()
+    }
+
+    tasks.withType(Test) {
+        testLogging {
+            exceptionFormat "full"
+            events "started", "skipped", "passed", "failed"
+            showStandardStreams true
+        }
     }
 }
