@@ -27,7 +27,6 @@ class CoinbaseWsFeedNonBlocking(config: CoinbaseConfiguration) {
     fun close(status: WsStatus): Unit = nonBlockingClient.close(status)
 
     fun createProductSubscription(request: CoinbaseWsSubscribeRequest) {
-        println(nonBlockingClient.upgradeRequest)
         val wsRequest = WsMessage(objectMapper.writeValueAsString(request))
         nonBlockingClient.send(wsRequest)
     }

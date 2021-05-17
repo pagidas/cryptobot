@@ -21,7 +21,7 @@ class SubscriberWebController(private val service: SubscriberService) {
                 if (response.isRight)
                     Response(Status.ACCEPTED)
                 else
-                    Response(Status.UNPROCESSABLE_ENTITY).with(CoinbaseProductSubscriptionFailure.lens of response.left)
+                    Response(Status.CONFLICT).with(CoinbaseProductSubscriptionFailure.lens of response.left)
             }
         }
 }

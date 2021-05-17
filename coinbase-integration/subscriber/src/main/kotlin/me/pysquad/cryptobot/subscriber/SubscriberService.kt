@@ -11,18 +11,18 @@ class SubscriberService(
     private val subscriberRepository: SubscriberRepository
 ) {
     private val log = LoggerFactory.getLogger(this::class.java)
+    val subscriptions = ArrayList<CoinbaseProductSubscription>()
 
     fun createCoinbaseProductSubscription(productId: ProductId):
             Either<CoinbaseProductSubscriptionFailure, CoinbaseProductSubscriptionSuccess> {
 
         log.info("Subscribing to coinbase websocket feed with product id: $productId")
-        if (subscriberRepository.getSubscriptions().map(CoinbaseProductSubscription::productId).contains(productId))
-            return Either.left(alreadySubscribed(productId))
+        if (subscriptions.isNotEmpty()) return Either.left(alreadySubscribed(productId))
+
+        val jsonWsLens = WsMessage.json().toLens()
+        val tickerMessageLens = WsMessage.auto<CoinbaseMessage>().toLens()
 
         coinbaseWsNonBlockingClient.onMessage { wsMessage ->
-            val jsonWsLens = WsMessage.json().toLens()
-            val tickerMessageLens = WsMessage.auto<CoinbaseMessage>().toLens()
-
             val jsonWsMessage = jsonWsLens(wsMessage)
 
             when(jsonWsMessage["type"].asText()) {
@@ -32,14 +32,13 @@ class SubscriberService(
                 }
                 CoinbaseRequestResponseTypes.SUBSCRIPTIONS.name.toLowerCase() -> {
                     val coinbaseWsResponse = CoinbaseWsResponse.wsLens(wsMessage)
-                    if (coinbaseWsResponse.channels.isNotEmpty()) {
+                    if (coinbaseWsResponse.channels.isNotEmpty() && subscriptions.isEmpty()) {
                         log.info("SUBSCRIPTION $coinbaseWsResponse") // test -- remove me
-                        subscriberRepository.storeSubscription(
-                            CoinbaseProductSubscription(
-                                coinbaseWsResponse.channels.first().name,
-                                coinbaseWsResponse.channels.first().productIds.first()
-                            )
-                        )
+                        val subscription = CoinbaseProductSubscription(
+                            coinbaseWsResponse.channels.first().name,
+                            coinbaseWsResponse.channels.first().productIds.first())
+                        subscriptions.add(subscription)
+                        subscriberRepository.storeSubscription(subscription)
                     }
                 }
                 CoinbaseChannelTypes.TICKER.name.toLowerCase() -> {
@@ -64,7 +63,7 @@ class SubscriberService(
     private fun alreadySubscribed(productId: ProductId) = CoinbaseProductSubscriptionFailure(
         "failure",
         "Failed to subscribe",
-        "Already subscribed to $productId"
+        "Already subscribed once to $productId"
     )
 }
 
