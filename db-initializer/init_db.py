@@ -2,7 +2,7 @@ import os
 from rethinkdb import RethinkDB
 
 
-rethink_host = os.environ['RETHINK_HOST']
+rethink_host = os.environ['RETHINKDB_HOST']
 
 r = RethinkDB()
 r.connect(rethink_host, 28015).repl()
