@@ -15,13 +15,11 @@ import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
-import org.testcontainers.containers.GenericContainer
-import org.testcontainers.junit.jupiter.Container
 import org.testcontainers.junit.jupiter.Testcontainers
 import java.util.function.Predicate
 
 @Testcontainers
-class ApplicationIT {
+class ApplicationIT: AbstractContainerBase() {
 
     private val httpClient: HttpHandler = with(testApp.appConfig) {
         DebuggingFilters.PrintRequestAndResponse()
@@ -33,26 +31,18 @@ class ApplicationIT {
         private lateinit var testApp: Application
         // keep dbConn alive and close after all -- used to query if data is in rethinkDb
         private lateinit var dbConn: Connection
-        private const val containerRethinkDbPort = 28015
+
         private const val mockCoinbaseWebsocketFeedPort = 9000
         private const val mockCoinbaseWebsocketUri = "ws://localhost:${mockCoinbaseWebsocketFeedPort}"
         private val mockCoinbaseWebsocketFeed = MockCoinbaseWebsocketFeed(mockCoinbaseWebsocketFeedPort)
-
-        @Container
-        @JvmStatic
-        private val containerRethinkDb = GenericContainer<Nothing>("rethinkdb:2.4.0").apply {
-            withExposedPorts(containerRethinkDbPort)
-        }
 
         @BeforeAll
         @JvmStatic
         internal fun init() {
             assertThat(containerRethinkDb.isRunning).isTrue
-            val mappedRethinkDbPort = containerRethinkDb.getMappedPort(containerRethinkDbPort)
-            setupRethinkDb(mappedRethinkDbPort)
+            setupRethinkDb(exposedContainerRethinkDbPort)
             mockCoinbaseWebsocketFeed.start()
-            System.setProperty("RETHINKDB_PORT", mappedRethinkDbPort.toString())
-            System.setProperty("COINBASE_WS_FEED_URI", mockCoinbaseWebsocketUri)
+            setEnvVars()
             setupApp(ConfigFactory.load("application-test"))
         }
 
@@ -60,8 +50,12 @@ class ApplicationIT {
         @JvmStatic
         internal fun tearDown() {
             dbConn.close()
-            containerRethinkDb.stop()
             mockCoinbaseWebsocketFeed.stop()
+        }
+
+        private fun setEnvVars() {
+            System.setProperty("RETHINKDB_PORT", exposedContainerRethinkDbPort.toString())
+            System.setProperty("COINBASE_WS_FEED_URI", mockCoinbaseWebsocketUri)
         }
 
         private fun setupApp(config: Config) {
