@@ -3,7 +3,7 @@ package me.pysquad.cryptobot.subscriber
 import org.testcontainers.containers.GenericContainer
 import org.testcontainers.junit.jupiter.Container
 
-abstract class AbstractContainerBase {
+abstract class TestContainersBase {
     companion object {
         private const val containerRethinkDbPort = 28015
 
