@@ -19,7 +19,7 @@ services:
     hostname: rethinkdb
     ports:
       - "${RETHINKDB_PORT}:8080"
-#      - "28015:28015"
+      - "28015:28015"
     restart: always
   db-initializer:
     build: ./db-initializer
