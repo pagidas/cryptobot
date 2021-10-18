@@ -5,11 +5,14 @@ import consume.listeners as listeners
 from dash.dependencies import Input, Output
 from model.models import CoinbaseProduct
 from rethinkdb.errors import ReqlTimeoutError
+from envyaml import EnvYAML
+
 
 
 class PlotlyPlotter:
     def __init__(self):
-        self.feed = listeners.get_coinbase_message_feed()
+        self.config = EnvYAML("resources/env.yml")
+        self.feed = listeners.get_coinbase_message_feed(self.config)
         self.app = dash.Dash()
 
     def run_dashboard(self):
@@ -36,5 +39,5 @@ class PlotlyPlotter:
             except ReqlTimeoutError as e:
                 print(interval_number, e)
 
-        self.app.run_server(host="0.0.0.0", port=8081, debug=True)
+        self.app.run_server(host="0.0.0.0", port=8080, debug=True)
 

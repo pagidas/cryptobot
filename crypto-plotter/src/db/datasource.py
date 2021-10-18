@@ -5,6 +5,5 @@ CRYPTOBOT = "cryptobot"
 ctx = r
 
 
-def connect():
-    # TODO pass config object
-    return ctx.connect(db=CRYPTOBOT)
+def connect(config):
+    return ctx.connect(db=CRYPTOBOT, host=config["rethinkdb"]["host"])

@@ -1,9 +1,9 @@
 import db.datasource as datasource
 
 
-MESSAGES = "messages"
+MESSAGES = "coinbase_messages"
 
 
-def get_coinbase_message_feed():
-    connection = datasource.connect()
+def get_coinbase_message_feed(config):
+    connection = datasource.connect(config)
     return datasource.ctx.table(MESSAGES).changes().run(connection)
