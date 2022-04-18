@@ -12,4 +12,4 @@ here: https://github.com/pagidas/cryptobot.
 The library used to generate the docs is [HUGO](https://gohugo.io/documentation/)
 along with the theme [ace-documentation](https://github.com/matcornic/hugo-theme-learn/).
 
-For further walkthrough on the theme, there is a demo here: https://themes.gohugo.io//theme/hugo-theme-learn/en.
+The documentation of the theme which is actually built using the theme itself (theme-ception) can be found on the following link https://learn.netlify.app/en/
