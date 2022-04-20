@@ -5,12 +5,6 @@ weight: 2
 
 *Contains images/discussions/thoughts about architecture designs of cryptobot.*
 
-## Contents
-- [v1](#first-draft-of-cryptobot)
-- [v2](#second-draft-of-cryptobot)
-
----
-
 ## First draft of cryptobot
 ![image](images/Architecture_diagram_v1.png)
 
