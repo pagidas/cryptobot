@@ -1,9 +1,22 @@
----
-title: Architecture Designs
-weight: 2
----
++++
+title = "Architecture Designs"
+chapter = "true"
+weight = 6
+pre = "<b>3. </b>"
++++
 
-*Contains images/discussions/thoughts about architecture designs of cryptobot.*
+### Chapter 3
+
+# Architecture Designs
+
+*Contains images/discussions/thoughts about architecture designs of CryptoBOT.*
+
+### Contents
+
+  - [Design v1](#first-draft-of-cryptobot)
+  - [Design v2](#second-draft-of-cryptobot)
+    - [Design v2.1](#new-version-for-the-second-draft-of-cryptobot)
+
 
 ## First draft of cryptobot
 ![image](images/Architecture_diagram_v1.png)
